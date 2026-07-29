@@ -9,7 +9,12 @@ const items = [
   {
     question: "Do I need a big following?",
     answer:
-      "No. Trust and engagement matter far more than follower count; a small audience that listens beats a large one that scrolls past. The call is where we work out whether yours will buy.",
+      "No. Trust and engagement matter far more than follower count. A small audience that listens outsells a large one that scrolls past.",
+  },
+  {
+    question: "Does this only work for online creators?",
+    answer:
+      "No. It works for anyone with an audience, including local and in-person businesses. The product just looks different — bookings and repeat customers instead of a digital checkout.",
   },
   {
     question: "What do you do, and what do I do?",
@@ -19,7 +24,7 @@ const items = [
   {
     question: "How long does it take?",
     answer:
-      "Digital products and communities move fastest. Physical apparel takes longer because of sampling and production. We agree a real timeline on the call.",
+      "Software and digital products move fastest. Physical products take longer because of sampling and production. We agree a real timeline on the call.",
   },
   {
     question: "What does it cost?",
@@ -27,20 +32,25 @@ const items = [
       "It depends on what we're building and how much I'm handling. The application asks what you're able to invest so the call is useful for both of us.",
   },
   {
+    question: "Do you offer refunds?",
+    answer:
+      "No. All fees are non-refundable, because work, time, and third-party costs are committed from day one. Everything is agreed in writing before anything starts, so there are no surprises.",
+  },
+  {
     question: "Who owns what we build?",
     answer:
-      "You do. The brand, the audience, and the assets are yours. Terms are agreed in writing before any work starts.",
+      "You do. The brand, the audience, and the assets are yours. Terms are agreed in writing before work begins.",
   },
   {
     question: "What happens after I apply?",
     answer:
-      "You'll book a call with me directly. If it's not a fit, I'll tell you on the call rather than sell you something that won't work.",
+      "You'll be taken straight to my calendar to book a call with me. If it's not a fit, I'll tell you on the call rather than sell you something that won't work.",
   },
 ];
 
 export default function FAQPreview() {
   return (
-    <Section variant="base">
+    <Section variant="surface">
       <Container>
         <Reveal>
           <SectionHeading
@@ -53,7 +63,7 @@ export default function FAQPreview() {
           <div className="mt-8">
             <Link
               href="/faq"
-              className="text-sm text-text-faint underline-offset-4 hover:text-sky-500 hover:underline"
+              className="text-sm text-text-muted underline-offset-4 hover:text-sky-500 hover:underline"
             >
               Read all questions
             </Link>

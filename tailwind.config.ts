@@ -10,8 +10,8 @@ const config: Config = {
     extend: {
       colors: {
         base: "#0B0F14",
-        surface: "#121821",
-        line: "#1E2833",
+        surface: "#141B24",
+        line: "#232E3B",
         sky: {
           400: "#93C0FF",
           500: "#6BA8FF",
@@ -19,8 +19,8 @@ const config: Config = {
         },
         text: {
           primary: "#FFFFFF",
-          muted: "#A6B2C4",
-          faint: "#6B7686",
+          muted: "#C6D0DE",
+          faint: "#94A0B0",
         },
       },
       fontFamily: {

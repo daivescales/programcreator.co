@@ -9,7 +9,7 @@ import { faqCategories } from "@/content/faq";
 export const metadata: Metadata = {
   title: "FAQ",
   description:
-    "Common questions about working with Daive at ProgramCreator — fit, process, ownership, and how the build works.",
+    "Questions about working with Daive at ProgramCreator — fit, process, ownership, refunds, and how audience monetisation builds work.",
 };
 
 export default function FAQPage() {

@@ -17,7 +17,7 @@ export default function LegalLayout({
           <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
             {title}
           </h1>
-          <p className="mt-4 text-sm text-text-faint">
+          <p className="mt-4 text-sm text-text-muted">
             Last updated: {lastUpdated}
           </p>
         </div>

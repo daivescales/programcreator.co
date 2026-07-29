@@ -66,7 +66,7 @@ export default function Footer() {
           <span className="text-sky-500">Creator</span>
         </p>
         <p className="mt-3 text-sm text-text-muted">
-          Product builds for creators and brands, led by Daive.
+          Turning audiences into income. Built by Daive.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">

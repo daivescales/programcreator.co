@@ -16,25 +16,25 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "ProgramCreator | Product Builds for Creators & Brands",
+    default: "ProgramCreator | Turn Your Audience Into Income",
     template: "%s | ProgramCreator",
   },
   description:
-    "ProgramCreator is led by Daive — done-with-you product builds for creators and brand owners. Clothing, digital products, and paid communities.",
+    "ProgramCreator is led by Daive. We find how creators and businesses can monetise the audience they already have — then build that product for them.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
     siteName: "ProgramCreator",
-    title: "ProgramCreator | Product Builds for Creators & Brands",
+    title: "ProgramCreator | Turn Your Audience Into Income",
     description:
-      "Product builds for creators and brands, led by Daive. Not a course — the actual build.",
+      "Turn your audience into income. Built by Daive — for creators and businesses.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ProgramCreator | Product Builds for Creators & Brands",
+    title: "ProgramCreator | Turn Your Audience Into Income",
     description:
-      "Product builds for creators and brands, led by Daive. Not a course — the actual build.",
+      "Turn your audience into income. Built by Daive — for creators and businesses.",
   },
 };
 

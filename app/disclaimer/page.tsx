@@ -6,7 +6,7 @@ import LegalLayout from "@/components/LegalLayout";
 export const metadata: Metadata = {
   title: "Disclaimer",
   description:
-    "General and earnings disclaimer for ProgramCreator — no income guarantees or promised results.",
+    "General and earnings disclaimer for ProgramCreator — no income guarantees; all fees are non-refundable.",
 };
 
 export default function DisclaimerPage() {
@@ -59,8 +59,9 @@ export default function DisclaimerPage() {
         your own business decisions.
       </p>
       <p>
-        No income outcome is guaranteed. Terms of any client engagement are agreed
-        in writing before work begins.
+        No income outcome is guaranteed. All fees are non-refundable as set out in
+        our Terms of Service. Terms of any client engagement are agreed in writing
+        before work begins.
       </p>
 
       <h2>Contact</h2>

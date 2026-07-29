@@ -7,8 +7,8 @@ import SectionHeading from "@/components/ui/SectionHeading";
 
 const points = [
   {
-    title: "Done with you, not sold to you",
-    body: "I build it. You stay involved on the decisions that need your taste and your voice.",
+    title: "Built by an operator",
+    body: "I've shipped my own product to my own audience. I'm not guessing at this.",
   },
   {
     title: "You own everything",
@@ -16,31 +16,45 @@ const points = [
   },
   {
     title: "A short client list",
-    body: "I only take on a few partners at a time so every build gets real attention.",
+    body: "I take on a few partners at a time so every build gets real attention.",
   },
 ];
 
 export default function WhyMe() {
   return (
-    <Section variant="surface">
+    <Section variant="base">
       <Container>
         <Reveal>
           <SectionHeading
             eyebrow="Why Work With Me"
-            title="You're not buying a course. You're getting me in the build."
+            title="I built this for myself first."
           />
-          <p className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-text-muted md:text-lg">
-            Most people in this space will sell you a program and leave you to
-            figure out the hard part alone. I do the opposite. I take on a small
-            number of creators and brands at a time and build the product myself,
-            alongside you, so it&apos;s done to a professional standard the first
-            time.
-          </p>
+          <div className="mx-auto mt-8 max-w-2xl space-y-5 text-base leading-relaxed text-text-muted md:text-lg">
+            <p>
+              I built Clipora — an AI platform I created off the back of my own
+              YouTube channel, with my own process built into it, made to help
+              YouTubers grow faster and get more out of what they were already
+              posting. I scaled my personal brand, then turned what I knew into a
+              product that served the exact audience I understood.
+            </p>
+            <p>
+              ProgramCreator is me doing that for other people. Not teaching it,
+              not selling a course on it — actually building it, to prove that
+              what worked for me works for anybody with an audience and something
+              worth selling.
+            </p>
+          </div>
           <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-3">
             {points.map((point) => (
               <div key={point.title} className="flex flex-col items-center">
-                <Check className="mb-4 text-sky-500" size={20} strokeWidth={2.5} />
-                <h3 className="text-lg font-semibold text-white">{point.title}</h3>
+                <Check
+                  className="mb-4 text-sky-500"
+                  size={20}
+                  strokeWidth={2.5}
+                />
+                <h3 className="text-lg font-semibold text-white">
+                  {point.title}
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-muted md:text-base">
                   {point.body}
                 </p>

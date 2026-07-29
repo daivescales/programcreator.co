@@ -18,7 +18,7 @@ export default function NotFound() {
             Back home
           </Button>
         </div>
-        <p className="mt-8 text-sm text-text-faint">
+        <p className="mt-8 text-sm text-text-muted">
           Or go to the{" "}
           <Link href="/faq" className="text-sky-500 hover:text-sky-400">
             FAQ

@@ -26,8 +26,8 @@ export const questions: Question[] = [
   {
     id: "welcome",
     type: "welcome",
-    headline: "Let's see if we should build together.",
-    body: "Ten questions, about five minutes. I read every application myself. — Daive",
+    headline: "Let's find out what your audience will buy.",
+    body: "Eleven questions, about five minutes. I read every application myself, and you'll book a call with me at the end. — Daive",
     buttonLabel: "Start",
   },
   {
@@ -51,16 +51,29 @@ export const questions: Question[] = [
     id: "brand_name",
     type: "text",
     field: "brand_name",
-    question: "What's your brand or creator name?",
+    question: "What's your brand or business name?",
     required: true,
-    placeholder: "Brand or creator name",
+    placeholder: "Brand or business name",
+  },
+  {
+    id: "business_type",
+    type: "choice",
+    field: "business_type",
+    question: "Which best describes you?",
+    required: true,
+    options: [
+      "Creator or personal brand",
+      "Online business",
+      "In-person or local business",
+      "Both a brand and an audience",
+    ],
   },
   {
     id: "social_link",
     type: "text",
     field: "social_link",
-    question: "Drop a link to your main social profile.",
-    helper: "Whichever platform your audience is biggest on.",
+    question: "Drop a link to your main profile or website.",
+    helper: "Wherever your audience is biggest.",
     required: true,
     placeholder: "https://...",
   },
@@ -76,6 +89,7 @@ export const questions: Question[] = [
       "25,000–100,000",
       "100,000–500,000",
       "500,000+",
+      "Still building it",
     ],
   },
   {
@@ -83,13 +97,15 @@ export const questions: Question[] = [
     type: "multichoice",
     field: "build_interest",
     question: "What are you interested in building?",
-    helper: "Pick anything that appeals.",
+    helper: "Pick anything that appeals — we'll narrow it down on the call.",
     required: true,
     minSelections: 1,
     options: [
-      "Clothing or merch brand",
-      "Digital product or course",
-      "Paid community",
+      "Software or an app",
+      "Course or info product",
+      "Paid community or membership",
+      "Physical product or merch",
+      "More customers for an existing business",
       "Not sure — recommend something",
     ],
   },
@@ -144,5 +160,4 @@ export const questions: Question[] = [
   },
 ];
 
-/** Field questions only (excludes welcome + review) for progress counter */
 export const fieldQuestions = questions.filter((q) => q.field);

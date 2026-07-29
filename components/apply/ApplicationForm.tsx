@@ -189,6 +189,7 @@ export default function ApplicationForm() {
           name: answers.name,
           email: answers.email,
           brand_name: answers.brand_name || null,
+          business_type: answers.business_type || null,
           social_link: answers.social_link || null,
           audience_size: answers.audience_size || null,
           build_interest: Array.isArray(answers.build_interest)
@@ -285,7 +286,7 @@ export default function ApplicationForm() {
                   {current.question}
                 </h2>
                 {current.helper && (
-                  <p className="mt-3 text-sm text-text-faint">{current.helper}</p>
+                  <p className="mt-3 text-sm text-text-muted">{current.helper}</p>
                 )}
 
                 <div className="mt-8">
@@ -388,7 +389,7 @@ export default function ApplicationForm() {
                     <Button type="button" onClick={next}>
                       Continue
                     </Button>
-                    <p className="mt-3 text-sm text-text-faint">press Enter</p>
+                    <p className="mt-3 text-sm text-text-muted">press Enter</p>
                   </div>
                 )}
 
@@ -397,7 +398,7 @@ export default function ApplicationForm() {
                     <Button type="button" onClick={next}>
                       Continue
                     </Button>
-                    <p className="mt-3 text-sm text-text-faint">press Enter</p>
+                    <p className="mt-3 text-sm text-text-muted">press Enter</p>
                   </div>
                 )}
 
@@ -405,7 +406,7 @@ export default function ApplicationForm() {
                   <button
                     type="button"
                     onClick={back}
-                    className="mt-8 inline-flex items-center gap-1 text-sm text-text-faint hover:text-white"
+                    className="mt-8 inline-flex items-center gap-1 text-sm text-text-muted hover:text-white"
                     aria-label="Go back"
                   >
                     <ChevronLeft size={16} />
@@ -463,7 +464,7 @@ function Welcome({
         <Button type="button" onClick={onStart}>
           {question.buttonLabel}
         </Button>
-        <p className="mt-3 text-sm text-text-faint">press Enter</p>
+        <p className="mt-3 text-sm text-text-muted">press Enter</p>
       </div>
     </div>
   );
@@ -502,7 +503,7 @@ function Review({
           <div key={q.id} className="border-b border-line pb-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm text-text-faint">{q.question}</p>
+                <p className="text-sm text-text-muted">{q.question}</p>
                 <p className="mt-1 text-base text-white">
                   {format(answers[q.field!])}
                 </p>
@@ -519,7 +520,7 @@ function Review({
         ))}
       </div>
 
-      <label className="mt-8 flex items-start justify-center gap-3 text-left text-sm text-text-muted">
+      <label className="mt-8 flex items-start justify-center gap-3 text-left text-sm text-white">
         <input
           type="checkbox"
           checked={consent}
@@ -535,7 +536,7 @@ function Review({
           <Link href="/terms" target="_blank" className="text-sky-500 underline">
             Terms
           </Link>
-          .
+          , including that all fees are non-refundable.
         </span>
       </label>
 

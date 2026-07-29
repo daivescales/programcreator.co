@@ -16,7 +16,7 @@ export default function CalEmbed({ calLink }: { calLink: string }) {
     .replace(/\?.*$/, "");
 
   const iframeSrc = calLink
-    ? `${calLink.includes("?") ? `${calLink}&` : `${calLink}?`}embed=true`
+    ? `${calLink.includes("?") ? `${calLink}&` : `${calLink}?`}embed=true&theme=dark`
     : "";
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function CalEmbed({ calLink }: { calLink: string }) {
 
   if (!Cal) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center text-sm text-text-faint">
+      <div className="flex min-h-[400px] items-center justify-center text-sm text-text-muted">
         Loading calendar…
       </div>
     );

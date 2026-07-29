@@ -7,12 +7,12 @@ const steps = [
   {
     number: "01",
     title: "Apply",
-    body: "Answer ten quick questions about your brand and audience.",
+    body: "Answer eleven quick questions about your brand and audience.",
   },
   {
     number: "02",
     title: "Call",
-    body: "We talk it through and I tell you honestly what I'd build.",
+    body: "We get on a call, go through your answers, and I tell you honestly what I'd build and what it could realistically earn you.",
   },
   {
     number: "03",
@@ -22,13 +22,13 @@ const steps = [
   {
     number: "04",
     title: "Launch",
-    body: "We launch to your audience together and scale what works.",
+    body: "We launch it to your audience together, then scale what works.",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <Section id="how" variant="base">
+    <Section id="how" variant="surface">
       <Container>
         <Reveal>
           <SectionHeading
@@ -40,12 +40,12 @@ export default function HowItWorks() {
               <div
                 key={step.number}
                 className={`px-4 ${
-                  index < steps.length - 1
-                    ? "md:border-r md:border-line"
-                    : ""
+                  index < steps.length - 1 ? "md:border-r md:border-line" : ""
                 }`}
               >
-                <p className="text-sm font-semibold text-sky-500">{step.number}</p>
+                <p className="text-sm font-semibold text-sky-500">
+                  {step.number}
+                </p>
                 <h3 className="mt-3 text-xl font-semibold text-white">
                   {step.title}
                 </h3>

@@ -6,7 +6,7 @@ import LegalLayout from "@/components/LegalLayout";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms governing use of the ProgramCreator website and application process.",
+    "Terms governing use of the ProgramCreator website, applications, and engagements — including payments and no-refund policy.",
 };
 
 export default function TermsPage() {
@@ -20,16 +20,16 @@ export default function TermsPage() {
 
       <h2>Description of services</h2>
       <p>
-        ProgramCreator provides agency-style product-build services for creators
-        and brands. This website itself does not sell a product; it describes
-        services and collects applications for potential engagements with
+        ProgramCreator provides agency-style product-build and audience-monetisation
+        services for creators and businesses. This website itself sells nothing; it
+        describes services and collects applications for potential engagements with
         [BUSINESS LEGAL NAME].
       </p>
 
       <h2>Eligibility</h2>
       <p>You must be at least 18 years old to use this site or submit an application.</p>
 
-      <h2>Applications and no obligation</h2>
+      <h2>Applications</h2>
       <p>
         Submitting an application does not create a client relationship. We may
         decline any application for any reason. No work begins until a separate
@@ -42,17 +42,36 @@ export default function TermsPage() {
         Repeated no-shows may affect future booking availability.
       </p>
 
-      <h2>Separate client agreements</h2>
+      <h2>Client engagements</h2>
       <p>
         Client engagements are governed by a separate written agreement. If there is
         any conflict between that agreement and these Terms, the written client
         agreement controls for that engagement.
       </p>
 
+      <h2>Payments and no refunds</h2>
+      <p>
+        All fees, deposits, and payments are non-refundable in full once paid,
+        including where a project is cancelled, paused, or abandoned by the client,
+        and including any unused portion of a retainer or milestone.
+      </p>
+      <p>
+        Work, capacity, and third-party costs are committed from the moment an
+        engagement begins. Scope, deliverables, timelines, and payment schedule are
+        agreed in writing before any payment is taken. By making a payment, the
+        client acknowledges this no-refund policy.
+      </p>
+      <p>
+        Initiating a chargeback or payment dispute in contradiction of these Terms
+        constitutes a breach of these Terms. Nothing in this clause is intended to
+        limit any non-waivable statutory rights the client may have under applicable
+        consumer law in [JURISDICTION].
+      </p>
+
       <h2>Intellectual property</h2>
       <p>
-        Site content is owned by us or our licensors. Client-owned deliverables are
-        defined in the separate written agreement for each engagement.
+        Site content is owned by us or our licensors. Client deliverables and
+        ownership are defined in the separate written agreement for each engagement.
       </p>
 
       <h2>User conduct</h2>
@@ -80,13 +99,14 @@ export default function TermsPage() {
         arising out of your misuse of the site or violation of these Terms.
       </p>
 
-      <h2>Governing law</h2>
+      <h2>Governing law and disputes</h2>
       <p>
         These Terms are governed by the laws of [JURISDICTION], without regard to
-        conflict-of-law principles.
+        conflict-of-law principles. Disputes shall be resolved in accordance with the
+        laws and courts of [JURISDICTION], unless applicable law requires otherwise.
       </p>
 
-      <h2>Changes</h2>
+      <h2>Changes to terms</h2>
       <p>
         We may update these Terms from time to time. Continued use of the site after
         changes constitutes acceptance of the revised Terms.

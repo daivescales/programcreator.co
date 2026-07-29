@@ -14,16 +14,16 @@ export default function Hero() {
       <Container>
         <Reveal>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-sky-500">
-            Creator & Brand Product Builds
+            Audience Monetisation & Product Builds
           </p>
           <h1 className="mx-auto mt-4 max-w-4xl text-4xl font-semibold leading-[1.1] tracking-tight text-white md:text-6xl">
-            I build the product your audience already wants.
+            Your audience is worth more than the platform pays you.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-text-muted md:text-lg">
-            I&apos;m Daive. I work directly with creators and brand owners to
-            build what their audience will actually buy — a clothing line, a
-            digital product, or a paid community. I handle the build. You keep
-            the brand.
+            I&apos;m Daive. I work with creators and businesses to find what their
+            audience will actually buy — then I build it. Software, digital
+            products, communities, physical goods, or offers for a real-world
+            business. Whatever fits your audience.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button href="/apply">Apply to Work With Me</Button>
@@ -31,7 +31,7 @@ export default function Hero() {
               How it works
             </Button>
           </div>
-          <p className="mt-5 text-sm text-text-faint">
+          <p className="mt-5 text-sm text-text-muted">
             Applications reviewed personally by Daive. Limited spots.
           </p>
 
@@ -51,7 +51,7 @@ export default function Hero() {
                 <span className="text-2xl font-semibold text-sky-500">D</span>
               )}
             </div>
-            <p className="mt-3 text-sm text-text-faint">
+            <p className="mt-3 text-sm text-text-muted">
               Daive · Founder, ProgramCreator
             </p>
           </div>

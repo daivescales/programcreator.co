@@ -13,7 +13,7 @@ type ButtonProps = {
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-sky-500 text-base font-medium hover:bg-sky-400",
+    "bg-sky-500 text-base font-semibold hover:bg-sky-400",
   secondary:
     "bg-transparent text-white border border-line hover:border-sky-500",
 };

@@ -22,7 +22,14 @@ export default function OpenGraphImage() {
           padding: "60px",
         }}
       >
-        <div style={{ display: "flex", fontSize: 64, fontWeight: 600, letterSpacing: "-0.03em" }}>
+        <div
+          style={{
+            display: "flex",
+            fontSize: 64,
+            fontWeight: 600,
+            letterSpacing: "-0.03em",
+          }}
+        >
           <span style={{ color: "#FFFFFF" }}>Program</span>
           <span style={{ color: "#6BA8FF" }}>Creator</span>
         </div>
@@ -30,12 +37,12 @@ export default function OpenGraphImage() {
           style={{
             marginTop: 28,
             fontSize: 28,
-            color: "#A6B2C4",
+            color: "#C6D0DE",
             maxWidth: 800,
             lineHeight: 1.4,
           }}
         >
-          Product builds for creators and brands. Led by Daive.
+          Turn your audience into income. Built by Daive.
         </div>
       </div>
     ),
