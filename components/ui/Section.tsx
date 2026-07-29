@@ -1,21 +1,31 @@
+import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
 type SectionProps = {
   children: ReactNode;
   className?: string;
   id?: string;
-  as?: "section" | "div" | "header";
+  variant?: "dark" | "darker" | "light";
+};
+
+const variants = {
+  dark: "bg-ink text-mist-300",
+  darker: "bg-navy-950 text-mist-300",
+  light: "bg-surface text-ink",
 };
 
 export default function Section({
   children,
-  className = "",
+  className,
   id,
-  as: Tag = "section",
+  variant = "dark",
 }: SectionProps) {
   return (
-    <Tag id={id} className={`py-16 sm:py-24 ${className}`}>
+    <section
+      id={id}
+      className={cn("py-20 md:py-28 lg:py-36", variants[variant], className)}
+    >
       {children}
-    </Tag>
+    </section>
   );
 }

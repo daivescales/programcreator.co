@@ -9,30 +9,68 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        black: "#000000",
-        white: "#FFFFFF",
-        gray: {
-          950: "#111111",
-          900: "#1A1A1A",
-          800: "#333333",
-          600: "#666666",
-          500: "#999999",
-          200: "#E5E5E5",
-          100: "#F5F5F5",
+        ink: "#04060B",
+        navy: {
+          950: "#060C1A",
+          900: "#0A1428",
+          800: "#0F1D3A",
+          700: "#16294F",
+          600: "#1D3768",
+          500: "#264785",
         },
+        azure: {
+          600: "#1E4FD8",
+          500: "#2B5CE6",
+          400: "#4E7CF0",
+          300: "#7BA0F7",
+        },
+        mist: {
+          100: "#EAEFFA",
+          300: "#AFBDD9",
+          500: "#7A88A6",
+          700: "#4A5673",
+        },
+        surface: "#F5F7FC",
       },
       fontFamily: {
+        display: ["var(--font-plus-jakarta)", "system-ui", "sans-serif"],
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
       },
       maxWidth: {
-        "6xl": "72rem",
+        "7xl": "80rem",
       },
       boxShadow: {
-        subtle: "0 1px 2px rgba(0, 0, 0, 0.06)",
+        azure: "0 0 24px rgba(43, 92, 230, 0.35)",
+        "azure-soft": "0 0 40px rgba(43, 92, 230, 0.18)",
       },
-      borderRadius: {
-        md: "0.375rem",
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "scroll-dot": {
+          "0%": { top: "0%", opacity: "0" },
+          "20%": { opacity: "1" },
+          "80%": { opacity: "1" },
+          "100%": { top: "100%", opacity: "0" },
+        },
+        pulseAzure: {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.08)" },
+        },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "20%": { transform: "translateX(-6px)" },
+          "40%": { transform: "translateX(6px)" },
+          "60%": { transform: "translateX(-4px)" },
+          "80%": { transform: "translateX(4px)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 40s linear infinite",
+        "scroll-dot": "scroll-dot 2s ease-in-out infinite",
+        "pulse-azure": "pulseAzure 1.4s ease-in-out infinite",
+        shake: "shake 0.4s ease-in-out",
       },
     },
   },

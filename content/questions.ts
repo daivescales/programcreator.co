@@ -1,0 +1,381 @@
+export type QuestionType =
+  | "welcome"
+  | "text"
+  | "email"
+  | "phone"
+  | "longtext"
+  | "choice"
+  | "multichoice"
+  | "review";
+
+export type Question = {
+  id: string;
+  type: QuestionType;
+  field?: string;
+  question?: string;
+  helper?: string;
+  required?: boolean;
+  optional?: boolean;
+  options?: string[];
+  minSelections?: number;
+  placeholder?: string;
+  headline?: string;
+  body?: string;
+  buttonLabel?: string;
+  section?: string;
+};
+
+export const questions: Question[] = [
+  {
+    id: "welcome",
+    type: "welcome",
+    headline: "Let's see if we should build something together.",
+    body: "This takes about 5 minutes. I read every application personally. If it's a fit, you'll book a call with me at the end.",
+    buttonLabel: "Start Application",
+  },
+  {
+    id: "first_name",
+    type: "text",
+    field: "first_name",
+    question: "First, what's your first name?",
+    helper: "So I know who I'm talking to.",
+    required: true,
+    placeholder: "Type your answer here...",
+    section: "You",
+  },
+  {
+    id: "last_name",
+    type: "text",
+    field: "last_name",
+    question: "And your last name?",
+    optional: true,
+    placeholder: "Type your answer here...",
+    section: "You",
+  },
+  {
+    id: "email",
+    type: "email",
+    field: "email",
+    question: "What's the best email to reach you on?",
+    helper: "This is where I'll send confirmation.",
+    required: true,
+    placeholder: "name@example.com",
+    section: "You",
+  },
+  {
+    id: "phone",
+    type: "phone",
+    field: "phone",
+    question: "Phone number?",
+    helper: "Optional. Only used if we need to reschedule.",
+    optional: true,
+    placeholder: "+1 555 000 0000",
+    section: "You",
+  },
+  {
+    id: "brand_name",
+    type: "text",
+    field: "brand_name",
+    question: "What's your brand or creator name?",
+    required: true,
+    placeholder: "Type your answer here...",
+    section: "You",
+  },
+  {
+    id: "applicant_type",
+    type: "choice",
+    field: "applicant_type",
+    question: "Which describes you best?",
+    required: true,
+    options: ["Creator", "Brand or business owner", "Both"],
+    section: "You",
+  },
+  {
+    id: "primary_platform",
+    type: "choice",
+    field: "primary_platform",
+    question: "Where's your main audience?",
+    required: true,
+    options: [
+      "Instagram",
+      "TikTok",
+      "YouTube",
+      "X (Twitter)",
+      "Twitch",
+      "Podcast",
+      "Other",
+    ],
+    section: "Your Audience",
+  },
+  {
+    id: "primary_handle",
+    type: "text",
+    field: "primary_handle",
+    question: "What's your handle or link on that platform?",
+    helper: "Paste the full link if it's easier.",
+    required: true,
+    placeholder: "@handle or https://...",
+    section: "Your Audience",
+  },
+  {
+    id: "audience_size",
+    type: "choice",
+    field: "audience_size",
+    question: "Roughly how big is that audience?",
+    required: true,
+    options: [
+      "Under 5,000",
+      "5,000-25,000",
+      "25,000-100,000",
+      "100,000-500,000",
+      "500,000-1M",
+      "1M+",
+    ],
+    section: "Your Audience",
+  },
+  {
+    id: "other_platforms",
+    type: "text",
+    field: "other_platforms",
+    question: "Any other platforms worth knowing about?",
+    helper: "Handles and rough follower counts.",
+    optional: true,
+    placeholder: "Type your answer here...",
+    section: "Your Audience",
+  },
+  {
+    id: "avg_views",
+    type: "choice",
+    field: "avg_views",
+    question: "What do your posts typically do in views?",
+    required: true,
+    options: [
+      "Under 1,000",
+      "1,000-10,000",
+      "10,000-50,000",
+      "50,000-250,000",
+      "250,000+",
+      "It varies wildly",
+    ],
+    section: "Your Audience",
+  },
+  {
+    id: "audience_description",
+    type: "longtext",
+    field: "audience_description",
+    question: "Describe your audience in your own words.",
+    helper:
+      "Who are they, what are they into, and why do they follow you specifically?",
+    required: true,
+    placeholder: "Type your answer here...",
+    section: "Your Audience",
+  },
+  {
+    id: "audience_location",
+    type: "choice",
+    field: "audience_location",
+    question: "Where are most of them based?",
+    optional: true,
+    options: [
+      "United States",
+      "United Kingdom",
+      "Europe",
+      "Canada",
+      "Australia",
+      "Mostly global",
+      "Somewhere else",
+    ],
+    section: "Your Audience",
+  },
+  {
+    id: "email_list_size",
+    type: "choice",
+    field: "email_list_size",
+    question: "Do you have an email list?",
+    required: true,
+    options: ["No", "Under 1,000", "1,000-10,000", "10,000-50,000", "50,000+"],
+    section: "Your Audience",
+  },
+  {
+    id: "currently_monetizing",
+    type: "choice",
+    field: "currently_monetizing",
+    question: "Are you currently making money from your audience?",
+    required: true,
+    options: [
+      "Not yet",
+      "Brand deals only",
+      "I sell a product already",
+      "Multiple income streams",
+    ],
+    section: "Where You Are Now",
+  },
+  {
+    id: "current_revenue_streams",
+    type: "longtext",
+    field: "current_revenue_streams",
+    question: "What are you currently selling or earning from?",
+    helper: "Skip if this doesn't apply yet.",
+    optional: true,
+    placeholder: "Type your answer here...",
+    section: "Where You Are Now",
+  },
+  {
+    id: "monthly_revenue",
+    type: "choice",
+    field: "monthly_revenue",
+    question: "Roughly what does that bring in monthly?",
+    required: true,
+    options: [
+      "$0",
+      "Under $2,000",
+      "$2,000-$10,000",
+      "$10,000-$50,000",
+      "$50,000+",
+      "Prefer not to say",
+    ],
+    section: "Where You Are Now",
+  },
+  {
+    id: "build_interest",
+    type: "multichoice",
+    field: "build_interest",
+    question: "What are you interested in building?",
+    helper: "Pick everything that appeals — we'll narrow it down on the call.",
+    required: true,
+    minSelections: 1,
+    options: [
+      "Clothing or merch brand",
+      "Info product or course",
+      "Paid community or membership",
+      "A full product ecosystem",
+      "Not sure yet, tell me what you'd recommend",
+    ],
+    section: "What You Want To Build",
+  },
+  {
+    id: "product_vision",
+    type: "longtext",
+    field: "product_vision",
+    question:
+      "If your audience could buy one thing from you tomorrow, what would it be?",
+    helper: "Your instinct is useful here, even if you're not sure.",
+    required: true,
+    placeholder: "Type your answer here...",
+    section: "What You Want To Build",
+  },
+  {
+    id: "biggest_goal",
+    type: "longtext",
+    field: "biggest_goal",
+    question: "What's your biggest goal over the next 12 months?",
+    required: true,
+    placeholder: "Type your answer here...",
+    section: "What You Want To Build",
+  },
+  {
+    id: "timeline",
+    type: "choice",
+    field: "timeline",
+    question: "How soon do you want this live?",
+    required: true,
+    options: [
+      "As soon as possible",
+      "Within 1-3 months",
+      "Within 3-6 months",
+      "Just exploring for now",
+    ],
+    section: "What You Want To Build",
+  },
+  {
+    id: "whats_blocking",
+    type: "longtext",
+    field: "whats_blocking",
+    question: "What's stopped you from building this already?",
+    helper: "Be honest — this tells me more than anything else on the form.",
+    required: true,
+    placeholder: "Type your answer here...",
+    section: "What You Want To Build",
+  },
+  {
+    id: "investment_range",
+    type: "choice",
+    field: "investment_range",
+    question: "What are you able to invest to get this built properly?",
+    helper: "I ask so neither of us wastes the call. Nothing is charged now.",
+    required: true,
+    options: [
+      "Under $2,000",
+      "$2,000-$5,000",
+      "$5,000-$10,000",
+      "$10,000-$25,000",
+      "$25,000+",
+      "I'd like to discuss it on the call",
+    ],
+    section: "Fit",
+  },
+  {
+    id: "decision_maker",
+    type: "choice",
+    field: "decision_maker",
+    question: "Are you the person who makes this decision?",
+    required: true,
+    options: [
+      "Yes, it's my call",
+      "I decide with a partner or manager",
+      "Someone else decides",
+    ],
+    section: "Fit",
+  },
+  {
+    id: "commitment_level",
+    type: "choice",
+    field: "commitment_level",
+    question: "How involved can you be during the build?",
+    helper: "I build it, but I need you in the room for the decisions.",
+    required: true,
+    options: [
+      "Very — weekly sessions are fine",
+      "Moderately — I can do check-ins",
+      "Minimally — I want it fully hands-off",
+    ],
+    section: "Fit",
+  },
+  {
+    id: "referral_source",
+    type: "choice",
+    field: "referral_source",
+    question: "How did you find me?",
+    optional: true,
+    options: [
+      "Instagram",
+      "TikTok",
+      "YouTube",
+      "X (Twitter)",
+      "Referral",
+      "Somewhere else",
+    ],
+    section: "Fit",
+  },
+  {
+    id: "additional_notes",
+    type: "longtext",
+    field: "additional_notes",
+    question: "Anything else I should know before we talk?",
+    optional: true,
+    placeholder: "Type your answer here...",
+    section: "Fit",
+  },
+  {
+    id: "review",
+    type: "review",
+  },
+];
+
+export const SECTION_ORDER = [
+  "You",
+  "Your Audience",
+  "Where You Are Now",
+  "What You Want To Build",
+  "Fit",
+] as const;

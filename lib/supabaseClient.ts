@@ -17,10 +17,3 @@ export function getSupabase(): SupabaseClient {
   client = createClient(supabaseUrl, supabaseAnonKey);
   return client;
 }
-
-/** @deprecated Prefer getSupabase() — kept for convenience after env is set */
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_target, prop, receiver) {
-    return Reflect.get(getSupabase(), prop, receiver);
-  },
-});
