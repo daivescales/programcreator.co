@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "ProgramCreator — I build the product your audience already wants.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -15,71 +14,28 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          padding: "72px 80px",
-          background: "#04060B",
-          position: "relative",
-          overflow: "hidden",
+          alignItems: "center",
+          background: "#0B0F14",
+          color: "#FFFFFF",
+          fontFamily: "system-ui, sans-serif",
+          textAlign: "center",
+          padding: "60px",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            width: 700,
-            height: 700,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(43,92,230,0.35) 0%, rgba(43,92,230,0.08) 45%, transparent 70%)",
-            top: -180,
-            right: -120,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(43,92,230,0.18) 0%, transparent 70%)",
-            bottom: -200,
-            left: -100,
-          }}
-        />
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            fontSize: 42,
-            fontWeight: 800,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-          }}
-        >
-          <span style={{ color: "#FFFFFF" }}>PROGRAM</span>
-          <span style={{ color: "#4E7CF0" }}>CREATOR</span>
-        </div>
-        <div
-          style={{
-            marginTop: 36,
-            maxWidth: 820,
-            fontSize: 52,
-            fontWeight: 700,
-            lineHeight: 1.15,
-            letterSpacing: "-0.03em",
-            color: "#FFFFFF",
-          }}
-        >
-          I build the product your audience already wants.
+        <div style={{ display: "flex", fontSize: 64, fontWeight: 600, letterSpacing: "-0.03em" }}>
+          <span style={{ color: "#FFFFFF" }}>Program</span>
+          <span style={{ color: "#6BA8FF" }}>Creator</span>
         </div>
         <div
           style={{
             marginTop: 28,
-            fontSize: 22,
-            color: "#AFBDD9",
-            letterSpacing: "0.02em",
+            fontSize: 28,
+            color: "#A6B2C4",
+            maxWidth: 800,
+            lineHeight: 1.4,
           }}
         >
-          Done-with-you product builds for creators
+          Product builds for creators and brands. Led by Daive.
         </div>
       </div>
     ),

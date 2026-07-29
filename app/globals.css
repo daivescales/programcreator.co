@@ -2,26 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-ink: #04060b;
-  --color-azure: #2b5ce6;
-}
-
 @layer base {
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-ink text-mist-300 font-sans antialiased;
+    @apply bg-base font-sans text-text-muted antialiased;
   }
 
   a {
-    @apply text-mist-100 transition-colors duration-200;
+    @apply text-text-muted transition-colors duration-150;
   }
 
   a:hover {
-    @apply text-azure-400;
+    @apply text-white;
   }
 
   *:focus {
@@ -29,17 +24,16 @@
   }
 
   *:focus-visible {
-    @apply outline outline-2 outline-offset-2 outline-azure-500;
+    @apply outline outline-2 outline-offset-2 outline-sky-500;
   }
 
   ::selection {
-    @apply bg-azure-500 text-white;
+    @apply bg-sky-500 text-base;
   }
 
-  /* Dark scrollbars */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #16294f #04060b;
+    scrollbar-color: #1e2833 #0b0f14;
   }
 
   *::-webkit-scrollbar {
@@ -48,96 +42,29 @@
   }
 
   *::-webkit-scrollbar-track {
-    background: #04060b;
+    background: #0b0f14;
   }
 
   *::-webkit-scrollbar-thumb {
-    background: #16294f;
+    background: #1e2833;
     border-radius: 999px;
-    border: 2px solid #04060b;
-  }
-}
-
-@layer components {
-  .grain {
-    position: relative;
+    border: 2px solid #0b0f14;
   }
 
-  .grain::before {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 180px 180px;
+  .legal-body h2 {
+    @apply mt-10 mb-3 text-xl font-semibold text-white;
   }
 
-  .grain > * {
-    position: relative;
-    z-index: 2;
+  .legal-body p {
+    @apply mb-4 text-base leading-relaxed text-text-muted;
   }
 
-  .grid-lines {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-    background-size: 64px 64px;
+  .legal-body ul {
+    @apply mb-4 list-disc space-y-2 pl-5 text-base leading-relaxed text-text-muted;
   }
 
-  .azure-glow {
-    background: radial-gradient(
-      ellipse 60% 50% at 50% 40%,
-      rgba(43, 92, 230, 0.22) 0%,
-      rgba(43, 92, 230, 0.06) 40%,
-      transparent 70%
-    );
-  }
-
-  .legal-prose h2 {
-    @apply font-display text-2xl font-bold tracking-tight text-white mt-12 mb-4 scroll-mt-28;
-  }
-
-  .legal-prose p,
-  .legal-prose li {
-    @apply text-mist-300 leading-relaxed;
-  }
-
-  .legal-prose p {
-    @apply mb-4;
-  }
-
-  .legal-prose ul {
-    @apply mb-4 list-disc pl-5 space-y-2;
-  }
-
-  .legal-prose a {
-    @apply text-azure-400 underline underline-offset-2;
-  }
-
-  .legal-prose table {
-    @apply w-full text-sm border-collapse mb-6;
-  }
-
-  .legal-prose th,
-  .legal-prose td {
-    @apply border border-white/10 px-3 py-2 text-left;
-  }
-
-  .legal-prose th {
-    @apply text-mist-100 bg-navy-900;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .border-hairline {
-    border-color: rgba(255, 255, 255, 0.08);
+  .legal-body a {
+    @apply text-sky-500 underline underline-offset-2 hover:text-sky-400;
   }
 }
 

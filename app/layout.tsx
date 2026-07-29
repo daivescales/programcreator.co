@@ -1,19 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import SiteChrome from "@/components/SiteChrome";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["500", "700", "800"],
-  variable: "--font-plus-jakarta",
   display: "swap",
 });
 
@@ -23,30 +16,30 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "ProgramCreator | I Build The Product Your Audience Already Wants",
+    default: "ProgramCreator | Product Builds for Creators & Brands",
     template: "%s | ProgramCreator",
   },
   description:
-    "ProgramCreator is a done-with-you build partner for creators and brand owners. I personally scale your brand and build the product alongside you — clothing, info products, or paid communities.",
+    "ProgramCreator is led by Daive — done-with-you product builds for creators and brand owners. Clothing, digital products, and paid communities.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
     siteName: "ProgramCreator",
-    title: "ProgramCreator | I Build The Product Your Audience Already Wants",
+    title: "ProgramCreator | Product Builds for Creators & Brands",
     description:
-      "Done-with-you product builds for creators and brand owners. Not a course. Not coaching. The actual build.",
+      "Product builds for creators and brands, led by Daive. Not a course — the actual build.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ProgramCreator | I Build The Product Your Audience Already Wants",
+    title: "ProgramCreator | Product Builds for Creators & Brands",
     description:
-      "Done-with-you product builds for creators and brand owners. Not a course. Not coaching. The actual build.",
+      "Product builds for creators and brands, led by Daive. Not a course — the actual build.",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#04060B",
+  themeColor: "#0B0F14",
 };
 
 export default function RootLayout({
@@ -56,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${plusJakarta.variable} font-sans`}>
+      <body className={`${inter.variable} font-sans`}>
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

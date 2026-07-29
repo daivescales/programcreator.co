@@ -2,72 +2,48 @@
 
 import { useEffect, useState, type ComponentType, type CSSProperties } from "react";
 
-type CalEmbedProps = {
-  calLink: string;
-};
+export default function CalEmbed({ calLink }: { calLink: string }) {
+  const [useIframe, setUseIframe] = useState(false);
+  const [Cal, setCal] = useState<ComponentType<{
+    calLink: string;
+    style?: CSSProperties;
+    config?: Record<string, string>;
+  }> | null>(null);
 
-type CalComponentProps = {
-  calLink: string;
-  style?: CSSProperties;
-  config?: Record<string, string>;
-};
-
-function normalizeCalLink(link: string): string {
-  if (!link) return "";
-  return link
+  const normalized = calLink
     .replace(/^https?:\/\/(www\.)?cal\.com\//, "")
     .replace(/\/$/, "")
     .replace(/\?.*$/, "");
-}
 
-function toIframeSrc(link: string): string {
-  if (!link) return "";
-  if (link.startsWith("http")) {
-    return `${link.includes("?") ? `${link}&` : `${link}?`}embed=true`;
-  }
-  return `https://cal.com/${normalizeCalLink(link)}?embed=true`;
-}
-
-export default function CalEmbed({ calLink }: CalEmbedProps) {
-  const [useIframe, setUseIframe] = useState(false);
-  const [CalComponent, setCalComponent] = useState<ComponentType<CalComponentProps> | null>(
-    null
-  );
-
-  const normalized = normalizeCalLink(calLink);
-  const iframeSrc = toIframeSrc(calLink);
+  const iframeSrc = calLink
+    ? `${calLink.includes("?") ? `${calLink}&` : `${calLink}?`}embed=true`
+    : "";
 
   useEffect(() => {
     let cancelled = false;
-
     async function load() {
       try {
         const mod = await import("@calcom/embed-react");
-        if (cancelled) return;
-
-        setCalComponent(() => mod.default);
-
-        const cal = await mod.getCalApi();
-        if (cancelled) return;
-
-        cal("ui", {
-          theme: "dark",
-          styles: { branding: { brandColor: "#2B5CE6" } },
-          hideEventTypeDetails: false,
-          layout: "month_view",
-        });
+        if (!cancelled) {
+          setCal(() => mod.default);
+          try {
+            const cal = await mod.getCalApi();
+            cal("ui", {
+              theme: "dark",
+              styles: { branding: { brandColor: "#6BA8FF" } },
+              hideEventTypeDetails: false,
+            });
+          } catch {
+            // UI config is optional
+          }
+        }
       } catch (err) {
-        console.error("Cal.com embed failed to load, falling back to iframe:", err);
+        console.error(err);
         if (!cancelled) setUseIframe(true);
       }
     }
-
-    if (normalized) {
-      load();
-    } else {
-      setUseIframe(true);
-    }
-
+    if (normalized) load();
+    else setUseIframe(true);
     return () => {
       cancelled = true;
     };
@@ -75,12 +51,8 @@ export default function CalEmbed({ calLink }: CalEmbedProps) {
 
   if (!calLink) {
     return (
-      <div className="flex min-h-[720px] items-center justify-center bg-navy-900 p-8 text-center">
-        <p className="text-sm text-mist-300">
-          Booking calendar will appear here once{" "}
-          <code className="font-medium text-mist-100">NEXT_PUBLIC_CALCOM_LINK</code>{" "}
-          is set in your environment.
-        </p>
+      <div className="flex min-h-[400px] items-center justify-center bg-surface p-8 text-center text-sm text-text-muted">
+        Booking calendar appears here once NEXT_PUBLIC_CALCOM_LINK is set.
       </div>
     );
   }
@@ -89,26 +61,26 @@ export default function CalEmbed({ calLink }: CalEmbedProps) {
     return (
       <iframe
         src={iframeSrc}
-        title="Book an intro call"
+        title="Book a call with Daive"
         className="w-full border-0"
-        style={{ minHeight: 720, height: 720 }}
+        style={{ minHeight: 700, height: 700 }}
         loading="lazy"
       />
     );
   }
 
-  if (!CalComponent) {
+  if (!Cal) {
     return (
-      <div className="flex min-h-[720px] items-center justify-center bg-navy-900 p-8">
-        <p className="text-sm text-mist-500">Loading calendar...</p>
+      <div className="flex min-h-[400px] items-center justify-center text-sm text-text-faint">
+        Loading calendar…
       </div>
     );
   }
 
   return (
-    <CalComponent
+    <Cal
       calLink={normalized}
-      style={{ width: "100%", height: "100%", minHeight: 720, overflow: "scroll" }}
+      style={{ width: "100%", height: "100%", minHeight: 700, overflow: "scroll" }}
       config={{ layout: "month_view", theme: "dark" }}
     />
   );

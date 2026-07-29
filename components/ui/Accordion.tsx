@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Minus, Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -10,18 +10,19 @@ export type AccordionItem = {
   answer: string;
 };
 
-type AccordionProps = {
+export default function Accordion({
+  items,
+  className,
+}: {
   items: AccordionItem[];
   className?: string;
-};
-
-export default function Accordion({ items, className }: AccordionProps) {
+}) {
   const [open, setOpen] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
   const baseId = useId();
 
   return (
-    <div className={cn("divide-y divide-white/8 border-y border-white/8", className)}>
+    <div className={cn("divide-y divide-line border-y border-line text-left", className)}>
       {items.map((item, index) => {
         const isOpen = open === index;
         const buttonId = `${baseId}-btn-${index}`;
@@ -34,20 +35,19 @@ export default function Accordion({ items, className }: AccordionProps) {
               type="button"
               aria-expanded={isOpen}
               aria-controls={panelId}
-              className="flex w-full items-center justify-between gap-4 py-5 text-left md:py-6"
+              className="flex w-full items-center justify-between gap-4 py-5 text-left"
               onClick={() => setOpen(isOpen ? null : index)}
             >
-              <span className="font-display text-lg font-semibold tracking-tight text-white md:text-xl">
+              <span className="text-base font-semibold text-white md:text-lg">
                 {item.question}
               </span>
-              <span
+              <ChevronDown
+                size={18}
                 className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-azure-500/40 text-azure-400 transition-transform duration-200",
+                  "shrink-0 text-sky-500 transition-transform duration-200",
                   isOpen && "rotate-180"
                 )}
-              >
-                {isOpen ? <Minus size={16} /> : <Plus size={16} />}
-              </span>
+              />
             </button>
             <AnimatePresence initial={false}>
               {isOpen && (
@@ -58,10 +58,10 @@ export default function Accordion({ items, className }: AccordionProps) {
                   initial={reduceMotion ? false : { height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.25 }}
                   className="overflow-hidden"
                 >
-                  <p className="pb-6 pr-10 text-base leading-relaxed text-mist-300">
+                  <p className="pb-5 pr-8 text-base leading-relaxed text-text-muted">
                     {item.answer}
                   </p>
                 </motion.div>

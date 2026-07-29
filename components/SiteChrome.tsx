@@ -4,16 +4,14 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import CookieBanner from "./CookieBanner";
-import ScrollToTop from "./ScrollToTop";
-import PageTransition from "./PageTransition";
 import MinimalHeader from "./MinimalHeader";
+import ScrollToTop from "./ScrollToTop";
 
-const MINIMAL_ROUTES = ["/apply", "/thank-you"];
+const MINIMAL = ["/apply", "/thank-you"];
 
 export default function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const minimal = MINIMAL_ROUTES.some(
+  const minimal = MINIMAL.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
@@ -21,17 +19,14 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-azure-500 focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-sky-500 focus:px-4 focus:py-2 focus:text-base"
       >
         Skip to content
       </a>
       <ScrollToTop />
       {minimal ? <MinimalHeader /> : <Navbar />}
-      <PageTransition disabled={minimal}>
-        <div id="main-content">{children}</div>
-      </PageTransition>
+      <main id="main-content">{children}</main>
       {!minimal && <Footer />}
-      <CookieBanner />
     </>
   );
 }

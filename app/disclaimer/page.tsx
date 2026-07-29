@@ -1,4 +1,4 @@
-// TEMPLATE ONLY — not legal advice. Have a qualified attorney review and adapt before publishing.
+// TEMPLATE ONLY — not legal advice. Have an attorney review before publishing.
 
 import type { Metadata } from "next";
 import LegalLayout from "@/components/LegalLayout";
@@ -6,89 +6,68 @@ import LegalLayout from "@/components/LegalLayout";
 export const metadata: Metadata = {
   title: "Disclaimer",
   description:
-    "General disclaimer for ProgramCreator website content, including no professional advice and no guaranteed results.",
+    "General and earnings disclaimer for ProgramCreator — no income guarantees or promised results.",
 };
-
-const toc = [
-  { id: "general", label: "General information only" },
-  { id: "no-advice", label: "No professional advice" },
-  { id: "no-guarantee", label: "No guarantee of results" },
-  { id: "external-links", label: "External links" },
-  { id: "testimonials", label: "Testimonials and case studies" },
-  { id: "errors", label: "Errors and omissions" },
-  { id: "limitation", label: "Limitation of liability" },
-  { id: "contact", label: "Contact" },
-];
 
 export default function DisclaimerPage() {
   return (
-    <LegalLayout title="Disclaimer" lastUpdated="[DATE]" toc={toc}>
-      <h2 id="general">General information only</h2>
+    <LegalLayout title="Disclaimer" lastUpdated="[DATE]">
+      <h2>General information only</h2>
       <p>
-        The content on programcreator.com (the &quot;Site&quot;), operated by [BUSINESS
-        LEGAL NAME], is provided for general informational purposes about our services
-        and approach. Nothing on the Site constitutes a binding offer, guarantee, or
-        professional engagement unless and until confirmed in a separate written
-        agreement.
+        Content on this website is for general informational purposes only. It is
+        not legal, financial, tax, or professional advice. You should seek advice
+        from qualified professionals before making business decisions.
       </p>
 
-      <h2 id="no-advice">No professional advice</h2>
+      <h2>No professional advice</h2>
       <p>
-        Site content is not legal, financial, tax, investment, accounting, or business
-        advice. You should not rely on the Site as a substitute for advice from qualified
-        professionals familiar with your specific situation. Decisions you make based on
-        Site content are made at your own risk.
+        Nothing on this site creates an advisor–client relationship. Examples and
+        descriptions of services are illustrative and may not apply to your
+        situation.
       </p>
 
-      <h2 id="no-guarantee">No guarantee of results</h2>
+      <h2>External links</h2>
       <p>
-        We do not guarantee any particular outcome from visiting the Site, submitting an
-        application, booking a call, or engaging our services. Business results depend on
-        many factors outside our control, including your audience, market conditions,
-        execution, and timing. Past examples, if any, do not predict future performance.
+        We may link to third-party sites. We are not responsible for their content,
+        policies, or practices.
       </p>
 
-      <h2 id="external-links">External links disclaimer</h2>
+      <h2>Errors and omissions</h2>
       <p>
-        The Site may contain links to third-party websites or embeds. Those resources are
-        not under our control. We are not responsible for their content, accuracy,
-        availability, or practices. Linking or embedding does not imply endorsement.
+        While we aim for accuracy, we do not warrant that site content is complete,
+        current, or free of errors.
       </p>
 
-      <h2 id="testimonials">Testimonials and case studies</h2>
+      <h2>Limitation of liability</h2>
       <p>
-        Any testimonials, case studies, examples, or results described on the Site
-        reflect individual experiences. They are not typical or promised outcomes and
-        should not be interpreted as a representation that you will achieve similar
-        results. Individual results vary widely.
+        To the fullest extent permitted by law, [BUSINESS LEGAL NAME] disclaims
+        liability for any loss or damage arising from use of this site or reliance
+        on its content.
       </p>
 
-      <h2 id="errors">Errors and omissions</h2>
+      <h2>Earnings disclaimer</h2>
       <p>
-        While we aim to keep Site information accurate and current, we do not warrant
-        completeness or accuracy. Content may contain typographical errors, omissions, or
-        outdated information and may be changed without notice.
+        We make no income guarantees or projections. Results from any product build
+        depend on the individual&apos;s audience, market, effort, timing, and factors
+        outside our control. Any figures shown on this site, if any, are examples
+        only and are not typical or promised results.
+      </p>
+      <p>
+        Testimonials and case studies, if published, reflect individual experiences
+        and are not guarantees of similar outcomes. Forward-looking statements are
+        speculative. You acknowledge normal business risk and remain responsible for
+        your own business decisions.
+      </p>
+      <p>
+        No income outcome is guaranteed. Terms of any client engagement are agreed
+        in writing before work begins.
       </p>
 
-      <h2 id="limitation">Limitation of liability</h2>
+      <h2>Contact</h2>
       <p>
-        To the fullest extent permitted by law, [BUSINESS LEGAL NAME] disclaims liability
-        for any loss or damage arising from your use of, or reliance on, the Site or any
-        linked third-party resource. Additional limitations may apply under our{" "}
-        <a href="/terms">Terms of Service</a>.
-      </p>
-
-      <h2 id="contact">Contact</h2>
-      <p>
-        Questions about this disclaimer:
-      </p>
-      <p>
-        [BUSINESS LEGAL NAME]
-        <br />
-        [BUSINESS ADDRESS]
-        <br />
-        Email: [CONTACT EMAIL]
-        <br />
+        [BUSINESS LEGAL NAME]<br />
+        [BUSINESS ADDRESS]<br />
+        Email: [CONTACT EMAIL]<br />
         [JURISDICTION]
       </p>
     </LegalLayout>

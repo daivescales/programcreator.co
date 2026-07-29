@@ -5,36 +5,12 @@ const siteUrl =
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-
-  const routes = [
-    "",
-    "/about",
-    "/services",
-    "/process",
-    "/results",
-    "/faq",
-    "/contact",
-    "/privacy",
-    "/terms",
-    "/cookies",
-    "/disclaimer",
-    "/earnings-disclaimer",
-    "/accessibility",
-  ];
-
-  const legal = new Set([
-    "/privacy",
-    "/terms",
-    "/cookies",
-    "/disclaimer",
-    "/earnings-disclaimer",
-    "/accessibility",
-  ]);
+  const routes = ["", "/about", "/faq", "/privacy", "/terms", "/disclaimer"];
 
   return routes.map((route) => ({
     url: `${siteUrl}${route}`,
     lastModified,
     changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : legal.has(route) ? 0.3 : 0.7,
+    priority: route === "" ? 1 : 0.6,
   }));
 }
