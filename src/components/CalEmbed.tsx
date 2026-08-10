@@ -25,8 +25,8 @@ export default function CalEmbed({ name, email, className }: CalEmbedProps) {
       const cal = await getCalApi({ namespace: "pc" });
       if (cancelled) return;
       cal("ui", {
-        theme: "light",
-        styles: { branding: { brandColor: "#3E8EF7" } },
+        theme: "dark",
+        styles: { branding: { brandColor: "#4D9BFF" } },
         hideEventTypeDetails: false,
         layout: "month_view",
       });
@@ -43,17 +43,22 @@ export default function CalEmbed({ name, email, className }: CalEmbedProps) {
     <div className={cn("relative min-h-[560px] w-full", className)}>
       {!ready && (
         <div
-          className="absolute inset-0 animate-pulse rounded-xl bg-pc-surface"
+          className="absolute inset-0 animate-pulse rounded-[4px] bg-navy-700"
           aria-hidden
         />
       )}
       <Cal
         namespace="pc"
         calLink={calLink}
-        style={{ width: "100%", height: "100%", minHeight: 560, overflow: "scroll" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          minHeight: 560,
+          overflow: "scroll",
+        }}
         config={{
           layout: "month_view",
-          theme: "light",
+          theme: "dark",
           ...(name ? { name } : {}),
           ...(email ? { email } : {}),
         }}
@@ -64,7 +69,7 @@ export default function CalEmbed({ name, email, className }: CalEmbedProps) {
           href={calUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-pc-blue underline-offset-2 hover:underline"
+          className="text-accent underline-offset-2 hover:underline"
         >
           Open Cal.com directly
         </a>

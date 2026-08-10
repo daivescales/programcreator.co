@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter_Tight, Instrument_Serif } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
-import { Toaster } from "sonner";
+import SmoothScroll from "@/components/system/SmoothScroll";
+import Grain from "@/components/system/Grain";
+import CustomCursor from "@/components/system/CustomCursor";
+import ScrollProgress from "@/components/system/ScrollProgress";
+import IntroLoader from "@/components/system/IntroLoader";
+import { Toaster } from "@/components/ui/sonner";
 import { faqItems } from "@/content/faq";
 import { site } from "@/lib/site-config";
 import "./globals.css";
 
-const inter = Inter({
+const interTight = Inter_Tight({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
   preload: true,
-  variable: "--font-inter",
+  variable: "--font-sans",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  display: "swap",
+  preload: true,
+  variable: "--font-serif",
 });
 
 const description =
@@ -88,16 +102,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} font-sans antialiased bg-pc-white text-pc-body`}
-      >
+    <html
+      lang="en"
+      className={`${interTight.variable} ${instrumentSerif.variable}`}
+    >
+      <body className="font-sans antialiased bg-navy-800 text-pc-text">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <SiteChrome>{children}</SiteChrome>
-        <Toaster theme="light" position="top-center" richColors />
+        <SmoothScroll>
+          <Grain />
+          <CustomCursor />
+          <ScrollProgress />
+          <IntroLoader />
+          <SiteChrome>{children}</SiteChrome>
+        </SmoothScroll>
+        <Toaster theme="dark" position="top-center" richColors />
       </body>
     </html>
   );

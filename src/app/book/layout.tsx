@@ -11,5 +11,5 @@ export default function BookLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="min-h-dvh bg-pc-white">{children}</div>;
+  return <div className="min-h-dvh bg-navy-800">{children}</div>;
 }

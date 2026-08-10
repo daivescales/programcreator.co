@@ -1,7 +1,6 @@
 import Link from "next/link";
+import { Reveal } from "@/components/motion";
 import Container from "@/components/ui/Container";
-import Reveal from "@/components/ui/Reveal";
-import Section from "@/components/ui/Section";
 import {
   InstagramIcon,
   TikTokIcon,
@@ -10,82 +9,75 @@ import {
 } from "@/components/ui/social-icons";
 import { site } from "@/lib/site-config";
 
-const socialLinks = [
+const socials = [
   { label: "Instagram", href: site.socials.instagram, icon: InstagramIcon },
   { label: "TikTok", href: site.socials.tiktok, icon: TikTokIcon },
-  { label: "X", href: site.socials.x, icon: XIcon },
   { label: "YouTube", href: site.socials.youtube, icon: YouTubeIcon },
+  { label: "X", href: site.socials.x, icon: XIcon },
 ] as const;
 
 export default function About() {
   return (
-    <Section id="about">
+    <section
+      id="about"
+      className="scroll-mt-section border-y border-pc-line bg-navy-900 py-20 md:py-24"
+    >
       <Container>
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
-          <Reveal className="lg:col-span-5">
-            {/* TODO: replace with photo of Daive */}
-            <div className="flex aspect-square items-center justify-center rounded-2xl border border-pc-line bg-pc-surface">
-              <span className="text-[120px] font-semibold leading-none tracking-tight text-pc-blue-100 select-none md:text-[160px]">
-                D
-              </span>
-            </div>
+        <Reveal>
+          <div className="flex flex-col items-center gap-8 md:flex-row md:items-center">
+            {/* TODO: swap for photo of Daive */}
             {/*
             <Image
               src="/daive.jpg"
-              alt="Daive, founder of ProgramCreator"
-              width={560}
-              height={560}
-              className="aspect-square w-full rounded-2xl border border-pc-line object-cover"
+              alt="Daive"
+              width={72}
+              height={72}
+              className="h-[72px] w-[72px] object-cover"
             />
             */}
-          </Reveal>
+            <div
+              aria-hidden
+              className="flex h-[72px] w-[72px] shrink-0 items-center justify-center border border-pc-line bg-navy-700"
+            >
+              <span className="font-serif-italic text-[34px] leading-none text-accent">
+                D
+              </span>
+            </div>
 
-          <Reveal delay={0.06} className="lg:col-span-7">
-            <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.14em] text-pc-blue">
-              Who you&apos;re working with
-            </p>
-            <h2 className="text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.1] tracking-tight text-pc-ink">
-              I&apos;m Daive.
-            </h2>
-            <div className="mt-5 max-w-[58ch] space-y-4 text-base leading-relaxed text-pc-body md:text-lg">
-              <p>
-                I build products and pages for creators and brands, and share the
-                process publicly as {site.handle}. {site.name} is where that work
-                happens.
+            <div className="max-w-[54ch] flex-1 text-center md:text-left">
+              <p className="text-[12px] uppercase tracking-[0.18em] text-pc-muted">
+                Who you&apos;re working with
               </p>
-              <p>
-                Creators pay a revenue split because I&apos;d rather be paid on
-                the outcome than the invoice. It also filters out brands I
-                can&apos;t actually help.
-              </p>
-              <p>
-                You work with me directly. No account manager, no offshore team.
-                A small number of clients at a time.
+              <p className="mt-3 text-[17px] leading-[1.65] text-pc-text">
+                I&apos;m Daive. I build products and pages for creators and
+                brands, and I share the process publicly as {site.handle}. You
+                work with me directly — no account manager, no outsourced team,
+                a small number of clients at a time.
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              {socialLinks.map((social) => {
+            <div className="flex shrink-0 items-center gap-3">
+              {socials.map((social) => {
                 const Icon = social.icon;
                 const href = social.href || "#";
                 return (
                   <Link
                     key={social.label}
                     href={href}
+                    aria-label={social.label}
                     {...(social.href
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="inline-flex items-center gap-2 rounded-full border border-pc-line bg-pc-white px-4 py-2 text-sm font-medium text-pc-ink transition-colors duration-150 hover:border-pc-blue-300"
+                    className="flex h-10 w-10 items-center justify-center border border-pc-line text-pc-muted transition-colors duration-200 hover:border-accent hover:text-accent"
                   >
-                    <Icon size={16} strokeWidth={1.75} aria-hidden />
-                    {social.label}
+                    <Icon size={18} />
                   </Link>
                 );
               })}
             </div>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </Container>
-    </Section>
+    </section>
   );
 }

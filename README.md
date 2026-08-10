@@ -7,12 +7,18 @@ Creators and digital brands work on a **revenue split** (no upfront). Physical p
 ## Stack
 
 - Next.js 15 (App Router, TypeScript)
-- Tailwind CSS + shadcn/ui
-- Framer Motion
+- Tailwind CSS v4
+- Framer Motion (MaskText, Reveal, CharDrift, etc.)
+- GSAP + ScrollTrigger (pinned Process, scroll-linked motion)
+- Lenis smooth scroll (lerp 0.09, synced to GSAP ticker)
 - Supabase (`leads` table)
 - Google Sheets API
 - Resend
 - Cal.com embed (`@calcom/embed-react`)
+
+## Design
+
+Dark editorial: mid-navy page (`#0B2038`), white type, accent `#4D9BFF`. Inter Tight + Instrument Serif (italic emphasis only). Grain overlay sitewide; soft aurora behind hero and final CTA. See `.cursorrules` for tokens, voice, and motion rules.
 
 ## Routes
 
@@ -70,7 +76,7 @@ Sheets writes fail soft — a Sheets outage will not block a lead (Supabase is t
    - `RESEND_API_KEY`
    - `LEAD_NOTIFY_EMAIL` (inbox that receives new-lead notifications, e.g. `hello@programcreator.com`)
 
-Emails fail soft.
+Emails fail soft. HTML templates use the dark navy brand (`#0B2038`, `#4D9BFF`).
 
 ### 4. Cal.com
 
@@ -115,9 +121,10 @@ npm run check-env    # warn if env vars missing (FORCE_ENV_CHECK=1 to fail)
 npm run build        # production build
 npm run start        # serve production build
 npm run lint         # ESLint
+npx tsc --noEmit     # typecheck
 ```
 
-## Deploy (Vercel via GitHub)
+## Deploy checklist (Vercel via GitHub)
 
 1. Push this repo to GitHub.
 2. Import the repo in Vercel (Framework: Next.js).
@@ -125,10 +132,12 @@ npm run lint         # ESLint
 4. Deploy (Vercel builds from GitHub on every push to `main`).
 5. Add custom domain `programcreator.com` (+ `www` redirect).
 6. Verify the Resend sending domain (SPF/DKIM/DMARC).
-7. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
+7. Confirm Cal.com embed loads on `/book` (dark theme, brand `#4D9BFF`).
+8. Submit a test lead through `/apply` → check Supabase, Sheet, and both emails.
+9. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
 
 Do **not** use `vercel --prod` as the primary path — push to GitHub and let Vercel auto-deploy.
 
 ## Design tokens
 
-Defined in `src/app/globals.css` as `--pc-*` and wired into Tailwind (`bg-pc-surface`, `text-pc-ink`, `bg-pc-blue`, etc.). Light theme only — see `.cursorrules` for voice, funnel, and visual rules.
+Defined in `src/app/globals.css` as `--pc-*` and wired into Tailwind (`bg-navy-800`, `text-pc-white`, `bg-accent`, etc.). Dark theme only — see `.cursorrules` for voice, funnel, and visual rules.

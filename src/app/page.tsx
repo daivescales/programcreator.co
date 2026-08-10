@@ -5,9 +5,10 @@ import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
 import Hero from "@/components/sections/Hero";
 import Lanes from "@/components/sections/Lanes";
+import Model from "@/components/sections/Model";
 import Process from "@/components/sections/Process";
 import Results from "@/components/sections/Results";
-import WhatItIs from "@/components/sections/WhatItIs";
+import Ticker from "@/components/sections/Ticker";
 import { site } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -20,7 +21,8 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <WhatItIs />
+      <Ticker />
+      <Model />
       <Lanes />
       <Process />
       <Deliverables />

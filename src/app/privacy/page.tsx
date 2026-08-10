@@ -10,27 +10,27 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="py-24 md:py-32">
+    <main className="bg-navy-800 py-32">
       <Container>
-        <article className="mx-auto max-w-[720px]">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-pc-blue">
+        <article className="prose prose-invert mx-auto max-w-[720px]">
+          <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
             Legal
           </p>
-          <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-[-0.03em] text-pc-ink">
+          <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-[-0.035em] text-pc-white">
             Privacy
           </h1>
-          <p className="mt-4 text-pc-body">
+          <p className="mt-4 text-pc-text">
             Last updated: August 10, 2026. Plain language. No legalese maze.
           </p>
 
-          <div className="mt-10 space-y-8 text-[15px] leading-relaxed text-pc-body">
+          <div className="mt-10 space-y-8 text-[17px] leading-[1.65] text-pc-text">
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 What we collect
               </h2>
               <p>
                 When you apply at{" "}
-                <Link href="/apply" className="text-pc-blue hover:underline">
+                <Link href="/apply" className="text-accent hover:underline">
                   /apply
                 </Link>
                 , we collect the answers you submit: name, email, brand name,
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Where it lives
               </h2>
               <p>
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 How we use it
               </h2>
               <p>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Retention and deletion
               </h2>
               <p>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
                 relationship or follow-up. To request deletion, email{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="text-pc-blue hover:underline"
+                  className="text-accent hover:underline"
                 >
                   {site.email}
                 </a>{" "}
@@ -86,14 +86,14 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Contact
               </h2>
               <p>
                 Questions about this policy:{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="text-pc-blue hover:underline"
+                  className="text-accent hover:underline"
                 >
                   {site.email}
                 </a>
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
           </div>
 
           <p className="mt-12">
-            <Link href="/" className="text-sm text-pc-blue hover:underline">
+            <Link href="/" className="text-sm text-accent hover:underline">
               ← Back to home
             </Link>
           </p>

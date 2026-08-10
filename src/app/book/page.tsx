@@ -1,44 +1,98 @@
-import { Suspense } from "react";
+"use client";
+
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import CalEmbed from "@/components/CalEmbed";
+import MaskText from "@/components/motion/MaskText";
+import Aurora from "@/components/system/Aurora";
 import Container from "@/components/ui/Container";
+import {
+  EASE_IN,
+  usePrefersReducedMotion,
+} from "@/hooks/usePrefersReducedMotion";
 import { site } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
 
-type Search = { name?: string; email?: string; lane?: string };
+function SuccessCheck() {
+  const reduced = usePrefersReducedMotion();
 
-function BookContent({ name, email, lane }: Search) {
+  return (
+    <div
+      className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[4px] border border-accent/40 bg-accent/10"
+      aria-hidden
+    >
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 28 28"
+        fill="none"
+        className="text-accent"
+      >
+        <motion.path
+          d="M6 14.5L11.5 20L22 8"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={
+            reduced
+              ? { duration: 0.2 }
+              : { duration: 0.7, ease: EASE_IN, delay: 0.15 }
+          }
+        />
+      </svg>
+    </div>
+  );
+}
+
+function BookContent() {
+  const params = useSearchParams();
+  const name = params.get("name") ?? undefined;
+  const email = params.get("email") ?? undefined;
+  const lane = params.get("lane") ?? undefined;
   const firstName = name?.trim().split(/\s+/)[0];
   const hasParams = Boolean(firstName || email);
 
   return (
-    <main className="pb-20 pt-10 md:pt-14">
-      <Container className="max-w-[960px]">
+    <div className="relative min-h-dvh overflow-hidden bg-navy-800 pb-20 pt-10 md:pt-14">
+      <Aurora className="opacity-40" />
+
+      <Container className="relative z-[1] max-w-[960px]">
         <div className="mx-auto mb-10 max-w-[560px] text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-pc-blue-50">
-            <Check className="h-7 w-7 text-pc-blue" strokeWidth={2.5} aria-hidden />
-          </div>
+          <SuccessCheck />
 
           {hasParams ? (
             <>
-              <h1 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-ink">
-                You&apos;re in{firstName ? `, ${firstName}` : ""}.
-              </h1>
-              <p className="mt-3 text-base text-pc-body md:text-lg">
-                Application received. Last step: pick a time and we&apos;ll talk it
-                through.
+              <MaskText
+                as="h1"
+                className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tracking-[-0.035em] text-pc-white"
+              >
+                {firstName
+                  ? `You're in, ${firstName}.`
+                  : "You're in."}
+              </MaskText>
+              <p className="mt-3 text-base text-pc-text md:text-lg">
+                Application received. Last step: pick a time and we&apos;ll talk
+                it through.
               </p>
             </>
           ) : (
             <>
-              <h1 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-ink">
-                Book a call with {site.founder}
-              </h1>
-              <p className="mt-3 text-base text-pc-body md:text-lg">
+              <MaskText
+                as="h1"
+                className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tracking-[-0.035em] text-pc-white"
+              >
+                {`Book a call with ${site.founder}`}
+              </MaskText>
+              <p className="mt-3 text-base text-pc-text md:text-lg">
                 Prefer to apply first?{" "}
                 <Link
                   href="/apply"
-                  className="text-pc-blue underline-offset-2 hover:underline"
+                  className="text-accent underline-offset-2 hover:underline"
                 >
                   Start the application
                 </Link>
@@ -48,34 +102,39 @@ function BookContent({ name, email, lane }: Search) {
           )}
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="rounded-full bg-pc-blue-50 px-3 py-1 text-xs font-medium text-pc-blue">
+            <span className="rounded-[4px] border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
               1 Application ✓
             </span>
-            <span className="rounded-full border border-pc-blue bg-pc-white px-3 py-1 text-xs font-medium text-pc-ink">
+            <span className="rounded-[4px] border border-accent bg-transparent px-3 py-1 text-xs font-medium text-pc-white">
               2 Book your call
             </span>
-            <span className="rounded-full bg-pc-surface px-3 py-1 text-xs font-medium text-pc-muted">
+            <span className="rounded-[4px] border border-pc-line bg-navy-700 px-3 py-1 text-xs font-medium text-pc-muted">
               3 We build
             </span>
           </div>
 
           {lane ? (
             <p className="mt-3 text-xs text-pc-muted">
-              Lane: {lane === "creator" ? "Creator / digital" : "Physical brand"}
+              Lane:{" "}
+              {lane === "creator" ? "Creator / digital" : "Physical brand"}
             </p>
           ) : null}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-          <div className="rounded-2xl border border-pc-line bg-pc-white p-2 shadow-[0_1px_2px_rgba(16,32,47,0.04)]">
+          <div className="rounded-[4px] border border-pc-line bg-navy-700 p-2">
             <CalEmbed name={name} email={email} />
           </div>
 
-          <aside className="h-fit rounded-2xl border border-pc-line bg-pc-surface p-6">
-            <h2 className="text-sm font-semibold tracking-tight text-pc-ink">
+          <aside
+            className={cn(
+              "h-fit rounded-[4px] border border-pc-line bg-navy-700 p-6"
+            )}
+          >
+            <h2 className="text-sm font-semibold tracking-tight text-pc-white">
               What to expect
             </h2>
-            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-pc-body">
+            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-pc-text">
               <li>20 minutes, video call</li>
               <li>No deck. Straight conversation</li>
               <li>Bring your numbers if you have them</li>
@@ -84,39 +143,20 @@ function BookContent({ name, email, lane }: Search) {
           </aside>
         </div>
       </Container>
-    </main>
+    </div>
   );
 }
 
-async function BookFromParams({
-  searchParams,
-}: {
-  searchParams: Promise<Search>;
-}) {
-  const params = await searchParams;
-  return (
-    <BookContent
-      name={params.name}
-      email={params.email}
-      lane={params.lane}
-    />
-  );
-}
-
-export default function BookPage({
-  searchParams,
-}: {
-  searchParams: Promise<Search>;
-}) {
+export default function BookPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-dvh items-center justify-center">
-          <div className="h-10 w-10 animate-pulse rounded-full bg-pc-blue-100" />
-        </main>
+        <div className="flex min-h-dvh items-center justify-center bg-navy-800">
+          <div className="h-10 w-10 animate-pulse rounded-[4px] bg-navy-700" />
+        </div>
       }
     >
-      <BookFromParams searchParams={searchParams} />
+      <BookContent />
     </Suspense>
   );
 }

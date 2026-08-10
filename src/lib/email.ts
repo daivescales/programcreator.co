@@ -2,6 +2,14 @@ import { Resend } from "resend";
 import { site } from "@/lib/site-config";
 import type { LeadRecord } from "@/lib/validation";
 
+const NAVY = "#0B2038";
+const NAVY_CARD = "#102C4C";
+const LINE = "rgba(255,255,255,0.09)";
+const WHITE = "#FFFFFF";
+const TEXT = "#C2D4E8";
+const MUTED = "#94AAC4";
+const ACCENT = "#4D9BFF";
+
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY;
   if (!key) return null;
@@ -19,11 +27,11 @@ function escapeHtml(value: string): string {
 function row(label: string, value: string | undefined, emphasise = false): string {
   const display = value?.trim() ? escapeHtml(value) : "—";
   const style = emphasise
-    ? "padding:12px 0;border-bottom:1px solid #E4EAF1;background:#F2F7FE;"
-    : "padding:10px 0;border-bottom:1px solid #E4EAF1;";
+    ? `padding:12px 0;border-bottom:1px solid ${LINE};background:rgba(77,155,255,0.08);`
+    : `padding:10px 0;border-bottom:1px solid ${LINE};`;
   return `<tr>
-    <td style="${style}width:160px;vertical-align:top;color:#7C8B9C;font-size:13px;padding-right:16px;">${escapeHtml(label)}</td>
-    <td style="${style}color:#10202F;font-size:14px;white-space:pre-wrap;">${display}</td>
+    <td style="${style}width:160px;vertical-align:top;color:${MUTED};font-size:13px;padding-right:16px;">${escapeHtml(label)}</td>
+    <td style="${style}color:${WHITE};font-size:14px;white-space:pre-wrap;">${display}</td>
   </tr>`;
 }
 
@@ -51,11 +59,11 @@ export async function sendLeadNotification(
       .join(" · ");
 
     const html = `<!DOCTYPE html>
-<html><body style="margin:0;padding:24px;background:#F6F9FC;font-family:Inter,Helvetica,Arial,sans-serif;">
-  <div style="max-width:640px;margin:0 auto;background:#FFFFFF;border:1px solid #E4EAF1;border-radius:12px;padding:28px;">
-    <p style="margin:0 0 4px;color:#3E8EF7;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">New lead</p>
-    <h1 style="margin:0 0 8px;color:#10202F;font-size:22px;font-weight:600;">${escapeHtml(lead.full_name)}</h1>
-    <p style="margin:0 0 20px;color:#46586B;font-size:14px;">${escapeHtml(lead.lane)} · ${escapeHtml(lead.brand_name ?? "")}</p>
+<html><body style="margin:0;padding:24px;background:${NAVY};font-family:Inter,Helvetica,Arial,sans-serif;">
+  <div style="max-width:640px;margin:0 auto;background:${NAVY_CARD};border:1px solid ${LINE};border-radius:4px;padding:28px;">
+    <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">New lead</p>
+    <h1 style="margin:0 0 8px;color:${WHITE};font-size:22px;font-weight:600;">${escapeHtml(lead.full_name)}</h1>
+    <p style="margin:0 0 20px;color:${TEXT};font-size:14px;">${escapeHtml(lead.lane)} · ${escapeHtml(lead.brand_name ?? "")}</p>
     <table style="width:100%;border-collapse:collapse;">
       ${row("Email", lead.email)}
       ${row("Socials", socialBits || undefined)}
@@ -70,7 +78,7 @@ export async function sendLeadNotification(
     </table>
     <p style="margin:24px 0 0;">
       <a href="mailto:${encodeURIComponent(lead.email)}?subject=${encodeURIComponent(`Re: ProgramCreator — ${lead.full_name}`)}"
-         style="display:inline-block;background:#3E8EF7;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:500;">
+         style="display:inline-block;background:${ACCENT};color:${NAVY};text-decoration:none;padding:12px 18px;border-radius:4px;font-size:14px;font-weight:500;">
         Reply to ${escapeHtml(lead.full_name.split(" ")[0] ?? lead.full_name)}
       </a>
     </p>
@@ -108,23 +116,23 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
     const first = lead.full_name.split(" ")[0] ?? lead.full_name;
 
     const html = `<!DOCTYPE html>
-<html><body style="margin:0;padding:24px;background:#F6F9FC;font-family:Inter,Helvetica,Arial,sans-serif;">
-  <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid #E4EAF1;border-radius:12px;padding:32px;">
-    <p style="margin:0 0 4px;color:#3E8EF7;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
-    <h1 style="margin:0 0 12px;color:#10202F;font-size:22px;font-weight:600;">Got it, ${escapeHtml(first)}.</h1>
-    <p style="margin:0 0 16px;color:#46586B;font-size:15px;line-height:1.6;">
+<html><body style="margin:0;padding:24px;background:${NAVY};font-family:Inter,Helvetica,Arial,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;background:${NAVY_CARD};border:1px solid ${LINE};border-radius:4px;padding:32px;">
+    <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
+    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:600;">Got it, ${escapeHtml(first)}.</h1>
+    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">
       I read every application myself. Next step is a short call so we can see if this is a fit.
     </p>
-    <p style="margin:0 0 16px;color:#46586B;font-size:15px;line-height:1.6;">
+    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">
       If the booking page closed, grab a time here:
     </p>
     <p style="margin:0 0 28px;">
       <a href="${escapeHtml(calUrl)}"
-         style="display:inline-block;background:#3E8EF7;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:500;">
+         style="display:inline-block;background:${ACCENT};color:${NAVY};text-decoration:none;padding:12px 18px;border-radius:4px;font-size:14px;font-weight:500;">
         Book your call
       </a>
     </p>
-    <p style="margin:0;color:#7C8B9C;font-size:13px;line-height:1.5;">
+    <p style="margin:0;color:${MUTED};font-size:13px;line-height:1.5;">
       Daive — ${escapeHtml(site.name)}
     </p>
   </div>

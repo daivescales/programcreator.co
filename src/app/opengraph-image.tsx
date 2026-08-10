@@ -14,7 +14,7 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#FFFFFF",
+          background: "#0B2038",
           padding: "56px 64px",
           fontFamily: "system-ui, sans-serif",
           position: "relative",
@@ -23,35 +23,46 @@ export default function OpenGraphImage() {
         <div
           style={{
             position: "absolute",
-            top: -80,
+            top: -120,
             right: -80,
+            width: 480,
+            height: 480,
+            borderRadius: "50%",
+            background: "rgba(77,155,255,0.18)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: -140,
+            left: -60,
             width: 420,
             height: 420,
             borderRadius: "50%",
-            background: "#F2F7FE",
+            background: "rgba(77,155,255,0.12)",
           }}
         />
         <div style={{ display: "flex", fontSize: 28, fontWeight: 600 }}>
-          <span style={{ color: "#10202F" }}>Program</span>
-          <span style={{ color: "#3E8EF7" }}>Creator</span>
+          <span style={{ color: "#FFFFFF" }}>Program</span>
+          <span style={{ color: "#4D9BFF" }}>Creator</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div
             style={{
               fontSize: 64,
               fontWeight: 600,
-              color: "#10202F",
-              letterSpacing: "-0.03em",
+              color: "#FFFFFF",
+              letterSpacing: "-0.04em",
               lineHeight: 1.05,
             }}
           >
             Creator Product Scaling
           </div>
-          <div style={{ fontSize: 26, color: "#46586B", maxWidth: 720 }}>
+          <div style={{ fontSize: 26, color: "#C2D4E8", maxWidth: 720 }}>
             Digital products for creators. Storefronts for brands.
           </div>
         </div>
-        <div style={{ fontSize: 20, color: "#7C8B9C" }}>@daivescales</div>
+        <div style={{ fontSize: 20, color: "#94AAC4" }}>@daivescales</div>
       </div>
     ),
     { ...size }

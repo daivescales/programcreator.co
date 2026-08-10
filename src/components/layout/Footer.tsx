@@ -1,134 +1,139 @@
+"use client";
+
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { MaskText, ScrambleText } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
-import {
-  InstagramIcon,
-  TikTokIcon,
-  XIcon,
-  YouTubeIcon,
-} from "@/components/ui/social-icons";
+import { useLenis } from "@/components/system/SmoothScroll";
 import { site } from "@/lib/site-config";
 
 const navigate = [
-  { href: "/#how", label: "How it works" },
-  { href: "/#lanes", label: "Who it's for" },
-  { href: "/#results", label: "Results" },
+  { href: "/#model", label: "Model" },
+  { href: "/#lanes", label: "Lanes" },
+  { href: "/#process", label: "Process" },
+  { href: "/#work", label: "Work" },
   { href: "/#faq", label: "FAQ" },
   { href: "/apply", label: "Apply" },
 ] as const;
 
-const company = [
-  { href: "/#about", label: "About Daive" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-] as const;
-
-const socials = [
-  { label: "Instagram", href: site.socials.instagram, icon: InstagramIcon },
-  { label: "TikTok", href: site.socials.tiktok, icon: TikTokIcon },
-  { label: "X", href: site.socials.x, icon: XIcon },
-  { label: "YouTube", href: site.socials.youtube, icon: YouTubeIcon },
+const elsewhere = [
+  { label: "Instagram", href: site.socials.instagram },
+  { label: "TikTok", href: site.socials.tiktok },
+  { label: "YouTube", href: site.socials.youtube },
+  { label: "X", href: site.socials.x },
 ] as const;
 
 export default function Footer() {
+  const { lenis } = useLenis();
+
+  const backToTop = () => {
+    if (lenis) {
+      lenis.scrollTo(0, { duration: 1.2 });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="border-t border-pc-line bg-pc-surface pt-20 pb-10">
+    <footer className="border-t border-pc-line bg-navy-900 pt-32 pb-10">
       <Container>
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <Link
-              href="/"
-              className="text-[18px] font-semibold tracking-tight text-pc-ink"
-            >
-              <span>Program</span>
-              <span className="text-pc-blue">Creator</span>
-            </Link>
-            <p className="mt-4 max-w-[36ch] text-[15px] leading-relaxed text-pc-body">
+        <div className="overflow-hidden text-center">
+          <MaskText
+            as="p"
+            className="text-stroke-wordmark text-[clamp(3rem,13vw,11rem)] font-bold leading-none tracking-[-0.05em]"
+          >
+            PROGRAMCREATOR
+          </MaskText>
+        </div>
+
+        <div className="mt-16 grid grid-cols-2 gap-10 lg:grid-cols-4 lg:gap-8">
+          <div className="col-span-2 lg:col-span-1">
+            <p className="text-[17px] font-semibold tracking-[-0.02em] text-pc-white">
+              Program<span className="text-accent">Creator</span>
+            </p>
+            <p className="mt-4 max-w-[28ch] text-[15px] leading-[1.65] text-pc-text">
               Creator Product Scaling for people who already have attention.
             </p>
-            <div className="mt-6 flex items-center gap-4">
-              {socials.map((social) => {
-                const Icon = social.icon;
-                const href = social.href || "#";
-                return (
-                  <a
-                    key={social.label}
-                    href={href}
-                    aria-label={social.label}
-                    {...(social.href
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="text-pc-muted transition-colors duration-150 hover:text-pc-blue"
-                  >
-                    <Icon size={20} strokeWidth={1.75} />
-                  </a>
-                );
-              })}
-            </div>
+            <a
+              href={`mailto:${site.email}`}
+              className="mt-4 inline-block text-[15px] text-accent transition-opacity hover:opacity-80"
+            >
+              {site.email}
+            </a>
           </div>
 
-          <div className="lg:col-span-2">
-            <p className="text-sm font-semibold text-pc-ink">Navigate</p>
+          <div>
+            <p className="text-[12px] uppercase tracking-[0.18em] text-pc-muted">
+              Navigate
+            </p>
             <ul className="mt-4 space-y-3">
               {navigate.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-pc-body transition-colors duration-150 hover:text-pc-ink"
+                    className="text-[15px] text-pc-text transition-colors hover:text-pc-white"
                   >
-                    {link.label}
+                    <ScrambleText text={link.label} />
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="lg:col-span-2">
-            <p className="text-sm font-semibold text-pc-ink">Company</p>
+          <div>
+            <p className="text-[12px] uppercase tracking-[0.18em] text-pc-muted">
+              Elsewhere
+            </p>
             <ul className="mt-4 space-y-3">
-              {company.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-pc-body transition-colors duration-150 hover:text-pc-ink"
+              {elsewhere.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href || "#"}
+                    {...(link.href
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="group inline-flex items-center gap-1.5 text-[15px] text-pc-text transition-colors hover:text-pc-white"
                   >
-                    {link.label}
-                  </Link>
+                    <ScrambleText text={link.label} />
+                    <ArrowUpRight
+                      size={14}
+                      className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      aria-hidden
+                    />
+                  </a>
                 </li>
               ))}
-              <li>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="text-sm text-pc-body transition-colors duration-150 hover:text-pc-ink"
-                >
-                  {site.email}
-                </a>
-              </li>
             </ul>
           </div>
 
-          <div className="lg:col-span-4">
-            <div className="rounded-xl border border-pc-line bg-pc-white p-6">
-              <p className="text-lg font-semibold tracking-tight text-pc-ink">
-                Ready to build?
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-pc-body">
-                Apply in three minutes. If I can help, we get on a call.
-              </p>
-              <CTAButton href="/apply" className="mt-5 w-full">
-                Apply to work with me
-              </CTAButton>
-            </div>
+          <div className="col-span-2 border border-pc-line bg-navy-800 p-6 lg:col-span-1">
+            <p className="text-[clamp(1.25rem,2vw,1.5rem)] font-semibold tracking-[-0.03em] text-pc-white">
+              Have a brand?
+            </p>
+            <p className="mt-2 text-[15px] leading-[1.65] text-pc-text">
+              Apply in three minutes. If I can help, we get on a call.
+            </p>
+            <CTAButton href="/apply" className="mt-5 w-full">
+              Apply to work with me
+            </CTAButton>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-pc-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[13px] text-pc-muted">
-            © 2026 {site.name}. All rights reserved.
+        <div className="mt-16 flex flex-col gap-4 border-t border-pc-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[12px] uppercase tracking-[0.14em] text-pc-muted">
+            © 2026 {site.name}
           </p>
-          <p className="text-[13px] text-pc-muted">
+          <p className="text-[12px] uppercase tracking-[0.14em] text-pc-muted">
             Built by {site.founder} · {site.handle}
           </p>
+          <button
+            type="button"
+            onClick={backToTop}
+            className="text-[12px] uppercase tracking-[0.14em] text-pc-muted transition-colors hover:text-pc-white"
+          >
+            Back to top
+          </button>
         </div>
       </Container>
     </footer>

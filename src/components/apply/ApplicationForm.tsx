@@ -1,8 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, ChevronLeft, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -20,7 +20,13 @@ import {
   type Resolver,
 } from "react-hook-form";
 import { toast } from "sonner";
-import CTAButton from "@/components/ui/CTAButton";
+import CharDrift from "@/components/motion/CharDrift";
+import MaskText from "@/components/motion/MaskText";
+import Aurora from "@/components/system/Aurora";
+import {
+  EASE_IN,
+  usePrefersReducedMotion,
+} from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 import {
   FOLLOWER_RANGE_OPTIONS,
@@ -34,7 +40,7 @@ import {
 const STORAGE_KEY = "pc_apply_draft";
 const TOTAL_STEPS = 13;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const EASE = [0.16, 1, 0.3, 1] as const;
+const AUTO_ADVANCE_MS = 300;
 
 type FormValues = {
   full_name: string;
@@ -48,9 +54,7 @@ type FormValues = {
     other?: string;
   };
   website?: string;
-  follower_range:
-    | (typeof FOLLOWER_RANGE_OPTIONS)[number]
-    | undefined;
+  follower_range: (typeof FOLLOWER_RANGE_OPTIONS)[number] | undefined;
   has_product: "yes" | "no" | "sort_of" | undefined;
   revenue_range: (typeof REVENUE_RANGE_OPTIONS)[number] | undefined;
   biggest_bottleneck: string;
@@ -135,6 +139,10 @@ const STEP_FIELDS: FieldPath<FormValues>[][] = [
   ["source"],
 ];
 
+function padStep(n: number) {
+  return String(n).padStart(2, "0");
+}
+
 function ChoiceCards({
   options,
   selectedId,
@@ -158,21 +166,28 @@ function ChoiceCards({
             data-letter={letter}
             onClick={() => onSelect(option)}
             className={cn(
-              "flex w-full items-center gap-4 rounded-xl border px-5 py-4 text-left transition-colors duration-150",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pc-blue",
+              "flex w-full items-center gap-4 rounded-[4px] border px-5 py-4 text-left transition-colors duration-[180ms]",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
               selected
-                ? "border-2 border-pc-blue bg-pc-blue-50"
-                : "border-pc-line hover:border-pc-blue-300 hover:bg-pc-blue-50/50"
+                ? "border-accent bg-accent/10"
+                : "border-pc-line bg-transparent hover:border-pc-line-2 hover:bg-white/[0.03]"
             )}
           >
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-pc-surface text-xs font-medium text-pc-ink">
+            <span
+              className={cn(
+                "flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] border text-xs font-medium",
+                selected
+                  ? "border-accent bg-accent text-navy-900"
+                  : "border-pc-line bg-navy-700 text-pc-muted"
+              )}
+            >
               {letter}
             </span>
-            <span className="flex-1 text-[15px] font-medium text-pc-ink">
+            <span className="flex-1 text-[15px] font-medium text-pc-white">
               {option.label}
             </span>
             {selected ? (
-              <Check className="h-5 w-5 text-pc-blue" strokeWidth={2.5} />
+              <Check className="h-5 w-5 text-accent" strokeWidth={2.5} />
             ) : null}
           </button>
         );
@@ -182,11 +197,11 @@ function ChoiceCards({
 }
 
 const inputClass =
-  "w-full border-0 border-b-2 border-pc-line bg-transparent py-3 text-xl text-pc-ink placeholder:text-pc-muted transition-colors focus:border-pc-blue focus:outline-none md:text-2xl";
+  "w-full border-0 border-b border-pc-line bg-transparent py-3 text-xl text-pc-white placeholder:text-pc-muted transition-colors duration-[180ms] focus:border-accent focus:outline-none md:text-2xl";
 
 export default function ApplicationForm() {
   const router = useRouter();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = usePrefersReducedMotion();
   const focusRef = useRef<HTMLDivElement>(null);
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -348,17 +363,14 @@ export default function ApplicationForm() {
     if (step > 0) goTo(step - 1, -1);
   }, [goTo, step]);
 
-  const selectAndAdvance = useCallback(
-    (apply: () => void) => {
-      apply();
-      if (advanceTimer.current) clearTimeout(advanceTimer.current);
-      advanceTimer.current = setTimeout(() => {
-        setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
-        setDirection(1);
-      }, 280);
-    },
-    []
-  );
+  const selectAndAdvance = useCallback((apply: () => void) => {
+    apply();
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    advanceTimer.current = setTimeout(() => {
+      setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
+      setDirection(1);
+    }, AUTO_ADVANCE_MS);
+  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -506,32 +518,41 @@ export default function ApplicationForm() {
 
   if (submitting) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center bg-pc-white px-6 text-center">
-        <Loader2 className="h-8 w-8 animate-spin text-pc-blue" />
-        <p className="mt-4 text-lg text-pc-ink">Sending your application...</p>
+      <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-navy-800 px-6 text-center">
+        <Aurora className="opacity-40 [&>div:first-child]:bottom-[-20%] [&>div:first-child]:left-[-15%] [&>div:first-child]:top-auto [&>div:last-child]:hidden" />
+        <CharDrift
+          as="p"
+          className="relative z-[1] text-lg text-pc-text"
+        >
+          Sending your application...
+        </CharDrift>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-pc-white">
-      <header className="sticky top-0 z-40 border-b border-pc-line bg-pc-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-[64px] max-w-[1180px] items-center justify-between px-6">
-          <Link href="/" className="text-[18px] font-semibold tracking-tight">
-            <span className="text-pc-ink">Program</span>
-            <span className="text-pc-blue">Creator</span>
+    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-navy-800">
+      <Aurora className="opacity-35 [&>div:first-child]:bottom-[-25%] [&>div:first-child]:left-[-20%] [&>div:first-child]:top-auto [&>div:last-child]:hidden" />
+
+      <header className="relative z-40 sticky top-0 border-b border-pc-line bg-navy-800/90 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between px-6">
+          <Link
+            href="/"
+            className="text-[18px] font-semibold tracking-tight text-pc-white"
+          >
+            Program<span className="text-accent">Creator</span>
           </Link>
-          <p className="text-sm text-pc-muted">
-            Step {step + 1} of {TOTAL_STEPS}
+          <p className="font-mono text-sm tabular-nums text-pc-muted">
+            {padStep(step + 1)} / {padStep(TOTAL_STEPS)}
           </p>
         </div>
-        <div className="h-[3px] w-full bg-pc-line" aria-hidden>
+        <div className="h-[2px] w-full bg-pc-line" aria-hidden>
           <motion.div
-            className="h-full bg-pc-blue"
+            className="h-full bg-accent"
             initial={false}
             animate={{ width: `${progress}%` }}
             transition={
-              reduceMotion ? { duration: 0 } : { duration: 0.32, ease: EASE }
+              reduceMotion ? { duration: 0 } : { duration: 0.32, ease: EASE_IN }
             }
           />
         </div>
@@ -542,7 +563,7 @@ export default function ApplicationForm() {
       </div>
 
       <form
-        className="flex flex-1 flex-col"
+        className="relative z-[1] flex flex-1 flex-col"
         onSubmit={(e) => {
           e.preventDefault();
           void submitOrNext();
@@ -581,18 +602,17 @@ export default function ApplicationForm() {
               transition={
                 reduceMotion
                   ? { duration: 0 }
-                  : { duration: 0.32, ease: EASE }
+                  : { duration: 0.32, ease: EASE_IN }
               }
             >
-              <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.14em] text-pc-blue">
-                Question {step + 1}
-              </p>
-
               {step === 0 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     What&apos;s your full name?
-                  </h1>
+                  </MaskText>
                   <input
                     className={cn(inputClass, "mt-8")}
                     placeholder="Your name"
@@ -606,9 +626,12 @@ export default function ApplicationForm() {
 
               {step === 1 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     What&apos;s the best email for you?
-                  </h1>
+                  </MaskText>
                   <input
                     type="email"
                     className={cn(inputClass, "mt-8")}
@@ -623,9 +646,12 @@ export default function ApplicationForm() {
 
               {step === 2 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     Which best describes you?
-                  </h1>
+                  </MaskText>
                   <div className="mt-8">
                     <ChoiceCards
                       selectedId={laneChoiceId}
@@ -647,9 +673,12 @@ export default function ApplicationForm() {
 
               {step === 3 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     Brand or business name?
-                  </h1>
+                  </MaskText>
                   <input
                     className={cn(inputClass, "mt-8")}
                     placeholder="Brand name"
@@ -662,9 +691,12 @@ export default function ApplicationForm() {
 
               {step === 4 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     Where can I see you?
-                  </h1>
+                  </MaskText>
                   <p className="mt-3 text-[15px] text-pc-muted">
                     At least one handle or a website.
                   </p>
@@ -700,9 +732,12 @@ export default function ApplicationForm() {
 
               {step === 5 && (
                 <>
-                  <h1 className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     Audience size on your main platform?
-                  </h1>
+                  </MaskText>
                   <div className="mt-8">
                     <ChoiceCards
                       selectedId={followerRange ?? null}
@@ -727,9 +762,12 @@ export default function ApplicationForm() {
 
               {step === 6 && (
                 <>
-                  <h1 className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     Do you already have something you sell?
-                  </h1>
+                  </MaskText>
                   <div className="mt-8">
                     <ChoiceCards
                       selectedId={hasProduct ?? null}
@@ -750,9 +788,12 @@ export default function ApplicationForm() {
 
               {step === 7 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     Current monthly revenue?
-                  </h1>
+                  </MaskText>
                   <div className="mt-8">
                     <ChoiceCards
                       selectedId={revenueRange ?? null}
@@ -777,9 +818,12 @@ export default function ApplicationForm() {
 
               {step === 8 && (
                 <>
-                  <h1 className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     What&apos;s actually broken right now?
-                  </h1>
+                  </MaskText>
                   <p className="mt-3 text-[15px] text-pc-muted">
                     Be specific. This is the question I read first.
                   </p>
@@ -801,9 +845,12 @@ export default function ApplicationForm() {
 
               {step === 9 && (
                 <>
-                  <h1 className="max-w-[24ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[24ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     If this works, what does the next 90 days look like?
-                  </h1>
+                  </MaskText>
                   <textarea
                     rows={4}
                     className={cn(inputClass, "mt-8 resize-none")}
@@ -822,9 +869,12 @@ export default function ApplicationForm() {
 
               {step === 10 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     How soon do you want to start?
-                  </h1>
+                  </MaskText>
                   <div className="mt-8">
                     <ChoiceCards
                       selectedId={readyToStart ?? null}
@@ -849,12 +899,15 @@ export default function ApplicationForm() {
 
               {step === 11 && (
                 <>
-                  <h1 className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     {lane === "creator"
                       ? "Creators work on a revenue split"
                       : "Physical brands work on a retainer"}
-                  </h1>
-                  <p className="mt-4 text-[15px] leading-relaxed text-pc-body">
+                  </MaskText>
+                  <p className="mt-4 text-[15px] leading-relaxed text-pc-text">
                     {lane === "creator"
                       ? "No upfront fee. We only make money when you do. That keeps incentives aligned."
                       : "Storefront and conversion work runs on a monthly retainer. Scope is set before we start."}
@@ -863,13 +916,13 @@ export default function ApplicationForm() {
                     control={control}
                     name="budget_ack"
                     render={({ field }) => (
-                      <label className="mt-8 flex cursor-pointer items-start gap-3 text-left text-[15px] text-pc-ink">
+                      <label className="mt-8 flex cursor-pointer items-start gap-3 text-left text-[15px] text-pc-white">
                         <input
                           type="checkbox"
                           checked={field.value === true}
                           onChange={(e) => field.onChange(e.target.checked)}
                           onKeyDown={onEnter}
-                          className="mt-1 h-4 w-4 accent-pc-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pc-blue"
+                          className="mt-1 h-4 w-4 accent-[var(--pc-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                         />
                         <span>
                           {lane === "creator"
@@ -884,9 +937,12 @@ export default function ApplicationForm() {
 
               {step === 12 && (
                 <>
-                  <h1 className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-tight text-pc-ink">
+                  <MaskText
+                    as="h1"
+                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
+                  >
                     How did you find me?
-                  </h1>
+                  </MaskText>
                   <div className="mt-8">
                     <ChoiceCards
                       selectedId={source ?? null}
@@ -908,7 +964,7 @@ export default function ApplicationForm() {
               )}
 
               {stepError ? (
-                <p className="mt-4 text-sm text-red-600" role="alert">
+                <p className="mt-4 text-sm text-red-400" role="alert">
                   {stepError}
                 </p>
               ) : null}
@@ -916,13 +972,13 @@ export default function ApplicationForm() {
           </AnimatePresence>
         </div>
 
-        <div className="sticky bottom-0 border-t border-pc-line bg-pc-white/95 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md">
+        <div className="sticky bottom-0 border-t border-pc-line bg-navy-800/95 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md">
           <div className="mx-auto flex max-w-[640px] items-center justify-between gap-4">
             <button
               type="button"
               onClick={back}
               className={cn(
-                "inline-flex items-center gap-1 text-sm text-pc-muted hover:text-pc-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pc-blue",
+                "inline-flex items-center gap-1 text-sm text-pc-muted transition-colors hover:text-pc-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                 step === 0 && "invisible"
               )}
               aria-label="Back"
@@ -933,11 +989,15 @@ export default function ApplicationForm() {
             <div className="text-right">
               {showContinue ? (
                 <>
-                  <CTAButton type="button" onClick={() => void submitOrNext()}>
+                  <button
+                    type="button"
+                    onClick={() => void submitOrNext()}
+                    className="inline-flex h-14 items-center justify-center rounded-[4px] bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
                     {step === TOTAL_STEPS - 1
                       ? "Submit application"
                       : "Continue"}
-                  </CTAButton>
+                  </button>
                   <p className="mt-2 text-[12px] text-pc-muted">press Enter ↵</p>
                 </>
               ) : (

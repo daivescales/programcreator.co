@@ -10,23 +10,23 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="py-24 md:py-32">
+    <main className="bg-navy-800 py-32">
       <Container>
-        <article className="mx-auto max-w-[720px]">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-pc-blue">
+        <article className="prose prose-invert mx-auto max-w-[720px]">
+          <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
             Legal
           </p>
-          <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-[-0.03em] text-pc-ink">
+          <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-[-0.035em] text-pc-white">
             Terms
           </h1>
-          <p className="mt-4 text-pc-body">
+          <p className="mt-4 text-pc-text">
             Last updated: August 10, 2026. These terms cover use of this website
             and the application process.
           </p>
 
-          <div className="mt-10 space-y-8 text-[15px] leading-relaxed text-pc-body">
+          <div className="mt-10 space-y-8 text-[17px] leading-[1.65] text-pc-text">
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 The site
               </h2>
               <p>
@@ -38,7 +38,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Two payment models
               </h2>
               <p>
@@ -52,14 +52,14 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Your application
               </h2>
               <p>
                 You agree that the information you submit is accurate to the
                 best of your knowledge. You grant us permission to store and
                 process it as described in the{" "}
-                <Link href="/privacy" className="text-pc-blue hover:underline">
+                <Link href="/privacy" className="text-accent hover:underline">
                   Privacy
                 </Link>{" "}
                 page so we can evaluate fit and follow up.
@@ -67,7 +67,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 No guarantees
               </h2>
               <p>
@@ -78,7 +78,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Booking
               </h2>
               <p>
@@ -89,14 +89,14 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-ink">
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
                 Contact
               </h2>
               <p>
                 Questions:{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="text-pc-blue hover:underline"
+                  className="text-accent hover:underline"
                 >
                   {site.email}
                 </a>
@@ -106,7 +106,7 @@ export default function TermsPage() {
           </div>
 
           <p className="mt-12">
-            <Link href="/" className="text-sm text-pc-blue hover:underline">
+            <Link href="/" className="text-sm text-accent hover:underline">
               ← Back to home
             </Link>
           </p>
