@@ -84,6 +84,12 @@ function DesktopProcess() {
         });
       }, container);
 
+      if (cancelled) {
+        ctx.revert();
+        ctx = undefined;
+        return;
+      }
+
       ScrollTrigger.refresh();
     };
 
@@ -92,6 +98,7 @@ function DesktopProcess() {
     return () => {
       cancelled = true;
       ctx?.revert();
+      ctx = undefined;
     };
   }, [reduced]);
 

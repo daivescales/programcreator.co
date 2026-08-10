@@ -131,7 +131,7 @@
   }
 
   body {
-    @apply bg-navy-800 font-sans text-pc-text antialiased;
+    @apply overflow-x-hidden bg-navy-800 font-sans text-pc-text antialiased;
   }
 
   body.has-custom-cursor,

@@ -75,6 +75,11 @@ export default function StickyStack({
           },
         });
       }, container);
+
+      if (cancelled) {
+        ctx.revert();
+        ctx = undefined;
+      }
     };
 
     void setup();
@@ -82,6 +87,7 @@ export default function StickyStack({
     return () => {
       cancelled = true;
       ctx?.revert();
+      ctx = undefined;
     };
   }, [reduced, steps, pinDuration, onProgress]);
 

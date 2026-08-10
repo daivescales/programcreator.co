@@ -236,7 +236,7 @@ export default function ApplicationForm() {
   const source = useWatch({ control, name: "source" });
 
   useEffect(() => {
-    setValue("startedAt", Date.now());
+    let restoredStartedAt: number | undefined;
 
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -247,13 +247,22 @@ export default function ApplicationForm() {
           laneChoiceId?: string | null;
         };
         if (draft.values) {
-          const { startedAt: _s, company_website: _h, ...rest } = draft.values;
-          void _s;
+          const { company_website: _h, ...rest } = draft.values;
           void _h;
           for (const [key, val] of Object.entries(rest)) {
+            if (key === "startedAt") continue;
             setValue(key as FieldPath<FormValues>, val as never, {
               shouldDirty: false,
             });
+          }
+          // Keep original start time across draft restores so a late-step
+          // refresh + quick submit isn't treated as bot spam (fake OK).
+          if (
+            typeof draft.values.startedAt === "number" &&
+            Number.isFinite(draft.values.startedAt) &&
+            draft.values.startedAt > 0
+          ) {
+            restoredStartedAt = draft.values.startedAt;
           }
         }
         if (typeof draft.step === "number") {
@@ -264,6 +273,8 @@ export default function ApplicationForm() {
     } catch {
       // ignore corrupt draft
     }
+
+    setValue("startedAt", restoredStartedAt ?? Date.now());
 
     const params = new URLSearchParams(window.location.search);
     setValue("utm", {

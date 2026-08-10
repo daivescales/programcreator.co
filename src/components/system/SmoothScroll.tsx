@@ -61,6 +61,12 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
         respectReducedMotion: true,
       });
 
+      if (cancelled) {
+        lenis.destroy();
+        lenis = null;
+        return;
+      }
+
       lenisRef.current = lenis;
 
       lenis.on("scroll", ScrollTrigger.update);
