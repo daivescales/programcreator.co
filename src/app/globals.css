@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-inter);
+
+  --color-pc-ink: var(--pc-ink);
+  --color-pc-body: var(--pc-body);
+  --color-pc-muted: var(--pc-muted);
+  --color-pc-line: var(--pc-line);
+  --color-pc-surface: var(--pc-surface);
+  --color-pc-surface2: var(--pc-surface2);
+  --color-pc-blue-50: var(--pc-blue-50);
+  --color-pc-blue-100: var(--pc-blue-100);
+  --color-pc-blue-300: var(--pc-blue-300);
+  --color-pc-blue: var(--pc-blue);
+  --color-pc-blue-600: var(--pc-blue-600);
+  --color-pc-white: var(--pc-white);
+
+  --color-background: var(--pc-white);
+  --color-foreground: var(--pc-ink);
+  --color-card: var(--pc-white);
+  --color-card-foreground: var(--pc-ink);
+  --color-popover: var(--pc-white);
+  --color-popover-foreground: var(--pc-ink);
+  --color-primary: var(--pc-blue);
+  --color-primary-foreground: var(--pc-white);
+  --color-secondary: var(--pc-surface);
+  --color-secondary-foreground: var(--pc-ink);
+  --color-muted: var(--pc-surface);
+  --color-muted-foreground: var(--pc-muted);
+  --color-accent: var(--pc-blue-50);
+  --color-accent-foreground: var(--pc-ink);
+  --color-destructive: #dc2626;
+  --color-border: var(--pc-line);
+  --color-input: var(--pc-line);
+  --color-ring: var(--pc-blue);
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+}
+
+:root {
+  --pc-ink: #10202f;
+  --pc-body: #46586b;
+  --pc-muted: #7c8b9c;
+  --pc-line: #e4eaf1;
+  --pc-surface: #f6f9fc;
+  --pc-surface2: #edf3fa;
+  --pc-blue-50: #f2f7fe;
+  --pc-blue-100: #e0edfd;
+  --pc-blue-300: #9cc5f8;
+  --pc-blue: #3e8ef7;
+  --pc-blue-600: #2a72d8;
+  --pc-white: #ffffff;
+
+  --background: var(--pc-white);
+  --foreground: var(--pc-ink);
+  --card: var(--pc-white);
+  --card-foreground: var(--pc-ink);
+  --popover: var(--pc-white);
+  --popover-foreground: var(--pc-ink);
+  --primary: var(--pc-blue);
+  --primary-foreground: var(--pc-white);
+  --secondary: var(--pc-surface);
+  --secondary-foreground: var(--pc-ink);
+  --muted: var(--pc-surface);
+  --muted-foreground: var(--pc-muted);
+  --accent: var(--pc-blue-50);
+  --accent-foreground: var(--pc-ink);
+  --destructive: #dc2626;
+  --border: var(--pc-line);
+  --input: var(--pc-line);
+  --ring: var(--pc-blue);
+  --radius: 0.625rem;
+
+  --shadow-soft: 0 1px 2px rgba(16, 32, 47, 0.04);
+  --shadow-cta: 0 8px 30px rgba(62, 142, 247, 0.1);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-pc-white font-sans text-pc-body antialiased;
+  }
+
+  *:focus {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--pc-blue);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--pc-blue-100);
+    color: var(--pc-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

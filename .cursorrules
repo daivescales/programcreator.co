@@ -1,0 +1,33 @@
+# ProgramCreator — Cursor Rules
+
+## Business
+- Brand: ProgramCreator | Founder: Daive (@daivescales) | Positioning: "Creator Product Scaling"
+- Lane A (Creators/digital): build digital products or convert store pages. Payment: REVENUE SPLIT, no upfront. Lead with this trust hook.
+- Lane B (Physical brands): rebuild storefronts, social→site. Payment: MONTHLY RETAINER.
+- Same discipline both lanes: turn attention into a product people buy. Payment model is the only structural difference.
+- Audience: smart 22–35 creator/founder, skeptical of agency fluff. Inbound from Daive's socials.
+
+## Voice
+Confident, plain-spoken, short sentences, specific. Never: unlock/elevate/synergy/revolutionize/"in today's fast-paced world"/"we're passionate about". No exclamation marks. No emoji in UI.
+
+## Visual
+Clean, bright, premium, whitespace. White base, light blue accent, cool grey. Linear/Vercel/Stripe restraint — not loud marketing.
+Tokens (CSS vars + Tailwind): --pc-ink #10202F, --pc-body #46586B, --pc-muted #7C8B9C, --pc-line #E4EAF1, --pc-surface #F6F9FC, --pc-surface2 #EDF3FA, --pc-blue-50 #F2F7FE, --pc-blue-100 #E0EDFD, --pc-blue-300 #9CC5F8, --pc-blue #3E8EF7, --pc-blue-600 #2A72D8, --pc-white #FFFFFF.
+Type: Inter 400/500/600/700. Headings tracking -0.02em to -0.03em. Radius: 12px cards, 10px buttons, 999px pills.
+Shadows only: `0 1px 2px rgba(16,32,47,.04)` and CTA `0 8px 30px rgba(62,142,247,.10)`. Borders via --pc-line. Sections py-24 md:py-32. Container max-w-[1180px] px-6.
+No purple, dark mode, glassmorphism, heavy shadows, gradients-as-decoration.
+
+## Motion
+Framer Motion: fade + 16px rise, 0.5s, ease [0.16,1,0.3,1], staggerChildren 0.06, once on viewport (-80px margin). Respect prefers-reduced-motion. No parallax/carousels/bounce.
+
+## Site map & funnel
+Routes: / · /apply · /book · /privacy · /terms
+Every CTA → /apply (never Cal.com directly). Label: "Apply to work with me". Ghost: "See how it works".
+Funnel: /apply → Supabase + Google Sheet + Resend emails → redirect /book (Cal.com embed).
+
+## Tech
+Next.js 15 App Router, TS strict, Tailwind, shadcn/ui, Framer Motion, lucide-react only.
+Server Components default; "use client" only when needed.
+Config in `src/lib/site-config.ts` — no hardcoded brand strings in components.
+Real copy only. No stock smiling business photos — abstract UI/SVG/CSS instead.
+Mobile-first, AA contrast, focus-visible rings in --pc-blue, labels on inputs.

@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ProgramCreator
 
-## Getting Started
+Production landing site + application funnel for **ProgramCreator** — Creator Product Scaling by Daive (`@daivescales`).
 
-First, run the development server:
+Creators and digital brands work on a **revenue split** (no upfront). Physical product brands work on a **monthly retainer**. Every CTA goes to `/apply` → leads land in Supabase, Google Sheets, and email → applicant books via Cal.com on `/book`.
+
+## Stack
+
+- Next.js 15 (App Router, TypeScript)
+- Tailwind CSS + shadcn/ui
+- Framer Motion
+- Supabase (`leads` table)
+- Google Sheets API
+- Resend
+- Cal.com embed (`@calcom/embed-react`)
+
+## Routes
+
+| Path | Purpose |
+|------|---------|
+| `/` | Landing page |
+| `/apply` | 13-step application (noindex) |
+| `/book` | Cal.com booking after apply (noindex) |
+| `/privacy` | Privacy |
+| `/terms` | Terms |
+
+## Local setup
 
 ```bash
+npm install
+cp .env.local.example .env.local
+# fill env vars (see Setup below)
+npm run check-env
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Supabase
 
-## Learn More
+1. Create a project at [supabase.com](https://supabase.com).
+2. Project Settings → API: copy **Project URL**, **anon key**, and **service role key**.
+3. SQL Editor → paste and run `supabase/schema.sql` (creates `leads`, indexes, RLS insert-only for anon).
+4. Set:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` (server only — never expose to the client)
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Google Sheets
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. [Google Cloud Console](https://console.cloud.google.com/) → create a project (or pick one).
+2. Enable **Google Sheets API**.
+3. Create a **service account** → download JSON key.
+4. Create a Google Sheet with a tab named exactly **`Leads`**.
+5. Share that sheet with the service account email as **Editor**.
+6. Set:
+   - `GOOGLE_SERVICE_ACCOUNT_EMAIL` = `client_email` from the JSON
+   - `GOOGLE_PRIVATE_KEY` = `private_key` from the JSON (keep `\n` escapes; wrap in quotes)
+   - `GOOGLE_SHEET_ID` = the ID from the sheet URL (`/d/<THIS_ID>/edit`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Sheets writes fail soft — a Sheets outage will not block a lead (Supabase is the hard dependency).
 
-## Deploy on Vercel
+### 3. Resend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Create an API key at [resend.com](https://resend.com).
+2. Verify your sending domain before production.
+3. Set:
+   - `RESEND_API_KEY`
+   - `LEAD_NOTIFY_EMAIL` (inbox that receives new-lead notifications, e.g. `hello@programcreator.com`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Emails fail soft.
+
+### 4. Cal.com
+
+1. Create event type: **ProgramCreator Brand Audit Call**, 20 min, video, with buffer.
+2. Copy the link slug (e.g. `daivescales/discovery`).
+3. Set `NEXT_PUBLIC_CAL_LINK=daivescales/discovery`
+4. Also update `calLink` in `src/lib/site-config.ts` if you change the default.
+
+### 5. Site URL
+
+Set `NEXT_PUBLIC_SITE_URL=https://programcreator.com` (used for metadata, sitemap, OG).
+
+## Environment variables
+
+See `.env.local.example`. Required:
+
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+GOOGLE_SERVICE_ACCOUNT_EMAIL
+GOOGLE_PRIVATE_KEY
+GOOGLE_SHEET_ID
+RESEND_API_KEY
+LEAD_NOTIFY_EMAIL
+NEXT_PUBLIC_CAL_LINK
+NEXT_PUBLIC_SITE_URL
+```
+
+## Before launch — content swaps
+
+1. **Results** — replace placeholders in `src/components/sections/Results.tsx` (or remove the section until you have real outcomes). Look for `TODO: replace with real client results`.
+2. **Photo** — drop Daive’s photo into `src/components/sections/About.tsx` (`TODO: replace with photo of Daive`).
+3. **Socials + Cal** — fill `src/lib/site-config.ts` (`socials`, `calLink`).
+4. **Bio link** — point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
+
+## Scripts
+
+```bash
+npm run dev          # local dev (Turbopack)
+npm run check-env    # fail if required env vars are missing
+npm run build        # production build (runs check-env first)
+npm run start        # serve production build
+npm run lint         # ESLint
+```
+
+## Deploy (Vercel via GitHub)
+
+1. Push this repo to GitHub.
+2. Import the repo in Vercel (Framework: Next.js).
+3. Paste all env vars listed above into Vercel → Project → Settings → Environment Variables.
+4. Deploy (Vercel builds from GitHub on every push to `main`).
+5. Add custom domain `programcreator.com` (+ `www` redirect).
+6. Verify the Resend sending domain (SPF/DKIM/DMARC).
+7. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
+
+Do **not** use `vercel --prod` as the primary path — push to GitHub and let Vercel auto-deploy.
+
+## Design tokens
+
+Defined in `src/app/globals.css` as `--pc-*` and wired into Tailwind (`bg-pc-surface`, `text-pc-ink`, `bg-pc-blue`, etc.). Light theme only — see `.cursorrules` for voice, funnel, and visual rules.
