@@ -1,7 +1,8 @@
 /**
- * Fails loudly on Vercel/CI if required env vars are missing.
- * Locally: warns so `next build` can still compile while secrets are incomplete.
- * Force strict: FORCE_ENV_CHECK=1
+ * Warns (or fails if FORCE_ENV_CHECK=1) when required env vars are missing.
+ * Does not block Vercel deploys by default — the marketing site can ship while
+ * Supabase / Sheets / Resend are still being configured. Lead capture will fail
+ * at runtime until those vars are set.
  */
 
 import { existsSync, readFileSync } from "fs";
@@ -46,7 +47,7 @@ function loadEnvFile(filename: string) {
 loadEnvFile(".env");
 loadEnvFile(".env.local");
 
-// Back-compat: older deploys used NEXT_PUBLIC_CALCOM_LINK
+// Back-compat with older Vercel / local configs
 if (!process.env.NEXT_PUBLIC_CAL_LINK && process.env.NEXT_PUBLIC_CALCOM_LINK) {
   process.env.NEXT_PUBLIC_CAL_LINK = process.env.NEXT_PUBLIC_CALCOM_LINK;
 }
@@ -56,20 +57,17 @@ const missing = REQUIRED.filter((key) => {
   return !value || value.trim().length === 0;
 });
 
-const strict =
-  process.env.CI === "1" ||
-  process.env.VERCEL === "1" ||
-  process.env.FORCE_ENV_CHECK === "1";
+const strict = process.env.FORCE_ENV_CHECK === "1";
 
 if (missing.length > 0) {
   const lines = [
     "",
-    "Missing required environment variables:",
+    "Missing environment variables for lead capture:",
     "",
     ...missing.map((key) => `  • ${key}`),
     "",
-    "Copy .env.local.example → .env.local and fill every value.",
-    "See README.md → Setup for where to get each one.",
+    "Add these in Vercel → Project → Settings → Environment Variables",
+    "(or .env.local locally). See README.md → Setup.",
     "",
   ];
   if (strict) {
@@ -78,7 +76,7 @@ if (missing.length > 0) {
   }
   console.warn(lines.join("\n"));
   console.warn(
-    "Continuing local build (set FORCE_ENV_CHECK=1 to fail). Lead capture will not work until these are set.\n"
+    "Build continuing. /api/lead will not work until these are set.\n"
   );
 } else {
   console.log("All required environment variables are set.");

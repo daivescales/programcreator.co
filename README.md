@@ -111,8 +111,8 @@ NEXT_PUBLIC_SITE_URL
 
 ```bash
 npm run dev          # local dev (Turbopack)
-npm run check-env    # fail if required env vars are missing
-npm run build        # production build (runs check-env first)
+npm run check-env    # warn if env vars missing (FORCE_ENV_CHECK=1 to fail)
+npm run build        # production build
 npm run start        # serve production build
 npm run lint         # ESLint
 ```
