@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { appendLeadToSheet } from "@/lib/google-sheets";
-import { sendApplicantConfirmation, sendLeadNotification } from "@/lib/email";
+import {
+  sendApplicantConfirmation,
+  sendLeadNotification,
+  sendNotQualifiedNotice,
+} from "@/lib/email";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { leadSchema, type LeadRecord } from "@/lib/validation";
 
@@ -69,18 +73,20 @@ export async function POST(req: NextRequest) {
 
     const data = parsed.data;
 
-    // Honeypot: bots fill hidden fields
     if (data.company_website && data.company_website.trim().length > 0) {
       return fakeOk();
     }
 
-    // Too-fast submissions
     if (
       typeof data.startedAt !== "number" ||
       Date.now() - data.startedAt < MIN_FILL_MS
     ) {
       return fakeOk();
     }
+
+    const qualified =
+      data.qualified !== false && data.investment_range !== "Nothing right now";
+    const status = qualified ? "new" : "not_qualified";
 
     const lead: LeadRecord = {
       full_name: data.full_name,
@@ -91,8 +97,10 @@ export async function POST(req: NextRequest) {
       follower_range: data.follower_range,
       has_product: data.has_product,
       biggest_bottleneck: data.biggest_bottleneck,
+      investment_range: data.investment_range,
       ready_to_start: data.ready_to_start,
-      terms_ack: data.terms_ack,
+      terms_ack: data.terms_ack ?? false,
+      qualified,
       utm: data.utm,
     };
 
@@ -108,9 +116,11 @@ export async function POST(req: NextRequest) {
         follower_range: lead.follower_range,
         has_product: lead.has_product,
         biggest_bottleneck: lead.biggest_bottleneck,
-        ready_to_start: lead.ready_to_start,
-        terms_ack: lead.terms_ack,
-        status: "new",
+        investment_range: lead.investment_range,
+        ready_to_start: lead.ready_to_start ?? null,
+        terms_ack: lead.terms_ack ?? false,
+        qualified,
+        status,
         utm: lead.utm,
       })
       .select("id, created_at")
@@ -128,12 +138,26 @@ export async function POST(req: NextRequest) {
       ...lead,
       id: inserted.id as string,
       created_at: inserted.created_at as string,
+      status,
     };
 
     const results = await Promise.allSettled([
-      appendLeadToSheet(leadWithMeta),
+      (async () => {
+        const row = await appendLeadToSheet(leadWithMeta);
+        if (row != null) {
+          const { error: updateError } = await supabase
+            .from("leads")
+            .update({ sheet_row: row })
+            .eq("id", inserted.id);
+          if (updateError) {
+            console.error("[api/lead] sheet_row update failed", updateError);
+          }
+        }
+      })(),
       sendLeadNotification(leadWithMeta),
-      sendApplicantConfirmation(lead),
+      qualified
+        ? sendApplicantConfirmation(lead)
+        : sendNotQualifiedNotice(lead),
     ]);
 
     for (const result of results) {

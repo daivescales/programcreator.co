@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { HandUnderline, MaskText } from "@/components/motion";
+import { HandUnderline } from "@/components/marks";
+import { MaskText } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
 import {
@@ -37,7 +38,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="text-[12px] uppercase tracking-[0.16em] text-pc-muted transition-colors duration-[160ms] hover:text-pc-white focus-visible:text-pc-white"
+      className="text-[13px] text-pc-muted transition-colors duration-[160ms] hover:text-pc-white focus-visible:text-pc-white"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
@@ -91,18 +92,20 @@ export default function Navbar() {
     };
   }, [open]);
 
+  const activeSocials = socials.filter((s) => s.href);
+
   return (
     <>
       <header
         className={cn(
           "fixed top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color] duration-[250ms]",
           scrolled
-            ? "border-b border-pc-line bg-navy-800/80 backdrop-blur-xl"
+            ? "border-b border-pc-line bg-navy-800/85 backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         )}
       >
         <Container>
-          <nav className="flex h-[72px] items-center justify-between">
+          <nav className="flex h-[76px] items-center justify-between">
             <Link
               href="/"
               className="text-[16px] font-semibold tracking-[-0.02em] text-pc-white"
@@ -120,7 +123,7 @@ export default function Navbar() {
               <CTAButton
                 href="/apply"
                 size="sm"
-                className="h-10 rounded-none px-6 text-[12px] uppercase tracking-[0.14em]"
+                className="h-10 rounded-control px-5 text-[13px]"
               >
                 Apply
               </CTAButton>
@@ -155,18 +158,12 @@ export default function Navbar() {
         {open && (
           <motion.div
             className="fixed inset-0 z-40 flex flex-col bg-navy-900 md:hidden"
-            initial={
-              reduced ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }
-            }
-            animate={
-              reduced ? { opacity: 1 } : { clipPath: "inset(0 0 0% 0)" }
-            }
-            exit={
-              reduced ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }
-            }
-            transition={{ duration: 0.5, ease: EASE_IN }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE_IN }}
           >
-            <div className="flex h-[72px] items-center justify-between px-6">
+            <div className="flex h-[76px] items-center justify-between px-6">
               <Link
                 href="/"
                 className="text-[16px] font-semibold tracking-[-0.02em] text-pc-white"
@@ -196,8 +193,8 @@ export default function Navbar() {
                   >
                     <MaskText
                       as="span"
-                      delay={0.06 * index}
-                      className="block text-[clamp(1.75rem,8vw,3rem)] font-semibold tracking-[-0.035em]"
+                      delay={reduced ? 0 : 0.06 * index}
+                      className="block text-[clamp(1.75rem,7vw,2.75rem)] font-semibold tracking-[-0.035em]"
                     >
                       {link.label}
                     </MaskText>
@@ -206,23 +203,30 @@ export default function Navbar() {
               </div>
 
               <div className="mt-auto space-y-6">
-                <div className="flex items-center gap-3">
-                  {socials.map((social) => {
-                    const Icon = social.icon;
-                    return (
-                      <a
-                        key={social.label}
-                        href={social.href || "#"}
-                        aria-label={social.label}
-                        className="flex h-10 w-10 items-center justify-center border border-pc-line text-pc-muted transition-colors duration-[160ms] hover:border-accent hover:text-accent"
-                      >
-                        <Icon size={18} />
-                      </a>
-                    );
-                  })}
-                </div>
+                {activeSocials.length > 0 && (
+                  <div className="flex items-center gap-3">
+                    {activeSocials.map((social) => {
+                      const Icon = social.icon;
+                      return (
+                        <a
+                          key={social.label}
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={social.label}
+                          className="flex h-10 w-10 items-center justify-center rounded-control text-pc-muted transition-colors duration-[160ms] hover:text-accent"
+                        >
+                          <Icon size={18} />
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
                 <div onClick={() => setOpen(false)}>
-                  <CTAButton href="/apply" className="w-full rounded-none">
+                  <CTAButton
+                    href="/apply"
+                    className="w-full rounded-control"
+                  >
                     Apply to work with me
                   </CTAButton>
                 </div>

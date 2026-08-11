@@ -10,6 +10,14 @@ export const FOLLOWER_RANGE_OPTIONS = [
   "100k+",
 ] as const;
 
+export const INVESTMENT_RANGE_OPTIONS = [
+  "Nothing right now",
+  "Under $1,000",
+  "$1,000 to $3,000",
+  "$3,000 to $10,000",
+  "$10,000 or more",
+] as const;
+
 export const READY_TO_START_OPTIONS = [
   "Immediately",
   "Within a month",
@@ -54,16 +62,12 @@ export const leadSchema = z
       .string()
       .trim()
       .min(20, "Give me a bit more. At least a couple of sentences."),
-    ready_to_start: z.enum(READY_TO_START_OPTIONS, {
-      error: "How soon do you want to start?",
+    investment_range: z.enum(INVESTMENT_RANGE_OPTIONS, {
+      error: "Pick what you can put behind a launch.",
     }),
-    terms_ack: z
-      .boolean({
-        error: "Check the box so we're aligned before you send this.",
-      })
-      .refine((val) => val === true, {
-        message: "Check the box so we're aligned before you send this.",
-      }),
+    ready_to_start: z.enum(READY_TO_START_OPTIONS).optional(),
+    terms_ack: z.boolean().optional().default(false),
+    qualified: z.boolean().optional().default(true),
     utm: z
       .object({
         utm_source: optionalText,
@@ -95,6 +99,32 @@ export const leadSchema = z
         path: ["socials", "instagram"],
         message: "Drop at least one handle or a website so I can find you.",
       });
+    }
+
+    const qualified = data.qualified !== false;
+
+    if (qualified) {
+      if (!data.ready_to_start) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["ready_to_start"],
+          message: "How soon do you want to start?",
+        });
+      }
+      if (data.terms_ack !== true) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["terms_ack"],
+          message: "Check the box so we're aligned before you send this.",
+        });
+      }
+      if (data.investment_range === "Nothing right now") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["investment_range"],
+          message: "Pick what you can put behind a launch.",
+        });
+      }
     }
   });
 

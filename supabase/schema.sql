@@ -1,12 +1,14 @@
--- ProgramCreator leads schema (v3)
+-- ProgramCreator leads schema (v5)
 -- Run this in the Supabase SQL Editor.
 --
--- If you already have an older `leads` table from v1/v2, drop and recreate:
+-- If you already have an older `leads` table, drop and recreate:
 --   drop table if exists public.leads cascade;
 
 create extension if not exists "pgcrypto";
 
-create table if not exists public.leads (
+drop table if exists public.leads cascade;
+
+create table public.leads (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   full_name text not null,
@@ -17,17 +19,31 @@ create table if not exists public.leads (
   follower_range text,
   has_product text check (has_product is null or has_product in ('yes', 'no', 'sort_of')),
   biggest_bottleneck text,
+  investment_range text,
   ready_to_start text,
   terms_ack boolean,
+  qualified boolean not null default true,
   status text not null default 'new' check (
-    status in ('new', 'reviewing', 'contacted', 'booked', 'won', 'passed')
+    status in (
+      'new',
+      'not_qualified',
+      'reviewing',
+      'contacted',
+      'booked',
+      'won',
+      'passed'
+    )
   ),
+  booked_at timestamptz,
+  booking_ref text,
+  sheet_row int,
   notes text,
   utm jsonb
 );
 
-create index if not exists leads_created_at_desc_idx on public.leads (created_at desc);
-create index if not exists leads_email_idx on public.leads (email);
+create index leads_created_at_desc_idx on public.leads (created_at desc);
+create index leads_email_idx on public.leads (email);
+create index leads_status_idx on public.leads (status);
 
 alter table public.leads enable row level security;
 

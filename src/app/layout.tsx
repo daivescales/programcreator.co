@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Inter_Tight, Instrument_Serif } from "next/font/google";
+import { Caveat, Inter_Tight } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
-import Grain from "@/components/system/Grain";
 import ScrollProgress from "@/components/system/ScrollProgress";
 import { Toaster } from "@/components/ui/sonner";
 import { faqItems } from "@/content/faq";
-import { site } from "@/lib/site-config";
+import { contactEmail, site } from "@/lib/site-config";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -16,19 +15,19 @@ const interTight = Inter_Tight({
   variable: "--font-sans",
 });
 
-const instrumentSerif = Instrument_Serif({
+const caveat = Caveat({
   subsets: ["latin"],
-  weight: "400",
-  style: "italic",
+  weight: ["400", "600"],
   display: "swap",
   preload: true,
-  variable: "--font-serif",
+  variable: "--font-hand",
 });
 
 const description =
   "I build digital products for creators and rebuild storefronts for physical brands, then scale them through the audience you already have. Creators pay a revenue split. Product brands pay a retainer.";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || site.url;
+const email = contactEmail();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -77,7 +76,7 @@ const jsonLd = [
       sameAs: [`https://x.com/${site.handle.replace("@", "")}`],
     },
     areaServed: "Worldwide",
-    email: site.email,
+    ...(email ? { email } : {}),
   },
   {
     "@context": "https://schema.org",
@@ -101,14 +100,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${interTight.variable} ${instrumentSerif.variable}`}
+      className={`${interTight.variable} ${caveat.variable}`}
     >
-      <body className="font-sans antialiased bg-navy-800 text-pc-text">
+      <body className="bg-navy-800 font-sans text-pc-text antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Grain />
         <ScrollProgress />
         <SiteChrome>{children}</SiteChrome>
         <Toaster theme="dark" position="top-center" richColors />

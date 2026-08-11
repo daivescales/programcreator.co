@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import HandUnderline from "@/components/motion/HandUnderline";
+import { HandUnderline } from "@/components/marks";
 import {
   EASE_IN,
   VIEWPORT_ONCE,
@@ -28,7 +28,7 @@ type WordToken = {
 
 /**
  * Markup:
- * - *word* → Instrument Serif italic (--pc-accent-2 via .serif-em)
+ * - *word* → Caveat handwriting (.hand)
  * - _word_ → HandUnderline wrapper
  */
 function parseMarkup(text: string): WordToken[] {
@@ -95,7 +95,7 @@ export default function MaskText({
           <motion.span
             className={cn(
               "inline-block will-change-transform",
-              token.emphasis && "serif-em"
+              token.emphasis && "hand"
             )}
             initial={false}
             animate={

@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
+import Annotation from "@/components/ui/Annotation";
 import Heading from "@/components/ui/Heading";
-import CTAButton from "@/components/ui/CTAButton";
-import Spine from "@/components/ui/Spine";
+import Section from "@/components/ui/Section";
+import SectionLabel from "@/components/ui/SectionLabel";
 import { faqItems } from "@/content/faq";
 import {
   EASE_IN,
@@ -38,13 +39,10 @@ export default function FAQ() {
   const reduced = usePrefersReducedMotion();
 
   return (
-    <Spine
-      id="faq"
-      number="04"
-      label="QUESTIONS"
-      className="border-t border-pc-line py-28 md:py-36"
-    >
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
+    <Section id="faq" tone="750" className="scroll-mt-section">
+      <SectionLabel number="04" label="Questions" />
+
+      <div className="mt-6 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-40">
             <Heading
@@ -53,44 +51,35 @@ export default function FAQ() {
               underlineVariant={3}
               className="max-w-[12ch]"
             />
-            <p className="mt-5 max-w-[28ch] text-[15px] leading-[1.6] text-pc-muted">
-              If your question is not here, ask me on the call.
-            </p>
-
-            <div className="mt-10 border-y border-pc-line py-6">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
-                Still deciding
-              </p>
-              <p className="mt-3 max-w-[32ch] text-[15px] leading-[1.6] text-pc-text">
-                The call is free and takes twenty minutes. You leave with a
-                clear yes or no.
-              </p>
-              <div className="mt-5">
-                <CTAButton href="/apply" variant="ghost" size="sm">
-                  Apply to work with me
-                </CTAButton>
-              </div>
+            <div className="mt-5">
+              <Annotation className="text-[20px]">
+                ask me the rest on the call
+              </Annotation>
             </div>
           </div>
         </div>
 
         <div className="lg:col-span-7 lg:col-start-6">
-          <div className="border-t border-pc-line">
+          <div>
             {faqItems.map((item, index) => {
               const isOpen = open === index;
               const number = String(index + 1).padStart(2, "0");
+              const isFirst = index === 0;
+              const isLast = index === faqItems.length - 1;
 
               return (
-                <div key={item.question} className="border-b border-pc-line">
+                <div
+                  key={item.question}
+                  className={cn(
+                    !isFirst && "border-t border-pc-line",
+                    isLast && "border-b-0"
+                  )}
+                >
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     onClick={() => setOpen(isOpen ? null : index)}
-                    className={cn(
-                      "group grid w-full grid-cols-[auto_1fr_auto] items-center gap-4 py-7 text-left transition-colors duration-[200ms]",
-                      "hover:bg-white/[0.02]",
-                      isOpen && "bg-white/[0.02]"
-                    )}
+                    className="group grid w-full grid-cols-[auto_1fr_auto] items-center gap-4 py-8 text-left"
                   >
                     <span
                       className={cn(
@@ -102,10 +91,10 @@ export default function FAQ() {
                     </span>
                     <span
                       className={cn(
-                        "text-[clamp(1rem,1.5vw,1.2rem)] font-medium tracking-[-0.02em] transition-[color,transform] duration-[300ms]",
+                        "text-[clamp(1rem,1.4vw,1.15rem)] font-medium tracking-[-0.02em] transition-[color,transform] duration-[300ms]",
                         isOpen
                           ? "text-accent"
-                          : "text-pc-white group-hover:translate-x-1.5"
+                          : "text-pc-white group-hover:translate-x-1"
                       )}
                     >
                       {item.question}
@@ -139,7 +128,7 @@ export default function FAQ() {
                   >
                     <p
                       className={cn(
-                        "max-w-[54ch] pb-8 text-[17px] leading-[1.7] text-pc-text transition-transform duration-[300ms]",
+                        "max-w-[54ch] pb-10 text-[17px] leading-[1.75] text-pc-text transition-transform duration-[300ms]",
                         isOpen ? "translate-y-0" : "translate-y-2"
                       )}
                     >
@@ -152,6 +141,6 @@ export default function FAQ() {
           </div>
         </div>
       </div>
-    </Spine>
+    </Section>
   );
 }

@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import CalEmbed from "@/components/CalEmbed";
+import Annotation from "@/components/ui/Annotation";
+import CalEmbed, {
+  type CalBookingSuccessPayload,
+} from "@/components/CalEmbed";
 import MaskText from "@/components/motion/MaskText";
 import Container from "@/components/ui/Container";
 import {
@@ -14,12 +17,20 @@ import {
 import { site } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
+const BOOKED_STORAGE_PREFIX = "pc_booked_";
+
+type ThankYouState = {
+  email: string;
+  bookedAt: string;
+  name?: string;
+};
+
 function SuccessCheck() {
   const reduced = usePrefersReducedMotion();
 
   return (
     <div
-      className="mb-6 flex h-14 w-14 items-center justify-center border border-accent"
+      className="mb-6 flex h-14 w-14 items-center justify-center rounded-panel border border-accent"
       aria-hidden
     >
       <svg
@@ -48,30 +59,112 @@ function SuccessCheck() {
   );
 }
 
-function ProgressRow() {
+function ProgressRow({ active }: { active: "book" | "done" }) {
   const steps = [
-    { n: "01", label: "Application", state: "complete" as const },
-    { n: "02", label: "Book your call", state: "active" as const },
-    { n: "03", label: "I build", state: "muted" as const },
+    {
+      label: "Application sent",
+      state: "complete" as const,
+    },
+    {
+      label: "Book your call",
+      state: active === "book" ? ("active" as const) : ("complete" as const),
+    },
+    {
+      label: "We build",
+      state: "muted" as const,
+    },
   ];
 
   return (
-    <ol className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-pc-line py-4">
-      {steps.map((s) => (
-        <li
-          key={s.n}
-          className={cn(
-            "flex items-center gap-2 text-[12px] uppercase tracking-[0.14em]",
-            s.state === "complete" && "text-accent",
-            s.state === "active" && "text-pc-white",
-            s.state === "muted" && "text-pc-muted"
-          )}
-        >
-          <span className="tabular-nums">{s.n}</span>
-          <span>{s.label}</span>
+    <ol className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] uppercase tracking-[0.14em]">
+      {steps.map((s, i) => (
+        <li key={s.label} className="flex items-center gap-3">
+          {i > 0 ? (
+            <span className="h-1 w-1 rounded-full bg-pc-muted/50" aria-hidden />
+          ) : null}
+          <span
+            className={cn(
+              s.state === "complete" && "text-accent",
+              s.state === "active" && "text-pc-white",
+              s.state === "muted" && "text-pc-muted"
+            )}
+          >
+            {s.label}
+          </span>
         </li>
       ))}
     </ol>
+  );
+}
+
+function formatLocal(iso: string): string {
+  try {
+    return new Date(iso).toLocaleString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function ThankYou({ state }: { state: ThankYouState }) {
+  const when = formatLocal(state.bookedAt);
+
+  return (
+    <div className="relative min-h-dvh bg-navy-800 py-32">
+      <Container className="relative z-[1] flex justify-center">
+        <div className="mx-auto max-w-[620px] text-center">
+          <div className="flex justify-center">
+            <SuccessCheck />
+          </div>
+          <MaskText
+            as="h1"
+            className="text-[clamp(2rem,4vw,3rem)] font-semibold tracking-[-0.035em] text-pc-white"
+          >
+            Thanks for applying.
+          </MaskText>
+          <div className="mt-3 flex justify-center">
+            <Annotation className="text-[22px]">see you soon</Annotation>
+          </div>
+          <p className="mt-8 text-[17px] leading-[1.65] text-pc-text">
+            Your call is booked for {when}. A calendar invite is on its way to{" "}
+            {state.email}.
+          </p>
+          <p className="mt-6 text-[17px] leading-[1.65] text-pc-text">
+            I read every application myself. If I think we are the right fit to
+            work together, you will get follow up emails from me before the call
+            with anything I need from you. If I do not think I am the right
+            person for your brand, I will tell you that on the call rather than
+            leave you guessing.
+          </p>
+          <div className="mt-10 rounded-panel bg-navy-750 px-6 py-6 text-left">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
+              Before we talk
+            </p>
+            <ul className="mt-4 space-y-3 text-[15px] leading-relaxed text-pc-text">
+              <li>Have your numbers to hand if you have them</li>
+              <li>Know roughly what you want to be selling</li>
+              <li>Think about what is currently costing you the most</li>
+            </ul>
+          </div>
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <Link
+              href="/"
+              className="text-sm text-pc-muted transition-colors hover:text-pc-white"
+            >
+              Back to the site
+            </Link>
+            <p className="text-sm text-pc-muted">{site.handle}</p>
+          </div>
+        </div>
+      </Container>
+    </div>
   );
 }
 
@@ -82,6 +175,72 @@ function BookContent() {
   const lane = params.get("lane") ?? undefined;
   const firstName = name?.trim().split(/\s+/)[0];
   const hasParams = Boolean(firstName || email);
+
+  const [thankYou, setThankYou] = useState<ThankYouState | null>(null);
+
+  useEffect(() => {
+    if (!email) return;
+    try {
+      const raw = sessionStorage.getItem(`${BOOKED_STORAGE_PREFIX}${email}`);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as ThankYouState;
+      if (parsed?.bookedAt && parsed?.email) {
+        setThankYou(parsed);
+      }
+    } catch {
+      // ignore
+    }
+  }, [email]);
+
+  const persistThankYou = useCallback((state: ThankYouState) => {
+    setThankYou(state);
+    try {
+      sessionStorage.setItem(
+        `${BOOKED_STORAGE_PREFIX}${state.email}`,
+        JSON.stringify(state)
+      );
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const onBookingSuccess = useCallback(
+    async (payload: CalBookingSuccessPayload) => {
+      const bookedEmail = payload.email || email;
+      const bookedAt = payload.bookedAt || new Date().toISOString();
+      if (!bookedEmail) return;
+
+      try {
+        await fetch("/api/booking", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: bookedEmail,
+            bookedAt,
+            bookingRef: payload.bookingRef,
+          }),
+        });
+      } catch (err) {
+        console.error("[book] booking POST failed", err);
+      }
+
+      persistThankYou({
+        email: bookedEmail,
+        bookedAt,
+        name: firstName,
+      });
+    },
+    [email, firstName, persistThankYou]
+  );
+
+  const stableSuccess = useMemo(
+    () => onBookingSuccess,
+    [onBookingSuccess]
+  );
+
+  if (thankYou) {
+    return <ThankYou state={thankYou} />;
+  }
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-navy-800 pb-20 pt-10 md:pt-14">
@@ -98,8 +257,8 @@ function BookContent() {
                 {firstName ? `You're in, ${firstName}.` : "You're in."}
               </MaskText>
               <p className="mt-3 text-base text-pc-text md:text-lg">
-                Application received. If you want, book your call now. Otherwise
-                I will be in touch once I have read it.
+                Application received. Book your call below and we will talk it
+                through.
               </p>
             </>
           ) : (
@@ -123,7 +282,7 @@ function BookContent() {
             </>
           )}
 
-          <ProgressRow />
+          <ProgressRow active="book" />
 
           {lane ? (
             <p className="mt-3 text-xs text-pc-muted">
@@ -134,11 +293,15 @@ function BookContent() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-          <div className="min-h-[560px] border border-pc-line bg-navy-700 p-2">
-            <CalEmbed name={name} email={email} />
+          <div className="min-h-[560px] rounded-panel bg-navy-700 p-2">
+            <CalEmbed
+              name={name}
+              email={email}
+              onBookingSuccess={stableSuccess}
+            />
           </div>
 
-          <aside className="h-fit border border-pc-line bg-navy-700 p-6">
+          <aside className="h-fit rounded-panel bg-navy-700 p-6">
             <h2 className="text-sm font-semibold tracking-tight text-pc-white">
               What to expect
             </h2>
@@ -161,7 +324,7 @@ export default function BookPage() {
     <Suspense
       fallback={
         <div className="flex min-h-dvh items-center justify-center bg-navy-800">
-          <div className="h-10 w-10 bg-navy-700" />
+          <div className="h-10 w-10 rounded-panel bg-navy-700" />
         </div>
       }
     >

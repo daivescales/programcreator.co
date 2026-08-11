@@ -1,6 +1,6 @@
 /**
  * Warns (or fails if FORCE_ENV_CHECK=1) when required env vars are missing.
- * Does not block Vercel deploys by default — the marketing site can ship while
+ * Does not block Vercel deploys by default. The marketing site can ship while
  * Supabase / Sheets / Resend are still being configured. Lead capture will fail
  * at runtime until those vars are set.
  */
@@ -20,6 +20,9 @@ const REQUIRED = [
   "NEXT_PUBLIC_CAL_LINK",
   "NEXT_PUBLIC_SITE_URL",
 ] as const;
+
+/** Warn locally if missing. Never hard-fail the build for this alone. */
+const OPTIONAL_WARN = ["CAL_WEBHOOK_SECRET"] as const;
 
 function loadEnvFile(filename: string) {
   const path = resolve(process.cwd(), filename);
@@ -57,6 +60,11 @@ const missing = REQUIRED.filter((key) => {
   return !value || value.trim().length === 0;
 });
 
+const missingOptional = OPTIONAL_WARN.filter((key) => {
+  const value = process.env[key];
+  return !value || value.trim().length === 0;
+});
+
 const strict = process.env.FORCE_ENV_CHECK === "1";
 
 if (missing.length > 0) {
@@ -80,4 +88,19 @@ if (missing.length > 0) {
   );
 } else {
   console.log("All required environment variables are set.");
+}
+
+if (missingOptional.length > 0) {
+  console.warn(
+    [
+      "",
+      "Optional (warn only, never hard-fail locally):",
+      "",
+      ...missingOptional.map((key) => `  • ${key}`),
+      "",
+      "Without CAL_WEBHOOK_SECRET, /api/cal-webhook rejects all requests.",
+      "Set it in Cal.com webhook settings and in Vercel / .env.local.",
+      "",
+    ].join("\n")
+  );
 }

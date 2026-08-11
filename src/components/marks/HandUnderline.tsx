@@ -8,8 +8,11 @@ import {
 import { cn } from "@/lib/utils";
 
 const PATHS = [
+  // Soft mid dip, right overshoot
   "M 2 14 C 18 16, 32 18, 48 15 C 62 12, 78 17, 98 11",
+  // Flatter start, deeper mid, lift off
   "M 1 12 C 22 11, 40 20, 58 16 C 72 13, 88 18, 100 10",
+  // Slightly wavy, longer overshoot
   "M 0 13 C 15 17, 35 11, 55 16 C 70 19, 85 12, 102 14",
 ] as const;
 
@@ -49,10 +52,10 @@ export default function HandUnderline({
       {children}
       <svg
         aria-hidden
-        className="pointer-events-none absolute left-0 top-[0.92em] h-[0.32em] w-[103%] overflow-visible"
+        className="pointer-events-none absolute left-0 top-[0.92em] h-[0.34em] w-[106%] overflow-visible"
         viewBox="0 0 100 24"
         preserveAspectRatio="none"
-        style={{ transform: "rotate(-0.6deg)" }}
+        style={{ transform: "rotate(-0.7deg)" }}
       >
         {reduced && !isHover ? (
           <path

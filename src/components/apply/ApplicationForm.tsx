@@ -21,24 +21,27 @@ import {
 } from "react-hook-form";
 import { toast } from "sonner";
 import MaskText from "@/components/motion/MaskText";
-import Signature from "@/components/ui/Signature";
+import Glow from "@/components/system/Glow";
 import {
   EASE_IN,
   EASE_OUT,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
+import { site } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import {
   FOLLOWER_RANGE_OPTIONS,
+  INVESTMENT_RANGE_OPTIONS,
   leadSchema,
   READY_TO_START_OPTIONS,
   type LeadInput,
 } from "@/lib/validation";
 
 const STORAGE_KEY = "pc_apply_draft";
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 11;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const AUTO_ADVANCE_MS = 280;
+const DQ_INVESTMENT = "Nothing right now";
 
 type FormValues = {
   full_name: string;
@@ -54,8 +57,10 @@ type FormValues = {
   follower_range: (typeof FOLLOWER_RANGE_OPTIONS)[number] | undefined;
   has_product: "yes" | "no" | "sort_of" | undefined;
   biggest_bottleneck: string;
+  investment_range: (typeof INVESTMENT_RANGE_OPTIONS)[number] | undefined;
   ready_to_start: (typeof READY_TO_START_OPTIONS)[number] | undefined;
   terms_ack: boolean;
+  qualified: boolean;
   utm: {
     utm_source?: string;
     utm_medium?: string;
@@ -75,8 +80,10 @@ const defaultValues: FormValues = {
   follower_range: undefined,
   has_product: undefined,
   biggest_bottleneck: "",
+  investment_range: undefined,
   ready_to_start: undefined,
   terms_ack: false,
+  qualified: true,
   utm: {
     utm_source: undefined,
     utm_medium: undefined,
@@ -120,8 +127,8 @@ const HAS_PRODUCT_OPTIONS: Choice[] = [
 const STAGES = [
   { id: "you", label: "YOU", start: 0, end: 1 },
   { id: "brand", label: "YOUR BRAND", start: 2, end: 4 },
-  { id: "status", label: "WHERE YOU'RE AT", start: 5, end: 7 },
-  { id: "work", label: "THE WORK", start: 8, end: 9 },
+  { id: "status", label: "WHERE YOU'RE AT", start: 5, end: 8 },
+  { id: "work", label: "THE WORK", start: 9, end: 10 },
 ] as const;
 
 const STEP_FIELDS: FieldPath<FormValues>[][] = [
@@ -133,6 +140,7 @@ const STEP_FIELDS: FieldPath<FormValues>[][] = [
   ["follower_range"],
   ["has_product"],
   ["biggest_bottleneck"],
+  ["investment_range"],
   ["ready_to_start"],
   ["terms_ack"],
 ];
@@ -261,7 +269,7 @@ function ChoiceRows({
                 : { duration: 0.3, delay: i * 0.05, ease: EASE_IN }
             }
             className={cn(
-              "group flex w-full items-center gap-4 border px-6 py-5 text-left transition-[border-color,background-color,transform] duration-[160ms]",
+              "group flex w-full items-center gap-4 rounded-control border px-6 py-5 text-left transition-[border-color,background-color,transform] duration-[160ms]",
               "hover:translate-x-1 hover:border-pc-line-2 hover:bg-white/[0.03]",
               selected
                 ? "border-accent bg-accent/[0.08]"
@@ -270,7 +278,7 @@ function ChoiceRows({
           >
             <span
               className={cn(
-                "flex h-6 w-6 shrink-0 items-center justify-center border text-[11px] font-medium tabular-nums",
+                "flex h-6 w-6 shrink-0 items-center justify-center rounded-control border text-[11px] font-medium tabular-nums",
                 selected
                   ? "border-accent text-accent"
                   : "border-pc-line text-pc-muted"
@@ -355,6 +363,8 @@ export default function ApplicationForm() {
   const [hydrated, setHydrated] = useState(false);
   const [laneChoiceId, setLaneChoiceId] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
+  const [disqualified, setDisqualified] = useState(false);
+  const dqPosted = useRef(false);
 
   const {
     register,
@@ -376,6 +386,7 @@ export default function ApplicationForm() {
   const lane = useWatch({ control, name: "lane" });
   const followerRange = useWatch({ control, name: "follower_range" });
   const hasProduct = useWatch({ control, name: "has_product" });
+  const investmentRange = useWatch({ control, name: "investment_range" });
   const readyToStart = useWatch({ control, name: "ready_to_start" });
 
   useEffect(() => {
@@ -388,6 +399,7 @@ export default function ApplicationForm() {
           step?: number;
           values?: Partial<FormValues>;
           laneChoiceId?: string | null;
+          disqualified?: boolean;
         };
         if (draft.values) {
           const { company_website: _h, ...rest } = draft.values;
@@ -398,8 +410,6 @@ export default function ApplicationForm() {
               shouldDirty: false,
             });
           }
-          // Keep original start time across draft restores so a late-step
-          // refresh + quick submit isn't treated as bot spam (fake OK).
           if (
             typeof draft.values.startedAt === "number" &&
             Number.isFinite(draft.values.startedAt) &&
@@ -412,6 +422,7 @@ export default function ApplicationForm() {
           setStep(Math.min(Math.max(draft.step, 0), TOTAL_STEPS - 1));
         }
         if (draft.laneChoiceId) setLaneChoiceId(draft.laneChoiceId);
+        if (draft.disqualified) setDisqualified(true);
       }
     } catch {
       // ignore corrupt draft
@@ -441,6 +452,7 @@ export default function ApplicationForm() {
             values: { ...values, company_website: "" },
             step,
             laneChoiceId,
+            disqualified,
           })
         );
       } catch {
@@ -454,7 +466,7 @@ export default function ApplicationForm() {
       persist(values as FormValues);
     });
     return () => sub.unsubscribe();
-  }, [watch, hydrated, step, laneChoiceId, getValues]);
+  }, [watch, hydrated, step, laneChoiceId, getValues, disqualified]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -463,14 +475,15 @@ export default function ApplicationForm() {
       const prev = raw ? JSON.parse(raw) : {};
       sessionStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ ...prev, step, laneChoiceId })
+        JSON.stringify({ ...prev, step, laneChoiceId, disqualified })
       );
     } catch {
       // ignore
     }
-  }, [step, laneChoiceId, hydrated]);
+  }, [step, laneChoiceId, hydrated, disqualified]);
 
   useEffect(() => {
+    if (disqualified) return;
     clearErrors();
     setShake(false);
     const t = setTimeout(() => {
@@ -480,7 +493,7 @@ export default function ApplicationForm() {
       el?.focus();
     }, 50);
     return () => clearTimeout(t);
-  }, [step, clearErrors]);
+  }, [step, clearErrors, disqualified]);
 
   useEffect(
     () => () => {
@@ -493,6 +506,56 @@ export default function ApplicationForm() {
     setShake(true);
     window.setTimeout(() => setShake(false), 400);
   }, []);
+
+  const postNotQualified = useCallback(
+    async (investment: (typeof INVESTMENT_RANGE_OPTIONS)[number]) => {
+      if (dqPosted.current) return;
+      dqPosted.current = true;
+      try {
+        const values = getValues();
+        const payload = leadSchema.parse({
+          ...values,
+          investment_range: investment,
+          qualified: false,
+          terms_ack: values.terms_ack ?? false,
+          ready_to_start: values.ready_to_start,
+        });
+        const res = await fetch("/api/lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = (await res.json()) as { ok?: boolean; error?: string };
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || "Could not submit. Try again.");
+        }
+        try {
+          sessionStorage.removeItem(STORAGE_KEY);
+        } catch {
+          // ignore
+        }
+      } catch (err) {
+        dqPosted.current = false;
+        toast.error(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Try again."
+        );
+      }
+    },
+    [getValues]
+  );
+
+  const enterDisqualified = useCallback(
+    (investment: FormValues["investment_range"]) => {
+      if (!investment) return;
+      setValue("investment_range", investment, { shouldValidate: false });
+      setValue("qualified", false);
+      setDisqualified(true);
+      void postNotQualified(investment);
+    },
+    [postNotQualified, setValue]
+  );
 
   const validateStep = useCallback(async () => {
     const fields = STEP_FIELDS[step];
@@ -543,7 +606,7 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (submitting) return;
+      if (submitting || disqualified) return;
       const target = e.target as HTMLElement | null;
       const tag = target?.tagName?.toLowerCase();
       if (tag === "textarea") return;
@@ -555,7 +618,8 @@ export default function ApplicationForm() {
         2: LANE_OPTIONS,
         5: FOLLOWER_RANGE_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
         6: HAS_PRODUCT_OPTIONS,
-        8: READY_TO_START_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
+        8: INVESTMENT_RANGE_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
+        9: READY_TO_START_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
       };
 
       const choices = choiceMap[step];
@@ -588,6 +652,20 @@ export default function ApplicationForm() {
               )
             );
           } else if (step === 8) {
+            if (choice.value === DQ_INVESTMENT) {
+              enterDisqualified(
+                choice.value as FormValues["investment_range"]
+              );
+            } else {
+              selectAndAdvance(() =>
+                setValue(
+                  "investment_range",
+                  choice.value as FormValues["investment_range"],
+                  { shouldValidate: true }
+                )
+              );
+            }
+          } else if (step === 9) {
             selectAndAdvance(() =>
               setValue(
                 "ready_to_start",
@@ -617,17 +695,22 @@ export default function ApplicationForm() {
   }, [
     step,
     submitting,
+    disqualified,
     selectAndAdvance,
     setValue,
     next,
     back,
     handleSubmit,
+    enterDisqualified,
   ]);
 
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
     try {
-      const payload: LeadInput = leadSchema.parse(values);
+      const payload: LeadInput = leadSchema.parse({
+        ...values,
+        qualified: true,
+      });
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -680,6 +763,7 @@ export default function ApplicationForm() {
     errors.follower_range?.message ||
     errors.has_product?.message ||
     errors.biggest_bottleneck?.message ||
+    errors.investment_range?.message ||
     errors.ready_to_start?.message ||
     errors.terms_ack?.message;
 
@@ -704,18 +788,15 @@ export default function ApplicationForm() {
       };
 
   const questionHeading =
-    "max-w-[20ch] text-[clamp(1.6rem,3.2vw,2.4rem)] font-semibold tracking-[-0.03em] text-pc-white";
+    "max-w-[20ch] text-[clamp(1.5rem,3vw,2.25rem)] font-semibold tracking-[-0.03em] text-pc-white";
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-navy-800 lg:flex-row">
-      {/* Mobile top bar */}
       <header className="sticky top-0 z-[3] border-b border-pc-line bg-navy-900 lg:hidden">
         <div className="flex h-16 items-center justify-between px-5">
           <Wordmark />
           <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-pc-muted">
-            <span className="hidden text-pc-text xs:inline sm:inline">
-              {currentStage.label}
-            </span>
+            <span className="text-pc-text">{currentStage.label}</span>
             <span className="tabular-nums text-pc-white">
               {step + 1} of {TOTAL_STEPS}
             </span>
@@ -725,7 +806,7 @@ export default function ApplicationForm() {
           <motion.div
             className="h-full origin-left bg-accent"
             initial={false}
-            animate={{ scaleX: progress }}
+            animate={{ scaleX: disqualified ? 1 : progress }}
             transition={
               reduceMotion
                 ? { duration: 0.15 }
@@ -736,15 +817,14 @@ export default function ApplicationForm() {
         </div>
       </header>
 
-      {/* Left panel */}
-      <aside className="relative hidden w-[38%] shrink-0 flex-col border-r border-pc-line bg-navy-900 p-10 lg:flex">
+      <aside className="relative hidden w-[36%] shrink-0 flex-col bg-navy-900 p-10 lg:sticky lg:top-0 lg:flex lg:h-dvh">
         <Wordmark className="text-base" />
 
         <div className="mt-16 flex-1">
-          <StageIndex step={step} />
+          <StageIndex step={disqualified ? 8 : step} />
         </div>
 
-        <div className="mt-auto border-t border-pc-line pt-8">
+        <div className="mt-auto pt-8">
           <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
             Why I ask all this
           </p>
@@ -752,14 +832,12 @@ export default function ApplicationForm() {
             I read every application myself. The more specific you are, the
             faster I can tell you whether I can help.
           </p>
-          <div className="mt-5">
-            <Signature height={24} />
-          </div>
         </div>
       </aside>
 
-      {/* Right panel */}
-      <div className="relative flex min-h-0 flex-1 flex-col bg-navy-800 lg:w-[62%]">
+      <div className="relative flex min-h-0 flex-1 flex-col bg-navy-800 lg:w-[64%]">
+        <Glow className="pointer-events-none absolute bottom-0 right-0 opacity-40" />
+
         <div
           className="relative z-[1] hidden h-0.5 w-full bg-pc-line lg:block"
           aria-hidden
@@ -767,7 +845,7 @@ export default function ApplicationForm() {
           <motion.div
             className="h-full origin-left bg-accent"
             initial={false}
-            animate={{ scaleX: progress }}
+            animate={{ scaleX: disqualified ? 1 : progress }}
             transition={
               reduceMotion
                 ? { duration: 0.15 }
@@ -777,11 +855,11 @@ export default function ApplicationForm() {
           />
         </div>
 
-        <div
-          className="sr-only"
-          aria-live="polite"
-          aria-atomic="true"
-        >{`Question ${step + 1} of ${TOTAL_STEPS}`}</div>
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+          {disqualified
+            ? "Application closed"
+            : `Question ${step + 1} of ${TOTAL_STEPS}`}
+        </div>
 
         <div className="relative z-[1] flex min-h-[calc(100dvh-4.125rem)] flex-1 flex-col px-5 py-8 sm:px-8 lg:min-h-0 lg:justify-center lg:px-12 lg:py-14 xl:px-20">
           <div className="mx-auto flex w-full max-w-[620px] flex-1 flex-col lg:mx-0 lg:flex-none">
@@ -801,7 +879,54 @@ export default function ApplicationForm() {
 
             <div className="relative flex-1 lg:flex-none" ref={focusRef}>
               <AnimatePresence mode="wait">
-                {!submitting ? (
+                {disqualified ? (
+                  <motion.div
+                    key="dq"
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    variants={variants}
+                    className="w-full"
+                  >
+                    <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-pc-muted">
+                      Application closed
+                    </p>
+                    <MaskText as="h2" className={questionHeading}>
+                      Not right now.
+                    </MaskText>
+                    <p className="mt-6 max-w-[48ch] text-[17px] leading-[1.65] text-pc-text">
+                      I am going to be straight with you. Every launch needs
+                      something behind it, even on a revenue split. Ads,
+                      tooling, product costs, setup. With nothing to put behind
+                      it there is no realistic way for me to move your numbers,
+                      so taking you on would waste both our time.
+                    </p>
+                    <p className="mt-4 max-w-[48ch] text-[17px] leading-[1.65] text-pc-text">
+                      That is a timing answer, not a permanent one. When you
+                      have something to work with, apply again and I will read
+                      it properly.
+                    </p>
+                    <div className="mt-10 flex flex-col gap-4">
+                      <Link
+                        href="/"
+                        className="inline-flex w-fit items-center text-sm text-pc-muted transition-colors hover:text-pc-white"
+                      >
+                        Back to the site
+                      </Link>
+                      <p className="text-sm text-pc-muted">
+                        Free material on{" "}
+                        <a
+                          href={`https://instagram.com/${site.handle.replace(/^@/, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent underline-offset-2 hover:underline"
+                        >
+                          {site.handle}
+                        </a>
+                      </p>
+                    </div>
+                  </motion.div>
+                ) : !submitting ? (
                   <motion.div
                     key={step}
                     initial="enter"
@@ -811,8 +936,9 @@ export default function ApplicationForm() {
                     onKeyDown={onContinueKey}
                     className="w-full"
                   >
-                    <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-accent">
-                      Question {stepLabel} of {String(TOTAL_STEPS).padStart(2, "0")}
+                    <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-accent">
+                      Question {stepLabel} of{" "}
+                      {String(TOTAL_STEPS).padStart(2, "0")}
                     </p>
 
                     {step === 0 && (
@@ -1033,7 +1159,10 @@ export default function ApplicationForm() {
                             className="absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
                           />
                           {errors.biggest_bottleneck?.message ? (
-                            <p className="mt-2 text-sm text-red-400" role="alert">
+                            <p
+                              className="mt-2 text-sm text-red-400"
+                              role="alert"
+                            >
                               {errors.biggest_bottleneck.message}
                             </p>
                           ) : null}
@@ -1042,6 +1171,47 @@ export default function ApplicationForm() {
                     )}
 
                     {step === 8 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          What can you put _behind_ this to get it launched?
+                        </MaskText>
+                        <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-pc-muted">
+                          This is not my fee. Creators still pay nothing upfront.
+                          This is what you can put behind the launch itself,
+                          things like ads, tooling, product costs and setup. It
+                          tells me what we are working with.
+                        </p>
+                        <div className="mt-8">
+                          <ChoiceRows
+                            options={INVESTMENT_RANGE_OPTIONS.map((v) => ({
+                              id: v,
+                              label: v,
+                              value: v,
+                            }))}
+                            value={investmentRange}
+                            error={errors.investment_range?.message}
+                            shake={shake}
+                            onSelect={(choice) => {
+                              if (choice.value === DQ_INVESTMENT) {
+                                enterDisqualified(
+                                  choice.value as FormValues["investment_range"]
+                                );
+                                return;
+                              }
+                              selectAndAdvance(() =>
+                                setValue(
+                                  "investment_range",
+                                  choice.value as FormValues["investment_range"],
+                                  { shouldValidate: true }
+                                )
+                              );
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 9 && (
                       <>
                         <MaskText as="h2" className={questionHeading}>
                           How soon do you want to start?
@@ -1070,7 +1240,7 @@ export default function ApplicationForm() {
                       </>
                     )}
 
-                    {step === 9 && (
+                    {step === 10 && (
                       <>
                         <MaskText as="h2" className={questionHeading}>
                           One thing before you _send_ this.
@@ -1090,7 +1260,7 @@ export default function ApplicationForm() {
                             name="terms_ack"
                             control={control}
                             render={({ field }) => (
-                              <label className="flex cursor-pointer items-start gap-3 border border-pc-line px-5 py-4 transition-colors hover:border-pc-line-2">
+                              <label className="flex cursor-pointer items-start gap-3 rounded-control border border-pc-line px-5 py-4 transition-colors hover:border-pc-line-2">
                                 <input
                                   type="checkbox"
                                   checked={field.value}
@@ -1116,7 +1286,10 @@ export default function ApplicationForm() {
                             )}
                           />
                           {errors.terms_ack?.message ? (
-                            <p className="mt-2 text-sm text-red-400" role="alert">
+                            <p
+                              className="mt-2 text-sm text-red-400"
+                              role="alert"
+                            >
                               {errors.terms_ack.message}
                             </p>
                           ) : null}
@@ -1153,7 +1326,7 @@ export default function ApplicationForm() {
               </AnimatePresence>
             </div>
 
-            {!submitting ? (
+            {!submitting && !disqualified ? (
               <div className="mt-10 border-t border-pc-line pt-6">
                 <div className="flex items-end justify-between gap-4">
                   <div>
@@ -1181,7 +1354,7 @@ export default function ApplicationForm() {
                           void handleSubmit(onSubmit)();
                         else void next();
                       }}
-                      className="inline-flex h-12 items-center justify-center bg-accent px-8 text-[15px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                      className="inline-flex h-12 items-center justify-center rounded-control bg-accent px-8 text-[15px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
                       {step === TOTAL_STEPS - 1
                         ? "Submit application"
@@ -1193,7 +1366,7 @@ export default function ApplicationForm() {
               </div>
             ) : null}
 
-            {stepError && !submitting ? (
+            {stepError && !submitting && !disqualified ? (
               <span className="sr-only" aria-live="assertive">
                 {stepError}
               </span>

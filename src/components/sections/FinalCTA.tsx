@@ -7,13 +7,13 @@ import CTAButton from "@/components/ui/CTAButton";
 
 export default function FinalCTA() {
   return (
-    <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-navy-900 py-28">
-      <Glow className="opacity-80" />
+    <section className="relative flex items-center overflow-hidden bg-navy-900 py-40">
+      <Glow className="opacity-70" />
 
       <Container className="relative z-10">
         <div className="mx-auto max-w-[900px] text-center">
           <Reveal>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-accent">
+            <p className="text-[12px] uppercase tracking-[0.2em] text-accent">
               Applications open
             </p>
           </Reveal>
@@ -31,10 +31,10 @@ export default function FinalCTA() {
 
           <MaskLines
             delay={0.2}
-            className="mx-auto mt-6 max-w-[50ch] text-[17px] leading-[1.6] text-pc-text"
+            className="mx-auto mt-6 max-w-[50ch] text-[17px] leading-[1.65] text-pc-text"
           >
             {
-              "Apply below. I read every one. If I think it is a fit, I will reach out and we will get on a call."
+              "Apply below. I read every one. If I think we are a fit, I will reach out and we will get on a call."
             }
           </MaskLines>
 
@@ -43,13 +43,12 @@ export default function FinalCTA() {
               <CTAButton
                 href="/apply"
                 size="lg"
-                magneticStrength={8}
-                className="h-16 rounded-none px-12 text-[16px]"
+                className="h-14 rounded-control px-10 text-[16px]"
               >
                 Apply to work with me
               </CTAButton>
             </div>
-            <p className="mt-5 text-[12px] text-pc-muted">
+            <p className="mt-5 text-[13px] text-pc-muted">
               Three minutes. Free 20 minute call. Limited spots, first come
               first served.
             </p>

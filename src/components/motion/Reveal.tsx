@@ -39,7 +39,7 @@ export default function Reveal({
       animate={
         reduced
           ? { opacity: show ? 1 : 0, y: 0 }
-          : { opacity: show ? 1 : 0, y: show ? 0 : 20 }
+          : { opacity: show ? 1 : 0, y: show ? 0 : 16 }
       }
       transition={
         reduced

@@ -2,7 +2,7 @@
 
 import CTAButton from "@/components/ui/CTAButton";
 import Container from "@/components/ui/Container";
-import { site } from "@/lib/site-config";
+import { contactEmail } from "@/lib/site-config";
 
 export default function Error({
   reset,
@@ -10,6 +10,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const email = contactEmail();
+
   return (
     <section className="flex min-h-[70vh] items-center bg-navy-800 py-24 text-center">
       <Container>
@@ -20,20 +22,28 @@ export default function Error({
           Something went wrong.
         </h1>
         <p className="mx-auto mt-4 max-w-[50ch] text-lg text-pc-text">
-          Refresh and try again. If it keeps happening, email{" "}
-          <a
-            href={`mailto:${site.email}`}
-            className="text-accent underline underline-offset-4"
-          >
-            {site.email}
-          </a>
-          .
+          Refresh and try again.
+          {email ? (
+            <>
+              {" "}
+              If it keeps happening, email{" "}
+              <a
+                href={`mailto:${email}`}
+                className="text-accent underline underline-offset-4"
+              >
+                {email}
+              </a>
+              .
+            </>
+          ) : (
+            <> If it keeps happening, email is coming soon.</>
+          )}
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <button
             type="button"
             onClick={reset}
-            className="inline-flex h-14 items-center justify-center rounded-none bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex h-14 items-center justify-center rounded-control bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Try again
           </button>

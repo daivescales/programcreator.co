@@ -1,238 +1,213 @@
+"use client";
+
 import Link from "next/link";
-import { MaskLines } from "@/components/motion";
+import type { ReactNode } from "react";
+import { HandCircle } from "@/components/marks";
+import { MaskLines, Reveal } from "@/components/motion";
+import Annotation from "@/components/ui/Annotation";
 import Heading from "@/components/ui/Heading";
-import Spine from "@/components/ui/Spine";
+import Section from "@/components/ui/Section";
+import SectionLabel from "@/components/ui/SectionLabel";
 
 const included = [
-  "Content angles that drive traffic",
-  "Ongoing conversion iteration",
-  "Tracking set up properly",
-  "Direct access to me rather than an account manager",
+  "content angles that drive traffic",
+  "ongoing conversion iteration",
+  "tracking set up properly",
+  "direct access to me rather than an account manager",
 ] as const;
 
-function IncludedList() {
-  return (
-    <ul className="space-y-2.5">
-      {included.map((item) => (
-        <li key={item} className="flex items-start gap-3">
-          <span
-            aria-hidden
-            className="mt-1.5 h-[9px] w-[9px] shrink-0 bg-accent"
-          />
-          <span className="text-[15px] leading-snug text-pc-text">{item}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+type LanePanel = {
+  key: "a" | "b";
+  title: string;
+  subtitle: string;
+  featured: boolean;
+  rows: { label: string; value: ReactNode }[];
+};
 
-function PaidA() {
-  return (
-    <p className="text-[clamp(1.35rem,2.2vw,1.85rem)] font-semibold tracking-[-0.03em] text-pc-white">
-      Revenue <span className="font-serif-italic text-accent-2">split</span>
-    </p>
-  );
-}
-
-function PaidB() {
-  return (
-    <p className="text-[clamp(1.35rem,2.2vw,1.85rem)] font-semibold tracking-[-0.03em] text-pc-white">
-      Monthly <span className="font-serif-italic text-pc-white">retainer</span>
-    </p>
-  );
-}
-
-type LaneRow =
-  | {
-      label: string;
-      kind: "text";
-      a: string;
-      b: string;
-    }
-  | {
-      label: string;
-      kind: "paid";
-    }
-  | {
-      label: string;
-      kind: "list";
-    };
-
-const rows: LaneRow[] = [
+const lanes: LanePanel[] = [
   {
-    label: "Who it's for",
-    kind: "text",
-    a: "You have an audience. You do not have a product, or the one you have does not convert.",
-    b: "You have inventory and traffic. The site is where the sale is dying.",
+    key: "a",
+    title: "Lane A",
+    subtitle: "Creators and digital brands",
+    featured: true,
+    rows: [
+      {
+        label: "Who it's for",
+        value:
+          "You have an audience. You do not have a product, or the one you have does not convert.",
+      },
+      {
+        label: "What I build",
+        value:
+          "Digital product from scratch, sales page, checkout flow, store page rebuild.",
+      },
+      {
+        label: "How I'm paid",
+        value: (
+          <p className="text-[clamp(1.5rem,2.5vw,2rem)] font-semibold tracking-[-0.03em] text-pc-white">
+            <HandCircle variant={1}>Revenue split</HandCircle>
+          </p>
+        ),
+      },
+      {
+        label: "When I'm paid",
+        value: "Only when it sells. No deposit, nothing upfront.",
+      },
+      {
+        label: "Why it works this way",
+        value:
+          "If it does not sell, I do not get paid. That is exactly why I am picky about who I take on.",
+      },
+    ],
   },
   {
-    label: "What I build",
-    kind: "text",
-    a: "Digital product from scratch, sales page, checkout flow, store page rebuild.",
-    b: "Full storefront rebuild, product pages, checkout and cart recovery.",
-  },
-  {
-    label: "How I'm paid",
-    kind: "paid",
-  },
-  {
-    label: "When I'm paid",
-    kind: "text",
-    a: "Only when it sells. No deposit, nothing upfront.",
-    b: "Flat monthly fee, billed in advance.",
-  },
-  {
-    label: "Why it works this way",
-    kind: "text",
-    a: "If it does not sell, I do not get paid. That is exactly why I am picky about who I take on.",
-    b: "Physical brands carry real costs and thinner margins, so a split does not make sense. A retainer keeps the work continuous and the incentives clean.",
-  },
-  {
-    label: "Both lanes include",
-    kind: "list",
+    key: "b",
+    title: "Lane B",
+    subtitle: "Physical product brands",
+    featured: false,
+    rows: [
+      {
+        label: "Who it's for",
+        value:
+          "You have inventory and traffic. The site is where the sale is dying.",
+      },
+      {
+        label: "What I build",
+        value:
+          "Full storefront rebuild, product pages, checkout and cart recovery.",
+      },
+      {
+        label: "How I'm paid",
+        value: (
+          <p className="text-[clamp(1.5rem,2.5vw,2rem)] font-semibold tracking-[-0.03em] text-pc-white">
+            Monthly retainer
+          </p>
+        ),
+      },
+      {
+        label: "When I'm paid",
+        value: "Flat monthly fee, billed in advance.",
+      },
+      {
+        label: "Why it works this way",
+        value:
+          "Physical brands carry real costs and thinner margins, so a split does not make sense. A retainer keeps the work continuous and the incentives clean.",
+      },
+    ],
   },
 ];
 
-function CellA({ row }: { row: LaneRow }) {
-  if (row.kind === "paid") return <PaidA />;
-  if (row.kind === "list") return <IncludedList />;
-  return <>{row.a}</>;
-}
+function LaneCard({ lane }: { lane: LanePanel }) {
+  return (
+    <article
+      className={
+        lane.featured
+          ? "rounded-panel border border-accent/30 bg-navy-700 p-8 md:p-10"
+          : "rounded-panel border border-pc-line bg-navy-750 p-8 md:p-10"
+      }
+    >
+      <p
+        className={
+          lane.featured
+            ? "text-[12px] uppercase tracking-[0.18em] text-accent"
+            : "text-[12px] uppercase tracking-[0.18em] text-pc-muted"
+        }
+      >
+        {lane.title}
+      </p>
+      <h3 className="mt-2 text-[clamp(1.15rem,1.9vw,1.4rem)] font-semibold tracking-[-0.03em] text-pc-white">
+        {lane.subtitle}
+      </h3>
 
-function CellB({ row }: { row: LaneRow }) {
-  if (row.kind === "paid") return <PaidB />;
-  if (row.kind === "list") return <IncludedList />;
-  return <>{row.b}</>;
+      <div className="mt-8 space-y-0">
+        {lane.rows.map((row, index) => (
+          <div
+            key={row.label}
+            className={
+              index === 0
+                ? "pb-6"
+                : index === lane.rows.length - 1
+                  ? "border-t border-pc-line pt-6"
+                  : "border-t border-pc-line py-6"
+            }
+          >
+            <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
+              {row.label}
+            </p>
+            <div className="mt-3 text-[16px] leading-[1.65] text-pc-text">
+              {row.value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
 }
 
 export default function Lanes() {
   return (
-    <Spine
-      id="lanes"
-      number="02"
-      label="TWO LANES"
-      className="border-t border-pc-line py-28 md:py-36"
-    >
+    <Section id="lanes" tone="800" className="scroll-mt-section">
+      <SectionLabel number="02" label="Two lanes" />
+
       <Heading
         as="h2"
         text="Two lanes. The _same_ work."
         underlineVariant={2}
-        className="max-w-[14ch]"
+        className="mt-6 max-w-[14ch]"
       />
 
       <MaskLines
         delay={0.12}
-        className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-pc-text"
+        className="mt-6 max-w-[52ch] text-[17px] leading-[1.65] text-pc-text"
       >
         {
           "The job is identical in both. Turn attention into something people buy. The only thing that changes is how I get paid."
         }
       </MaskLines>
 
-      <div className="mt-14 hidden overflow-hidden md:block">
-        <table className="w-full border-collapse text-left" aria-label="Lane comparison">
-          <thead>
-            <tr className="border-b border-pc-line">
-              <th className="w-[18%] py-6 pr-4" scope="col">
-                <span className="sr-only">Category</span>
-              </th>
-              <th
-                className="w-[41%] border-t-2 border-t-accent bg-white/[0.02] px-6 py-6"
-                scope="col"
-              >
-                <p className="text-[11px] uppercase tracking-[0.2em] text-accent">
-                  Lane A
-                </p>
-                <p className="mt-2 text-[15px] text-pc-white">
-                  Creators and digital brands
-                </p>
-              </th>
-              <th className="w-[41%] px-6 py-6" scope="col">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
-                  Lane B
-                </p>
-                <p className="mt-2 text-[15px] text-pc-white">
-                  Physical product brands
-                </p>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.label} className="border-b border-pc-line">
-                <th
-                  scope="row"
-                  className="py-6 pr-4 align-top text-[11px] uppercase tracking-[0.2em] text-pc-muted"
-                >
-                  {row.label}
-                </th>
-                <td className="bg-white/[0.02] px-6 py-6 align-top text-[15px] leading-[1.6] text-pc-text">
-                  <CellA row={row} />
-                </td>
-                <td className="px-6 py-6 align-top text-[15px] leading-[1.6] text-pc-text">
-                  <CellB row={row} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-14 space-y-10 md:hidden">
-        {(
-          [
-            {
-              key: "a" as const,
-              title: "Lane A",
-              subtitle: "Creators and digital brands",
-              featured: true,
-            },
-            {
-              key: "b" as const,
-              title: "Lane B",
-              subtitle: "Physical product brands",
-              featured: false,
-            },
-          ] as const
-        ).map((lane) => (
-          <div
-            key={lane.key}
-            className={
-              lane.featured
-                ? "border-t-2 border-t-accent bg-white/[0.02]"
-                : "border-t border-pc-line"
-            }
-          >
-            <div className="px-1 py-5">
-              <p
-                className={
-                  lane.featured
-                    ? "text-[11px] uppercase tracking-[0.2em] text-accent"
-                    : "text-[11px] uppercase tracking-[0.2em] text-pc-muted"
-                }
-              >
-                {lane.title}
-              </p>
-              <p className="mt-2 text-[15px] text-pc-white">{lane.subtitle}</p>
+      <Reveal delay={0.2}>
+        <div className="relative mt-14">
+          <div className="mb-3 lg:absolute lg:-top-2 lg:left-0 lg:mb-0 lg:-translate-y-full">
+            <div className="hidden lg:block">
+              <Annotation arrow="ltr" arrowPosition="after">
+                most people land here
+              </Annotation>
             </div>
-            {rows.map((row) => (
-              <div
-                key={`${lane.key}-${row.label}`}
-                className="border-t border-pc-line py-5"
-              >
-                <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
-                  {row.label}
-                </p>
-                <div className="mt-3 text-[15px] leading-[1.6] text-pc-text">
-                  {lane.key === "a" ? <CellA row={row} /> : <CellB row={row} />}
-                </div>
-              </div>
+            <p className="hand text-[16px] lg:hidden">most people land here</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+            {lanes.map((lane) => (
+              <LaneCard key={lane.key} lane={lane} />
             ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </Reveal>
 
-      <p className="mt-10 text-left text-[15px] text-pc-muted">
+      <Reveal delay={0.28}>
+        <div className="mt-10">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
+            Both lanes include
+          </p>
+          <ul className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:gap-y-2">
+            {included.map((item, index) => (
+              <li
+                key={item}
+                className="flex items-center gap-3 text-[15px] text-pc-text"
+              >
+                {index > 0 && (
+                  <span aria-hidden className="hidden text-pc-muted sm:inline">
+                    ·
+                  </span>
+                )}
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Reveal>
+
+      <p className="mt-10 text-[15px] text-pc-muted">
         Not sure which lane you are in. That is what the call is for.{" "}
         <Link
           href="/apply"
@@ -242,6 +217,6 @@ export default function Lanes() {
           <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
         </Link>
       </p>
-    </Spine>
+    </Section>
   );
 }
