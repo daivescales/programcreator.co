@@ -9,7 +9,6 @@ import Spine from "@/components/ui/Spine";
 import { faqItems } from "@/content/faq";
 import {
   EASE_IN,
-  EASE_OUT,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
@@ -25,7 +24,7 @@ function renderAnswer(answer: string): ReactNode {
       {parts[0]}
       <Link
         href="/terms"
-        className="text-accent underline-offset-4 transition-opacity hover:opacity-80"
+        className="text-accent underline underline-offset-4 transition-opacity hover:opacity-80"
       >
         Terms of Service
       </Link>
@@ -96,33 +95,20 @@ export default function FAQ() {
                     <motion.div
                       key="content"
                       initial={
-                        reduced ? { opacity: 0 } : { height: 0, opacity: 0 }
+                        reduced ? { opacity: 0 } : { opacity: 0, y: 8 }
                       }
-                      animate={
-                        reduced
-                          ? { opacity: 1 }
-                          : { height: "auto", opacity: 1 }
-                      }
+                      animate={{ opacity: 1, y: 0 }}
                       exit={
-                        reduced ? { opacity: 0 } : { height: 0, opacity: 0 }
+                        reduced ? { opacity: 0 } : { opacity: 0, y: 4 }
                       }
                       transition={{
-                        height: {
-                          duration: 0.35,
-                          ease: isOpen ? EASE_IN : EASE_OUT,
-                        },
-                        opacity: { duration: 0.28 },
+                        duration: reduced ? 0.15 : 0.28,
+                        ease: EASE_IN,
                       }}
-                      className="overflow-hidden"
                     >
-                      <motion.p
-                        initial={reduced ? false : { y: 8, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.3, ease: EASE_IN }}
-                        className="max-w-[62ch] pb-7 text-[17px] leading-[1.6] text-pc-text"
-                      >
+                      <p className="max-w-[62ch] pb-7 text-[17px] leading-[1.6] text-pc-text">
                         {renderAnswer(item.answer)}
-                      </motion.p>
+                      </p>
                     </motion.div>
                   )}
                 </AnimatePresence>

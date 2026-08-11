@@ -3,16 +3,17 @@
 import RuleDraw from "@/components/motion/RuleDraw";
 import { cn } from "@/lib/utils";
 
-export type RuleProps = {
+type RuleProps = {
   className?: string;
   delay?: number;
 };
 
-/** Full-bleed hairline via RuleDraw. */
+/** Full-bleed 1px hairline using RuleDraw. */
 export default function Rule({ className, delay }: RuleProps) {
   return (
-    <div className={cn("w-full", className)}>
-      <RuleDraw delay={delay} className="bg-pc-line" />
-    </div>
+    <RuleDraw
+      delay={delay}
+      className={cn("h-px w-full bg-pc-line origin-left", className)}
+    />
   );
 }

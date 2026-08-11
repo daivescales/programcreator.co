@@ -2,8 +2,8 @@
 
 /**
  * RotatingWord — cycles words with mask up/out.
- * Width: slot is sized to the longest word (no CSS width animation — banned).
- * Words sit absolutely in that fixed slot; only opacity + translateY animate.
+ * Width: in-flow sizer is the widest measured word (never the active word),
+ * so the slot does not jump as words change. Only opacity + translateY animate.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -33,7 +33,7 @@ export default function RotatingWord({
   const reduced = usePrefersReducedMotion();
   const measureRef = useRef<HTMLSpanElement>(null);
   const [index, setIndex] = useState(0);
-  const [slotWidth, setSlotWidth] = useState<number | undefined>(undefined);
+  const [widestWord, setWidestWord] = useState(words[0] ?? "");
 
   useEffect(() => {
     const el = measureRef.current;
@@ -42,10 +42,15 @@ export default function RotatingWord({
     const measure = () => {
       const children = el.querySelectorAll("[data-measure-word]");
       let max = 0;
+      let widest = words[0] ?? "";
       children.forEach((node) => {
-        max = Math.max(max, (node as HTMLElement).offsetWidth);
+        const width = (node as HTMLElement).offsetWidth;
+        if (width > max) {
+          max = width;
+          widest = (node as HTMLElement).dataset.measureWord ?? widest;
+        }
       });
-      if (max > 0) setSlotWidth(max);
+      if (widest) setWidestWord(widest);
     };
 
     measure();
@@ -70,23 +75,29 @@ export default function RotatingWord({
         "relative inline-flex h-[1.15em] items-baseline overflow-hidden align-baseline",
         className
       )}
-      style={slotWidth ? { width: slotWidth } : undefined}
     >
-      {/* Hidden measurer — establishes fixed max width of longest word */}
+      {/* Hidden measurer — finds widest word in rendered font */}
       <span
         ref={measureRef}
         aria-hidden
         className="pointer-events-none invisible absolute left-0 top-0 flex flex-col whitespace-nowrap"
       >
         {words.map((w) => (
-          <span key={w} data-measure-word className="inline-block">
+          <span key={w} data-measure-word={w} className="inline-block">
             {w}
           </span>
         ))}
       </span>
 
+      {/* In-flow sizer — widest word only; does not change with rotation */}
+      <span className="invisible whitespace-nowrap" aria-hidden>
+        {widestWord}
+      </span>
+
       {reduced ? (
-        <span className="inline-block whitespace-nowrap">{current}</span>
+        <span className="absolute inset-0 inline-flex items-baseline whitespace-nowrap">
+          {current}
+        </span>
       ) : (
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -105,11 +116,6 @@ export default function RotatingWord({
           </motion.span>
         </AnimatePresence>
       )}
-
-      {/* Invisible current word keeps baseline height in flow */}
-      <span className="invisible whitespace-nowrap" aria-hidden>
-        {current}
-      </span>
     </span>
   );
 }

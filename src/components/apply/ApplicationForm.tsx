@@ -357,7 +357,8 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const sub = watch((values) => {
+
+    const persist = (values: FormValues) => {
       try {
         sessionStorage.setItem(
           STORAGE_KEY,
@@ -370,9 +371,16 @@ export default function ApplicationForm() {
       } catch {
         // ignore
       }
+    };
+
+    // Persist immediately so startedAt survives a refresh before the first edit.
+    persist(getValues());
+
+    const sub = watch((values) => {
+      persist(values as FormValues);
     });
     return () => sub.unsubscribe();
-  }, [watch, hydrated, step, laneChoiceId]);
+  }, [watch, hydrated, step, laneChoiceId, getValues]);
 
   useEffect(() => {
     if (!hydrated) return;

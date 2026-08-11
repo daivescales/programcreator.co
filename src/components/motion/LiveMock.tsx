@@ -121,7 +121,7 @@ export default function LiveMock({ className }: LiveMockProps) {
 
         {/* Accent button + click scale */}
         <div
-          className="relative mt-5 inline-flex"
+          className="relative mt-5 w-full"
           style={
             reduced
               ? undefined
