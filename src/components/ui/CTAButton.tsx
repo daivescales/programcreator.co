@@ -36,7 +36,7 @@ export default function CTAButton({
   variant = "primary",
   size = "lg",
   className,
-  magneticStrength = 6,
+  magneticStrength = 5,
 }: CTAButtonProps) {
   return (
     <MagneticButton strength={magneticStrength}>

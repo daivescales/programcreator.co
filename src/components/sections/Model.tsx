@@ -16,7 +16,7 @@ const rows = [
   {
     number: "03",
     title: "Scale it through your socials",
-    body: "Hooks and funnel paths that route the attention you already have into the product, then we keep tightening it against live data.",
+    body: "Hooks and funnel paths that route the attention you already have into the product, then I keep tightening it against live data.",
   },
 ] as const;
 

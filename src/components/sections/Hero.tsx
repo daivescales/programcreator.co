@@ -42,7 +42,7 @@ export default function Hero() {
               className="max-w-[46ch] text-[17px] leading-[1.6] text-pc-text"
             >
               {
-                "I'm Daive. I build digital products for creators, and I rebuild storefronts for physical brands. Then we scale them through the audience you already have. Creators pay nothing upfront because I take a revenue split. Product brands run on a flat monthly retainer."
+                "I'm Daive. I build digital products for creators, and I rebuild storefronts for physical brands. Then I scale them through the audience you already have. Creators pay nothing upfront because I take a revenue split. Product brands run on a flat monthly retainer."
               }
             </MaskLines>
           </div>

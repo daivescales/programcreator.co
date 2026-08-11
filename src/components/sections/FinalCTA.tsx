@@ -34,7 +34,7 @@ export default function FinalCTA() {
             className="mx-auto mt-6 max-w-[50ch] text-[17px] leading-[1.6] text-pc-text"
           >
             {
-              "Apply below. I read every one. If I think we are a fit, I will reach out and we will get on a call."
+              "Apply below. I read every one. If I think it is a fit, I will reach out and we will get on a call."
             }
           </MaskLines>
 

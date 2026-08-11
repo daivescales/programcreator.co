@@ -5,8 +5,8 @@ export const HAS_PRODUCT_VALUES = ["yes", "no", "sort_of"] as const;
 
 export const FOLLOWER_RANGE_OPTIONS = [
   "Under 5k",
-  "5k–25k",
-  "25k–100k",
+  "5k-25k",
+  "25k-100k",
   "100k+",
 ] as const;
 

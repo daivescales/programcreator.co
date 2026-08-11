@@ -21,14 +21,12 @@ import {
 } from "react-hook-form";
 import { toast } from "sonner";
 import MaskText from "@/components/motion/MaskText";
-import Glow from "@/components/system/Glow";
 import Signature from "@/components/ui/Signature";
 import {
   EASE_IN,
   EASE_OUT,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
-import { site } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import {
   FOLLOWER_RANGE_OPTIONS,
@@ -762,8 +760,6 @@ export default function ApplicationForm() {
 
       {/* Right panel */}
       <div className="relative flex min-h-0 flex-1 flex-col bg-navy-800 lg:w-[62%]">
-        <Glow className="opacity-30 [&>div]:left-auto [&>div]:right-[-8%] [&>div]:top-auto [&>div]:bottom-[-12%] [&>div]:translate-x-0 [&>div]:translate-y-0" />
-
         <div
           className="relative z-[1] hidden h-0.5 w-full bg-pc-line lg:block"
           aria-hidden

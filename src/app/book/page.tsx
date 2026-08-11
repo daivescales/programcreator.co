@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CalEmbed from "@/components/CalEmbed";
 import MaskText from "@/components/motion/MaskText";
-import Glow from "@/components/system/Glow";
 import Container from "@/components/ui/Container";
 import {
   EASE_IN,
@@ -53,7 +52,7 @@ function ProgressRow() {
   const steps = [
     { n: "01", label: "Application", state: "complete" as const },
     { n: "02", label: "Book your call", state: "active" as const },
-    { n: "03", label: "We build", state: "muted" as const },
+    { n: "03", label: "I build", state: "muted" as const },
   ];
 
   return (
@@ -86,8 +85,6 @@ function BookContent() {
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-navy-800 pb-20 pt-10 md:pt-14">
-      <Glow className="opacity-40 [&>div]:left-auto [&>div]:right-[-10%] [&>div]:top-auto [&>div]:bottom-[-15%] [&>div]:translate-x-0 [&>div]:translate-y-0" />
-
       <Container className="relative z-[1] max-w-[960px]">
         <div className="mb-10 max-w-[560px]">
           <SuccessCheck />
