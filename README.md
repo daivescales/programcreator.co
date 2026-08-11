@@ -8,27 +8,27 @@ Creators and digital brands work on a **revenue split** (no upfront). Physical p
 
 - Next.js 15 (App Router, TypeScript)
 - Tailwind CSS v4
-- Framer Motion (MaskText, Reveal, CharDrift, etc.)
-- GSAP + ScrollTrigger (pinned Process, scroll-linked motion)
-- Lenis smooth scroll (lerp 0.09, synced to GSAP ticker)
+- Framer Motion only (ambient loops + one-shot `whileInView` reveals — no scroll hijack)
 - Supabase (`leads` table)
 - Google Sheets API
 - Resend
 - Cal.com embed (`@calcom/embed-react`)
 
+**Not used (removed in v3):** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch text, scroll-pin / parallax.
+
 ## Design
 
-Dark editorial: mid-navy page (`#0B2038`), white type, accent `#4D9BFF`. Inter Tight + Instrument Serif (italic emphasis only). Grain overlay sitewide; soft aurora behind hero and final CTA. See `.cursorrules` for tokens, voice, and motion rules.
+Editorial dossier layout: mid-navy page (`#0B2038`), white type, accent `#4D9BFF`. Inter Tight + Instrument Serif (italic emphasis only). Radius 0. Grain overlay sitewide; soft Glow bloom on hero and Final CTA only. Sticky spine rail on landing sections. See `.cursorrules` for tokens, voice, and motion doctrine.
 
 ## Routes
 
 | Path | Purpose |
 |------|---------|
-| `/` | Landing page |
-| `/apply` | 13-step application (noindex) |
+| `/` | Landing (9 blocks) |
+| `/apply` | 10-step application (noindex) |
 | `/book` | Cal.com booking after apply (noindex) |
-| `/privacy` | Privacy |
-| `/terms` | Terms |
+| `/privacy` | Privacy Policy |
+| `/terms` | Terms of Service |
 
 ## Local setup
 
@@ -91,7 +91,7 @@ Set `NEXT_PUBLIC_SITE_URL=https://programcreator.com` (used for metadata, sitema
 
 ## Environment variables
 
-See `.env.local.example`. Required:
+See `.env.local.example`. Required for lead capture:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL
@@ -106,19 +106,25 @@ NEXT_PUBLIC_CAL_LINK
 NEXT_PUBLIC_SITE_URL
 ```
 
-## Before launch — content swaps
+### `check-env` behaviour
 
-1. **Results** — replace placeholders in `src/components/sections/Results.tsx` (or remove the section until you have real outcomes). Look for `TODO: replace with real client results`.
-2. **Photo** — drop Daive’s photo into `src/components/sections/About.tsx` (`TODO: replace with photo of Daive`).
+`npm run check-env` (also runs before `npm run build`) **warns** by default when vars are missing so Vercel deploys are not blocked while credentials are still being wired. Set `FORCE_ENV_CHECK=1` to fail the build on missing vars.
+
+## Before launch — content / legal TODOs
+
+1. **Proof / results** — replace placeholders when you have real outcomes.
+2. **Photo** — add Daive’s photo in the About strip when ready.
 3. **Socials + Cal** — fill `src/lib/site-config.ts` (`socials`, `calLink`).
-4. **Bio link** — point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
+4. **Governing law** — insert jurisdiction in `/terms` (HTML TODO comment in section 14).
+5. **Cookies / analytics** — update `/privacy` section 9 if you add PostHog, GA, or a Meta pixel (HTML TODO comment).
+6. **Bio link** — point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
 
 ## Scripts
 
 ```bash
 npm run dev          # local dev (Turbopack)
 npm run check-env    # warn if env vars missing (FORCE_ENV_CHECK=1 to fail)
-npm run build        # production build
+npm run build        # production build (runs check-env first)
 npm run start        # serve production build
 npm run lint         # ESLint
 npx tsc --noEmit     # typecheck
@@ -129,12 +135,13 @@ npx tsc --noEmit     # typecheck
 1. Push this repo to GitHub.
 2. Import the repo in Vercel (Framework: Next.js).
 3. Paste all env vars listed above into Vercel → Project → Settings → Environment Variables.
-4. Deploy (Vercel builds from GitHub on every push to `main`).
+4. Deploy (Vercel builds from GitHub on every push to `main`). `check-env` warns by default — set `FORCE_ENV_CHECK=1` in Vercel only when you want the build to fail on missing lead-capture vars.
 5. Add custom domain `programcreator.com` (+ `www` redirect).
 6. Verify the Resend sending domain (SPF/DKIM/DMARC).
 7. Confirm Cal.com embed loads on `/book` (dark theme, brand `#4D9BFF`).
-8. Submit a test lead through `/apply` → check Supabase, Sheet, and both emails.
-9. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
+8. Re-run `supabase/schema.sql` if upgrading from an older leads schema (v3 drops revenue/goal/budget/source; adds `terms_ack` and expanded status values).
+9. Submit a test lead through `/apply` → check Supabase, Sheet, and both emails.
+10. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
 
 Do **not** use `vercel --prod` as the primary path — push to GitHub and let Vercel auto-deploy.
 

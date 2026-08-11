@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MaskText, ScrambleText } from "@/components/motion";
+import { MaskText } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
 import {
@@ -13,7 +13,6 @@ import {
   XIcon,
   YouTubeIcon,
 } from "@/components/ui/social-icons";
-import { useLenis } from "@/components/system/SmoothScroll";
 import { EASE_IN, usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 import { site } from "@/lib/site-config";
@@ -22,7 +21,6 @@ const navLinks = [
   { href: "/#model", label: "Model" },
   { href: "/#lanes", label: "Lanes" },
   { href: "/#process", label: "Process" },
-  { href: "/#work", label: "Work" },
   { href: "/#faq", label: "FAQ" },
 ] as const;
 
@@ -36,23 +34,11 @@ const socials = [
 export default function Navbar() {
   const pathname = usePathname();
   const reduced = usePrefersReducedMotion();
-  const { stop: stopLenis, start: startLenis } = useLenis();
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    let lastY = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 20);
-      if (y > 400 && y > lastY) {
-        setHidden(true);
-      } else {
-        setHidden(false);
-      }
-      lastY = y;
-    };
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -65,7 +51,6 @@ export default function Navbar() {
   useEffect(() => {
     if (!open) {
       document.body.style.overflow = "";
-      startLenis();
       return;
     }
 
@@ -74,31 +59,28 @@ export default function Navbar() {
     };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    stopLenis();
 
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
-      startLenis();
     };
-  }, [open, stopLenis, startLenis]);
+  }, [open]);
 
   return (
     <>
       <header
         className={cn(
-          "fixed top-0 z-50 w-full transition-[transform,background-color,backdrop-filter,border-color] duration-[350ms]",
-          hidden && !open ? "-translate-y-full" : "translate-y-0",
+          "fixed top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color] duration-[250ms]",
           scrolled
-            ? "border-b border-pc-line bg-navy-800/70 backdrop-blur-xl"
+            ? "border-b border-pc-line bg-navy-800/80 backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         )}
       >
         <Container>
-          <nav className="flex h-20 items-center justify-between">
+          <nav className="flex h-[72px] items-center justify-between">
             <Link
               href="/"
-              className="text-[17px] font-semibold tracking-[-0.02em] text-pc-white"
+              className="text-[16px] font-semibold tracking-[-0.02em] text-pc-white"
             >
               Program<span className="text-accent">Creator</span>
             </Link>
@@ -108,10 +90,10 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="group relative text-[13px] uppercase tracking-[0.14em] text-pc-muted transition-colors hover:text-pc-white"
+                  className="group relative text-[12px] uppercase tracking-[0.16em] text-pc-muted transition-colors duration-[160ms] hover:text-pc-white"
                 >
-                  <ScrambleText text={link.label} />
-                  <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100" />
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
                 </Link>
               ))}
             </div>
@@ -120,7 +102,7 @@ export default function Navbar() {
               <CTAButton
                 href="/apply"
                 size="sm"
-                className="h-11 px-6 text-[13px] uppercase tracking-wider"
+                className="h-10 rounded-none px-6 text-[12px] uppercase tracking-[0.14em]"
               >
                 Apply
               </CTAButton>
@@ -136,13 +118,13 @@ export default function Navbar() {
               <span className="sr-only">Menu</span>
               <span
                 className={cn(
-                  "absolute h-px w-5 bg-pc-white transition-transform duration-300",
+                  "absolute h-px w-5 bg-pc-white transition-transform duration-[300ms]",
                   open ? "translate-y-0 rotate-45" : "-translate-y-1.5"
                 )}
               />
               <span
                 className={cn(
-                  "absolute h-px w-5 bg-pc-white transition-transform duration-300",
+                  "absolute h-px w-5 bg-pc-white transition-transform duration-[300ms]",
                   open ? "translate-y-0 -rotate-45" : "translate-y-1.5"
                 )}
               />
@@ -156,26 +138,20 @@ export default function Navbar() {
           <motion.div
             className="fixed inset-0 z-40 flex flex-col bg-navy-900 md:hidden"
             initial={
-              reduced
-                ? { opacity: 0 }
-                : { clipPath: "inset(0 0 100% 0)" }
+              reduced ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }
             }
             animate={
-              reduced
-                ? { opacity: 1 }
-                : { clipPath: "inset(0 0 0% 0)" }
+              reduced ? { opacity: 1 } : { clipPath: "inset(0 0 0% 0)" }
             }
             exit={
-              reduced
-                ? { opacity: 0 }
-                : { clipPath: "inset(0 0 100% 0)" }
+              reduced ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }
             }
-            transition={{ duration: 0.6, ease: EASE_IN }}
+            transition={{ duration: 0.5, ease: EASE_IN }}
           >
-            <div className="flex h-20 items-center justify-between px-6">
+            <div className="flex h-[72px] items-center justify-between px-6">
               <Link
                 href="/"
-                className="text-[17px] font-semibold tracking-[-0.02em] text-pc-white"
+                className="text-[16px] font-semibold tracking-[-0.02em] text-pc-white"
                 onClick={() => setOpen(false)}
               >
                 Program<span className="text-accent">Creator</span>
@@ -202,8 +178,8 @@ export default function Navbar() {
                   >
                     <MaskText
                       as="span"
-                      delay={0.07 * index}
-                      className="block text-[clamp(2rem,9vw,3.5rem)] font-semibold tracking-[-0.035em]"
+                      delay={0.06 * index}
+                      className="block text-[clamp(1.75rem,8vw,3rem)] font-semibold tracking-[-0.035em]"
                     >
                       {link.label}
                     </MaskText>
@@ -220,7 +196,7 @@ export default function Navbar() {
                         key={social.label}
                         href={social.href || "#"}
                         aria-label={social.label}
-                        className="flex h-10 w-10 items-center justify-center border border-pc-line text-pc-muted"
+                        className="flex h-10 w-10 items-center justify-center border border-pc-line text-pc-muted transition-colors duration-[160ms] hover:border-accent hover:text-accent"
                       >
                         <Icon size={18} />
                       </a>
@@ -228,7 +204,10 @@ export default function Navbar() {
                   })}
                 </div>
                 <div onClick={() => setOpen(false)}>
-                  <CTAButton href="/apply" className="w-full">
+                  <CTAButton
+                    href="/apply"
+                    className="w-full rounded-none"
+                  >
                     Apply to work with me
                   </CTAButton>
                 </div>

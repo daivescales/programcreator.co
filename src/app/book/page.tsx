@@ -6,7 +6,8 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CalEmbed from "@/components/CalEmbed";
 import MaskText from "@/components/motion/MaskText";
-import Aurora from "@/components/system/Aurora";
+import PulseDot from "@/components/motion/PulseDot";
+import Glow from "@/components/system/Glow";
 import Container from "@/components/ui/Container";
 import {
   EASE_IN,
@@ -20,7 +21,7 @@ function SuccessCheck() {
 
   return (
     <div
-      className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[4px] border border-accent/40 bg-accent/10"
+      className="mb-6 flex h-14 w-14 items-center justify-center border border-accent"
       aria-hidden
     >
       <svg
@@ -49,6 +50,34 @@ function SuccessCheck() {
   );
 }
 
+function ProgressRow() {
+  const steps = [
+    { n: "01", label: "Application ✓", state: "complete" as const },
+    { n: "02", label: "Book your call", state: "active" as const },
+    { n: "03", label: "We build", state: "muted" as const },
+  ];
+
+  return (
+    <ol className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-pc-line py-4">
+      {steps.map((s) => (
+        <li
+          key={s.n}
+          className={cn(
+            "flex items-center gap-2 text-[12px] uppercase tracking-[0.14em]",
+            s.state === "complete" && "text-accent",
+            s.state === "active" && "text-pc-white",
+            s.state === "muted" && "text-pc-muted"
+          )}
+        >
+          <span className="tabular-nums">{s.n}</span>
+          <span>{s.label}</span>
+          {s.state === "active" ? <PulseDot /> : null}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function BookContent() {
   const params = useSearchParams();
   const name = params.get("name") ?? undefined;
@@ -59,10 +88,10 @@ function BookContent() {
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-navy-800 pb-20 pt-10 md:pt-14">
-      <Aurora className="opacity-40" />
+      <Glow className="opacity-40" />
 
       <Container className="relative z-[1] max-w-[960px]">
-        <div className="mx-auto mb-10 max-w-[560px] text-center">
+        <div className="mb-10 max-w-[560px]">
           <SuccessCheck />
 
           {hasParams ? (
@@ -71,13 +100,11 @@ function BookContent() {
                 as="h1"
                 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tracking-[-0.035em] text-pc-white"
               >
-                {firstName
-                  ? `You're in, ${firstName}.`
-                  : "You're in."}
+                {firstName ? `You're in, ${firstName}.` : "You're in."}
               </MaskText>
               <p className="mt-3 text-base text-pc-text md:text-lg">
-                Application received. Last step: pick a time and we&apos;ll talk
-                it through.
+                Application received. If you&apos;d like, book your call now —
+                otherwise I&apos;ll be in touch after I&apos;ve read it.
               </p>
             </>
           ) : (
@@ -101,17 +128,7 @@ function BookContent() {
             </>
           )}
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="rounded-[4px] border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-              1 Application ✓
-            </span>
-            <span className="rounded-[4px] border border-accent bg-transparent px-3 py-1 text-xs font-medium text-pc-white">
-              2 Book your call
-            </span>
-            <span className="rounded-[4px] border border-pc-line bg-navy-700 px-3 py-1 text-xs font-medium text-pc-muted">
-              3 We build
-            </span>
-          </div>
+          <ProgressRow />
 
           {lane ? (
             <p className="mt-3 text-xs text-pc-muted">
@@ -122,23 +139,20 @@ function BookContent() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-          <div className="rounded-[4px] border border-pc-line bg-navy-700 p-2">
+          <div className="min-h-[560px] border border-pc-line bg-navy-700 p-2">
             <CalEmbed name={name} email={email} />
           </div>
 
-          <aside
-            className={cn(
-              "h-fit rounded-[4px] border border-pc-line bg-navy-700 p-6"
-            )}
-          >
+          <aside className="h-fit border border-pc-line bg-navy-700 p-6">
             <h2 className="text-sm font-semibold tracking-tight text-pc-white">
               What to expect
             </h2>
             <ul className="mt-4 space-y-3 text-sm leading-relaxed text-pc-text">
-              <li>20 minutes, video call</li>
-              <li>No deck. Straight conversation</li>
+              <li>20 minutes</li>
+              <li>Video call</li>
+              <li>No deck</li>
               <li>Bring your numbers if you have them</li>
-              <li>You leave with a clear yes, no, or not yet</li>
+              <li>A straight answer either way</li>
             </ul>
           </aside>
         </div>
@@ -152,7 +166,7 @@ export default function BookPage() {
     <Suspense
       fallback={
         <div className="flex min-h-dvh items-center justify-center bg-navy-800">
-          <div className="h-10 w-10 animate-pulse rounded-[4px] bg-navy-700" />
+          <div className="h-10 w-10 animate-pulse bg-navy-700" />
         </div>
       }
     >

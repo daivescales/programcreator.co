@@ -53,14 +53,14 @@ export async function sendLeadNotification(
       lead.socials?.instagram && `IG @${lead.socials.instagram}`,
       lead.socials?.tiktok && `TT @${lead.socials.tiktok}`,
       lead.socials?.youtube && `YT @${lead.socials.youtube}`,
-      lead.website,
+      lead.socials?.website,
     ]
       .filter(Boolean)
       .join(" · ");
 
     const html = `<!DOCTYPE html>
 <html><body style="margin:0;padding:24px;background:${NAVY};font-family:Inter,Helvetica,Arial,sans-serif;">
-  <div style="max-width:640px;margin:0 auto;background:${NAVY_CARD};border:1px solid ${LINE};border-radius:4px;padding:28px;">
+  <div style="max-width:640px;margin:0 auto;background:${NAVY_CARD};border:1px solid ${LINE};padding:28px;">
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">New lead</p>
     <h1 style="margin:0 0 8px;color:${WHITE};font-size:22px;font-weight:600;">${escapeHtml(lead.full_name)}</h1>
     <p style="margin:0 0 20px;color:${TEXT};font-size:14px;">${escapeHtml(lead.lane)} · ${escapeHtml(lead.brand_name ?? "")}</p>
@@ -69,16 +69,14 @@ export async function sendLeadNotification(
       ${row("Socials", socialBits || undefined)}
       ${row("Audience", lead.follower_range)}
       ${row("Has product", lead.has_product)}
-      ${row("Revenue", lead.revenue_range)}
       ${row("Ready", lead.ready_to_start)}
-      ${row("Source", lead.source)}
+      ${row("Terms ack", lead.terms_ack ? "yes" : "no")}
       ${row("Bottleneck", lead.biggest_bottleneck, true)}
-      ${row("90-day goal", lead.goal_90_days, true)}
       ${row("Lead ID", lead.id)}
     </table>
     <p style="margin:24px 0 0;">
       <a href="mailto:${encodeURIComponent(lead.email)}?subject=${encodeURIComponent(`Re: ProgramCreator — ${lead.full_name}`)}"
-         style="display:inline-block;background:${ACCENT};color:${NAVY};text-decoration:none;padding:12px 18px;border-radius:4px;font-size:14px;font-weight:500;">
+         style="display:inline-block;background:${ACCENT};color:${NAVY};text-decoration:none;padding:12px 18px;font-size:14px;font-weight:500;">
         Reply to ${escapeHtml(lead.full_name.split(" ")[0] ?? lead.full_name)}
       </a>
     </p>
@@ -89,7 +87,7 @@ export async function sendLeadNotification(
       from: `${site.name} <onboarding@resend.dev>`,
       to: [to],
       replyTo: lead.email,
-      subject: `New ProgramCreator lead — ${lead.full_name} (${lead.lane})`,
+      subject: `New lead — ${lead.full_name} (${lead.lane})`,
       html,
     });
   } catch (err) {
@@ -99,6 +97,7 @@ export async function sendLeadNotification(
 
 /**
  * Confirm receipt to the applicant. Fail-soft.
+ * Wording must match Terms §2 / Prompt 7 exactly.
  */
 export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void> {
   try {
@@ -108,31 +107,17 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
       return;
     }
 
-    const calLink =
-      process.env.NEXT_PUBLIC_CAL_LINK || `https://cal.com/${site.calLink}`;
-    const calUrl = calLink.startsWith("http")
-      ? calLink
-      : `https://cal.com/${calLink}`;
     const first = lead.full_name.split(" ")[0] ?? lead.full_name;
 
     const html = `<!DOCTYPE html>
 <html><body style="margin:0;padding:24px;background:${NAVY};font-family:Inter,Helvetica,Arial,sans-serif;">
-  <div style="max-width:560px;margin:0 auto;background:${NAVY_CARD};border:1px solid ${LINE};border-radius:4px;padding:32px;">
+  <div style="max-width:560px;margin:0 auto;background:${NAVY_CARD};border:1px solid ${LINE};padding:32px;">
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
     <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:600;">Got it, ${escapeHtml(first)}.</h1>
     <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">
-      I read every application myself. Next step is a short call so we can see if this is a fit.
+      Your application is in. I read every one myself, usually within a few days. If I think we're a good fit to work together, I'll reach out with a link to book a call. If you don't hear from me, it means I didn't think I was the right person for your brand right now — that's not a judgement on what you're building.
     </p>
-    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">
-      If the booking page closed, grab a time here:
-    </p>
-    <p style="margin:0 0 28px;">
-      <a href="${escapeHtml(calUrl)}"
-         style="display:inline-block;background:${ACCENT};color:${NAVY};text-decoration:none;padding:12px 18px;border-radius:4px;font-size:14px;font-weight:500;">
-        Book your call
-      </a>
-    </p>
-    <p style="margin:0;color:${MUTED};font-size:13px;line-height:1.5;">
+    <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
       Daive — ${escapeHtml(site.name)}
     </p>
   </div>

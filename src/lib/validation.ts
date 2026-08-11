@@ -10,27 +10,10 @@ export const FOLLOWER_RANGE_OPTIONS = [
   "100k+",
 ] as const;
 
-export const REVENUE_RANGE_OPTIONS = [
-  "$0",
-  "Under $2k",
-  "$2k–$10k",
-  "$10k–$50k",
-  "$50k+",
-] as const;
-
 export const READY_TO_START_OPTIONS = [
   "Immediately",
   "Within a month",
   "Just exploring",
-] as const;
-
-export const SOURCE_OPTIONS = [
-  "Instagram",
-  "TikTok",
-  "YouTube",
-  "X",
-  "Referral",
-  "Other",
 ] as const;
 
 function blankToUndefined(value: unknown): string | undefined {
@@ -59,39 +42,28 @@ export const leadSchema = z
       instagram: optionalText,
       tiktok: optionalText,
       youtube: optionalText,
-      other: optionalText,
+      website: optionalText,
     }),
-    website: optionalText,
     follower_range: z.enum(FOLLOWER_RANGE_OPTIONS, {
       error: "Pick an audience size so I know the scale.",
     }),
     has_product: z.enum(HAS_PRODUCT_VALUES, {
       error: "Tell me whether something is already for sale.",
     }),
-    revenue_range: z.enum(REVENUE_RANGE_OPTIONS, {
-      error: "Pick a revenue range — rough is fine.",
-    }),
     biggest_bottleneck: z
       .string()
       .trim()
       .min(20, "Give me a bit more — at least a couple of sentences."),
-    goal_90_days: z
-      .string()
-      .trim()
-      .min(20, "Paint the picture. A short paragraph is enough."),
     ready_to_start: z.enum(READY_TO_START_OPTIONS, {
       error: "How soon do you want to start?",
     }),
-    budget_ack: z
+    terms_ack: z
       .boolean({
-        error: "Check the box so we're aligned on how this works.",
+        error: "Check the box so we're aligned before you send this.",
       })
       .refine((val) => val === true, {
-        message: "Check the box so we're aligned on how this works.",
+        message: "Check the box so we're aligned before you send this.",
       }),
-    source: z.enum(SOURCE_OPTIONS, {
-      error: "How did you find me?",
-    }),
     utm: z
       .object({
         utm_source: optionalText,
@@ -115,7 +87,7 @@ export const leadSchema = z
       Boolean(data.socials.instagram) ||
       Boolean(data.socials.tiktok) ||
       Boolean(data.socials.youtube) ||
-      Boolean(data.website);
+      Boolean(data.socials.website);
 
     if (!hasSocial) {
       ctx.addIssue({

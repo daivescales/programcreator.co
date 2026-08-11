@@ -26,7 +26,7 @@ export default function Error({
           <button
             type="button"
             onClick={reset}
-            className="inline-flex h-14 items-center justify-center rounded-[4px] bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex h-14 items-center justify-center bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Try again
           </button>

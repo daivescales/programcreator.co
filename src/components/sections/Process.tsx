@@ -1,230 +1,93 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { MaskLines, MaskText } from "@/components/motion";
-import Container from "@/components/ui/Container";
+import { MaskLines, Reveal } from "@/components/motion";
 import Heading from "@/components/ui/Heading";
-import Section from "@/components/ui/Section";
-import SectionNumber from "@/components/ui/SectionNumber";
-import { EASE_IN, usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { cn } from "@/lib/utils";
+import Spine from "@/components/ui/Spine";
 
-export const processSteps = [
+const steps = [
   {
-    id: "apply",
     number: "01",
-    label: "Apply",
     title: "You apply",
-    body: "Fill in the application. Three minutes. It asks the things I actually need: what you sell, who follows you, and what's currently broken.",
+    body: "Three minutes. It asks what you sell, who follows you, and what's currently broken.",
   },
   {
-    id: "call",
     number: "02",
-    label: "Call",
-    title: "We get on a call",
-    body: "Twenty minutes. No deck, no pressure. I tell you straight whether I can move the number and what I'd do first. If it isn't a fit, I say so on the call.",
+    title: "I read it",
+    body: "I read every application myself. If I think I can move the number, I reach out and we book a call.",
   },
   {
-    id: "build",
     number: "03",
-    label: "Build",
     title: "I build",
-    body: "Product, page, funnel — depending on your lane. You review at two checkpoints. I handle the rest, so you keep making content.",
+    body: "Product, page, funnel, depending on your lane. You review at two checkpoints. I handle the rest so you keep making content.",
   },
   {
-    id: "scale",
     number: "04",
-    label: "Scale",
     title: "We scale it",
-    body: "It goes live and we drive your audience into it. Then we keep tightening the offer and the page against what the data actually says.",
+    body: "It goes live and we drive your audience into it, then keep tightening the offer against what the data says.",
   },
 ] as const;
 
-function DesktopProcess() {
-  const reduced = usePrefersReducedMotion();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    if (reduced) return;
-
-    let ctx: { revert: () => void } | undefined;
-    let cancelled = false;
-
-    const setup = async () => {
-      const gsap = (await import("gsap")).default;
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      if (cancelled) return;
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      const container = containerRef.current;
-      const pin = pinRef.current;
-      if (!container || !pin) return;
-
-      ctx = gsap.context(() => {
-        ScrollTrigger.create({
-          trigger: container,
-          start: "top top",
-          end: () => `+=${3 * window.innerHeight}`,
-          pin,
-          scrub: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            setProgress(self.progress);
-            const idx = Math.min(
-              processSteps.length - 1,
-              Math.floor(self.progress * processSteps.length)
-            );
-            setActiveIndex(idx);
-          },
-        });
-      }, container);
-
-      if (cancelled) {
-        ctx.revert();
-        ctx = undefined;
-        return;
-      }
-
-      ScrollTrigger.refresh();
-    };
-
-    void setup();
-
-    return () => {
-      cancelled = true;
-      ctx?.revert();
-      ctx = undefined;
-    };
-  }, [reduced]);
-
-  const active = processSteps[activeIndex];
-
-  return (
-    <div ref={containerRef} className="relative mt-16">
-      <div ref={pinRef} className="relative min-h-[100svh] py-16">
-        <div className="grid grid-cols-12 gap-10">
-          <div className="sticky top-32 col-span-5 self-start">
-            <div className="overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={active.number}
-                  initial={reduced ? false : { y: "110%" }}
-                  animate={{ y: 0 }}
-                  exit={reduced ? undefined : { y: "-110%" }}
-                  transition={{ duration: 0.5, ease: EASE_IN }}
-                  className="text-[clamp(6rem,14vw,13rem)] font-bold leading-none tracking-[-0.06em] text-accent"
-                >
-                  {active.number}
-                </motion.p>
-              </AnimatePresence>
-            </div>
-
-            <div className="mt-8 h-32 w-px overflow-hidden bg-pc-line">
-              <div
-                className="w-full origin-top bg-accent transition-[height] duration-150"
-                style={{ height: `${Math.max(8, progress * 100)}%` }}
-              />
-            </div>
-
-            <ul className="mt-8 space-y-2">
-              {processSteps.map((step, index) => (
-                <li
-                  key={step.id}
-                  className={cn(
-                    "text-[12px] uppercase tracking-[0.18em] transition-colors duration-300",
-                    index === activeIndex
-                      ? "text-pc-white"
-                      : "text-pc-muted/40"
-                  )}
-                >
-                  {step.number} · {step.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="col-span-7 space-y-24 py-8">
-            {processSteps.map((step, index) => {
-              const isActive = index === activeIndex;
-              return (
-                <article
-                  key={step.id}
-                  className={cn(
-                    "border-b border-pc-line pb-12 transition-[opacity,filter] duration-[400ms]",
-                    isActive
-                      ? "opacity-100 blur-0"
-                      : "opacity-[0.22] blur-[1px]"
-                  )}
-                >
-                  <h3 className="text-[clamp(1.75rem,3vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white">
-                    {step.title}
-                  </h3>
-                  <p className="mt-4 max-w-[46ch] text-[17px] leading-[1.65] text-pc-text">
-                    {step.body}
-                  </p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Process() {
   return (
-    <Section id="process" bordered className="scroll-mt-section">
-      <Container>
-        <SectionNumber number="03" label="The Process" />
+    <Spine
+      id="process"
+      number="03"
+      label="THE PROCESS"
+      className="border-t border-pc-line py-28 md:py-36"
+    >
+      <Heading
+        as="h2"
+        text="From application to *first sale*."
+        className="max-w-[14ch]"
+      />
 
-        <Heading
-          as="h2"
-          text="From first message to *first sale*."
-          className="mt-8 max-w-[16ch]"
+      <MaskLines
+        delay={0.12}
+        className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-pc-text"
+      >
+        Four steps. Two to four weeks depending on the lane.
+      </MaskLines>
+
+      <div className="relative mt-14 hidden border-t border-pc-line md:block">
+        <span
+          aria-hidden
+          className="motion-idle pointer-events-none absolute top-0 left-0 z-10 h-0.5 w-16 bg-accent animate-process-scan"
         />
-
-        <MaskLines
-          delay={0.12}
-          className="mt-6 max-w-[58ch] text-lg leading-[1.65] text-pc-text"
-        >
-          Four steps. Two to four weeks depending on the lane.
-        </MaskLines>
-
-        <div className="hidden lg:block">
-          <DesktopProcess />
-        </div>
-
-        <ol className="relative mt-16 space-y-0 lg:hidden">
-          <div
-            aria-hidden
-            className="absolute top-2 bottom-2 left-[15px] w-px bg-pc-line"
-          />
-          {processSteps.map((step) => (
-            <li key={step.id} className="relative flex gap-6 pb-12 last:pb-0">
-              <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center border border-pc-line bg-navy-800 text-[12px] font-medium text-accent">
-                {step.number}
-              </span>
-              <div className="pt-0.5">
-                <MaskText
-                  as="h3"
-                  className="text-[clamp(1.75rem,3vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                >
+        <div className="grid grid-cols-4">
+          {steps.map((step, index) => (
+            <Reveal key={step.number} delay={0.08 * index}>
+              <article
+                className={`group h-full p-7 transition-colors duration-[200ms] hover:bg-white/[0.02] ${
+                  index > 0 ? "border-l border-pc-line" : ""
+                }`}
+              >
+                <p className="text-[clamp(2.5rem,4vw,3.5rem)] font-semibold tracking-[-0.04em] text-accent opacity-30 transition-opacity duration-[200ms] group-hover:opacity-70">
+                  {step.number}
+                </p>
+                <h3 className="mt-4 text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold tracking-[-0.035em] text-pc-white">
                   {step.title}
-                </MaskText>
-                <p className="mt-3 max-w-[46ch] text-[17px] leading-[1.65] text-pc-text">
+                </h3>
+                <p className="mt-3 text-[15px] leading-[1.6] text-pc-text">
                   {step.body}
                 </p>
-              </div>
-            </li>
+              </article>
+            </Reveal>
           ))}
-        </ol>
-      </Container>
-    </Section>
+        </div>
+      </div>
+
+      <ol className="relative mt-14 space-y-0 border-l border-pc-line md:hidden">
+        {steps.map((step) => (
+          <li key={step.number} className="relative py-7 pl-8">
+            <span className="absolute top-8 -left-px h-8 w-px bg-accent/40" />
+            <p className="text-[13px] text-accent">{step.number}</p>
+            <h3 className="mt-2 text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold tracking-[-0.035em] text-pc-white">
+              {step.title}
+            </h3>
+            <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.6] text-pc-text">
+              {step.body}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </Spine>
   );
 }

@@ -2,17 +2,15 @@
 
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { MaskText, ScrambleText } from "@/components/motion";
+import { MaskText } from "@/components/motion";
 import Container from "@/components/ui/Container";
-import CTAButton from "@/components/ui/CTAButton";
-import { useLenis } from "@/components/system/SmoothScroll";
+import Signature from "@/components/ui/Signature";
 import { site } from "@/lib/site-config";
 
-const navigate = [
+const indexLinks = [
   { href: "/#model", label: "Model" },
   { href: "/#lanes", label: "Lanes" },
   { href: "/#process", label: "Process" },
-  { href: "/#work", label: "Work" },
   { href: "/#faq", label: "FAQ" },
   { href: "/apply", label: "Apply" },
 ] as const;
@@ -24,65 +22,59 @@ const elsewhere = [
   { label: "X", href: site.socials.x },
 ] as const;
 
+const legal = [
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms of Service" },
+] as const;
+
 export default function Footer() {
-  const { lenis } = useLenis();
-
-  const backToTop = () => {
-    if (lenis) {
-      lenis.scrollTo(0, { duration: 1.2 });
-      return;
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
-    <footer className="border-t border-pc-line bg-navy-900 pt-32 pb-10">
+    <footer className="border-t border-pc-line bg-navy-900 pt-28 pb-8">
       <Container>
         <div className="overflow-hidden text-center">
           <MaskText
             as="p"
-            className="text-stroke-wordmark text-[clamp(3rem,13vw,11rem)] font-bold leading-none tracking-[-0.05em]"
+            className="text-stroke-wordmark text-[clamp(2.5rem,12vw,10rem)] font-bold leading-none tracking-[-0.05em]"
           >
             PROGRAMCREATOR
           </MaskText>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-10 lg:grid-cols-4 lg:gap-8">
-          <div className="col-span-2 lg:col-span-1">
-            <p className="text-[17px] font-semibold tracking-[-0.02em] text-pc-white">
-              Program<span className="text-accent">Creator</span>
-            </p>
-            <p className="mt-4 max-w-[28ch] text-[15px] leading-[1.65] text-pc-text">
+        <div className="mt-16 grid grid-cols-2 gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="col-span-2 lg:col-span-4">
+            <Signature height={28} />
+            <p className="mt-5 max-w-[32ch] text-[15px] leading-[1.65] text-pc-text">
               Creator Product Scaling for people who already have attention.
             </p>
             <a
               href={`mailto:${site.email}`}
-              className="mt-4 inline-block text-[15px] text-accent transition-opacity hover:opacity-80"
+              className="group relative mt-4 inline-block text-[15px] text-accent"
             >
               {site.email}
+              <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
             </a>
           </div>
 
-          <div>
-            <p className="text-[12px] uppercase tracking-[0.18em] text-pc-muted">
-              Navigate
+          <div className="lg:col-span-3">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
+              Index
             </p>
             <ul className="mt-4 space-y-3">
-              {navigate.map((link) => (
+              {indexLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[15px] text-pc-text transition-colors hover:text-pc-white"
+                    className="inline-block text-[15px] text-pc-text transition-[color,transform] duration-[160ms] hover:translate-x-1 hover:text-pc-white"
                   >
-                    <ScrambleText text={link.label} />
+                    {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
-            <p className="text-[12px] uppercase tracking-[0.18em] text-pc-muted">
+          <div className="lg:col-span-3">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
               Elsewhere
             </p>
             <ul className="mt-4 space-y-3">
@@ -93,12 +85,12 @@ export default function Footer() {
                     {...(link.href
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="group inline-flex items-center gap-1.5 text-[15px] text-pc-text transition-colors hover:text-pc-white"
+                    className="group inline-flex items-center gap-1.5 text-[15px] text-pc-text transition-colors duration-[160ms] hover:text-pc-white"
                   >
-                    <ScrambleText text={link.label} />
+                    {link.label}
                     <ArrowUpRight
                       size={14}
-                      className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="transition-transform duration-[160ms] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                       aria-hidden
                     />
                   </a>
@@ -107,33 +99,32 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="col-span-2 border border-pc-line bg-navy-800 p-6 lg:col-span-1">
-            <p className="text-[clamp(1.25rem,2vw,1.5rem)] font-semibold tracking-[-0.03em] text-pc-white">
-              Have a brand?
+          <div className="col-span-2 lg:col-span-2">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
+              Legal
             </p>
-            <p className="mt-2 text-[15px] leading-[1.65] text-pc-text">
-              Apply in three minutes. If I can help, we get on a call.
-            </p>
-            <CTAButton href="/apply" className="mt-5 w-full">
-              Apply to work with me
-            </CTAButton>
+            <ul className="mt-4 space-y-3">
+              {legal.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="inline-block text-[15px] text-pc-text transition-[color,transform] duration-[160ms] hover:translate-x-1 hover:text-pc-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-pc-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[12px] uppercase tracking-[0.14em] text-pc-muted">
-            © 2026 {site.name}
+        <div className="mt-16 flex flex-col gap-3 border-t border-pc-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-pc-muted">
+            © 2026 {site.name}. Built and run by {site.founder}.
           </p>
-          <p className="text-[12px] uppercase tracking-[0.14em] text-pc-muted">
-            Built by {site.founder} · {site.handle}
+          <p className="text-[11px] uppercase tracking-[0.16em] text-pc-muted">
+            {site.handle}
           </p>
-          <button
-            type="button"
-            onClick={backToTop}
-            className="text-[12px] uppercase tracking-[0.14em] text-pc-muted transition-colors hover:text-pc-white"
-          >
-            Back to top
-          </button>
         </div>
       </Container>
     </footer>

@@ -8,7 +8,6 @@ const PHRASES = [
   "Revenue split partnerships",
   "Clothing brands",
   "Conversion design",
-  "Creator product scaling",
 ] as const;
 
 function PhraseTrack() {
@@ -16,7 +15,7 @@ function PhraseTrack() {
     <>
       {PHRASES.map((phrase) => (
         <span key={phrase} className="inline-flex items-center gap-8">
-          <span className="text-[15px] uppercase tracking-[0.16em] text-pc-muted whitespace-nowrap">
+          <span className="whitespace-nowrap text-[13px] uppercase tracking-[0.18em] text-pc-muted">
             {phrase}
           </span>
           <span
@@ -31,7 +30,7 @@ function PhraseTrack() {
 
 export default function Ticker() {
   return (
-    <div className="border-y border-pc-line bg-navy-900 py-6">
+    <div className="border-y border-pc-line bg-navy-900 py-5">
       <div
         className="overflow-hidden"
         style={{
@@ -41,7 +40,7 @@ export default function Ticker() {
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <Marquee className="gap-8">
+        <Marquee className="gap-8" pauseOnHover>
           <PhraseTrack />
         </Marquee>
       </div>

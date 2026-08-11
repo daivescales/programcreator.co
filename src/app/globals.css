@@ -10,7 +10,6 @@
   --color-navy-800: var(--pc-navy-800);
   --color-navy-700: var(--pc-navy-700);
   --color-navy-600: var(--pc-navy-600);
-  --color-navy-500: var(--pc-navy-500);
 
   --color-pc-line: var(--pc-line);
   --color-pc-line-2: var(--pc-line-2);
@@ -38,18 +37,22 @@
   --color-input: var(--pc-line);
   --color-ring: var(--pc-accent);
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 4px;
-  --radius-xl: 4px;
-  --radius-2xl: 4px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
 
   --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.65, 0, 0.35, 1);
 
   --animate-marquee: marquee 40s linear infinite;
-  --animate-aurora-drift: aurora-drift 24s ease-in-out infinite;
-  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-glow-drift: glow-drift 26s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+  --animate-mock-cycle: mock-cycle 7s ease-in-out infinite;
+  --animate-apply-drift: apply-drift 20s ease-in-out infinite;
+  --animate-process-scan: process-scan 6s linear infinite;
+  --animate-field-shake: field-shake 0.35s ease-in-out;
 }
 
 :root {
@@ -57,16 +60,14 @@
   --pc-navy-800: #0b2038;
   --pc-navy-700: #102c4c;
   --pc-navy-600: #16395f;
-  --pc-navy-500: #1e4b7a;
   --pc-line: rgba(255, 255, 255, 0.09);
-  --pc-line-2: rgba(255, 255, 255, 0.16);
+  --pc-line-2: rgba(255, 255, 255, 0.18);
   --pc-white: #ffffff;
-  /* Lightened from #7E97B4 for AA on navy-800 at small sizes */
   --pc-muted: #94aac4;
   --pc-text: #c2d4e8;
   --pc-accent: #4d9bff;
   --pc-accent-2: #a9cdff;
-  --pc-glow: rgba(77, 155, 255, 0.3);
+  --pc-glow: rgba(77, 155, 255, 0.28);
 
   --background: var(--pc-navy-800);
   --foreground: var(--pc-text);
@@ -84,7 +85,7 @@
   --border: var(--pc-line);
   --input: var(--pc-line);
   --ring: var(--pc-accent);
-  --radius: 4px;
+  --radius: 0px;
 }
 
 @keyframes marquee {
@@ -96,47 +97,89 @@
   }
 }
 
-@keyframes aurora-drift {
+@keyframes glow-drift {
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
   50% {
-    transform: translate(4%, -3%) scale(1.08);
+    transform: translate(3%, -2%) scale(1.06);
   }
 }
 
-@keyframes pulse-soft {
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes mock-cycle {
   0%,
   100% {
     opacity: 1;
   }
+  90% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 0;
+  }
+}
+
+@keyframes apply-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
   50% {
-    opacity: 0.45;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes process-scan {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(100vw));
+  }
+}
+
+@keyframes field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    border-radius: 0;
   }
 
   html {
-    scroll-behavior: auto;
-  }
-
-  html.lenis,
-  html.lenis body {
-    height: auto;
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px;
   }
 
   body {
     @apply overflow-x-hidden bg-navy-800 font-sans text-pc-text antialiased;
-  }
-
-  body.has-custom-cursor,
-  body.has-custom-cursor * {
-    cursor: none !important;
   }
 
   *:focus {
@@ -155,6 +198,13 @@
 }
 
 @layer utilities {
+  .serif-em {
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--pc-accent-2);
+  }
+
   .font-serif-italic {
     font-family: var(--font-serif), ui-serif, Georgia, serif;
     font-style: italic;
@@ -163,7 +213,7 @@
 
   .text-stroke-wordmark {
     color: transparent;
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.18);
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.16);
   }
 
   .scroll-mt-section {
@@ -176,7 +226,7 @@
     scroll-behavior: auto;
   }
 
-  .motion-safe-only {
-    display: none !important;
+  .motion-idle {
+    animation: none !important;
   }
 }

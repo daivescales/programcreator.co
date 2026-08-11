@@ -1,9 +1,6 @@
 import type { Config } from "tailwindcss";
 
-/**
- * Tailwind v4 primarily uses @theme in globals.css.
- * This file documents the v2 design tokens and easing for tooling/reference.
- */
+/** Tailwind v4 uses @theme in globals.css; this documents v3 tokens. */
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
@@ -13,7 +10,6 @@ const config: Config = {
         "navy-800": "var(--pc-navy-800)",
         "navy-700": "var(--pc-navy-700)",
         "navy-600": "var(--pc-navy-600)",
-        "navy-500": "var(--pc-navy-500)",
         "pc-line": "var(--pc-line)",
         "pc-line-2": "var(--pc-line-2)",
         "pc-white": "var(--pc-white)",
@@ -36,22 +32,29 @@ const config: Config = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-50%)" },
         },
-        "aurora-drift": {
+        "glow-drift": {
           "0%, 100%": { transform: "translate(0, 0) scale(1)" },
-          "50%": { transform: "translate(4%, -3%) scale(1.08)" },
+          "50%": { transform: "translate(3%, -2%) scale(1.06)" },
         },
-        "pulse-soft": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.45" },
+        "pulse-ring": {
+          "0%": { transform: "scale(1)", opacity: "0.55" },
+          "70%": { transform: "scale(2.2)", opacity: "0" },
+          "100%": { transform: "scale(2.2)", opacity: "0" },
+        },
+        "mock-cycle": {
+          "0%, 90%": { opacity: "1" },
+          "95%, 100%": { opacity: "0" },
         },
       },
       animation: {
         marquee: "marquee 40s linear infinite",
-        "aurora-drift": "aurora-drift 24s ease-in-out infinite",
-        "pulse-soft": "pulse-soft 2s ease-in-out infinite",
+        "glow-drift": "glow-drift 26s ease-in-out infinite",
+        "pulse-ring": "pulse-ring 2.4s ease-out infinite",
+        "mock-cycle": "mock-cycle 7s ease-in-out infinite",
       },
       borderRadius: {
-        DEFAULT: "4px",
+        DEFAULT: "0px",
+        none: "0px",
       },
     },
   },

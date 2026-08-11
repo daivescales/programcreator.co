@@ -12,20 +12,22 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
-type MagneticButtonProps = {
+export type MagneticButtonProps = {
   children: ReactNode;
   className?: string;
+  /** Max pull toward cursor in px. Capped at 6. */
   strength?: number;
 };
 
 export default function MagneticButton({
   children,
   className,
-  strength = 8,
+  strength = 6,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
   const [enabled, setEnabled] = useState(false);
+  const max = Math.min(Math.abs(strength), 6);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -34,8 +36,7 @@ export default function MagneticButton({
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
-    const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    setEnabled(fine && !touch && !reduced);
+    setEnabled(fine && !reduced);
   }, [reduced]);
 
   const onMove = useCallback(
@@ -47,18 +48,19 @@ export default function MagneticButton({
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
       const dist = Math.hypot(dx, dy);
+      const radius = Math.max(rect.width, rect.height) * 0.75;
 
-      if (dist > 80) {
+      if (dist > radius) {
         x.set(0);
         y.set(0);
         return;
       }
 
-      const t = 1 - dist / 80;
-      x.set((dx / rect.width) * strength * 2 * t);
-      y.set((dy / rect.height) * strength * 2 * t);
+      const t = 1 - dist / radius;
+      x.set(Math.max(-max, Math.min(max, (dx / rect.width) * max * 2 * t)));
+      y.set(Math.max(-max, Math.min(max, (dy / rect.height) * max * 2 * t)));
     },
-    [enabled, strength, x, y]
+    [enabled, max, x, y]
   );
 
   const onLeave = useCallback(() => {
@@ -82,5 +84,3 @@ export default function MagneticButton({
     </motion.div>
   );
 }
-
-export type { MagneticButtonProps };

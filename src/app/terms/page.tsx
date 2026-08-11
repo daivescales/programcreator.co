@@ -4,111 +4,272 @@ import Container from "@/components/ui/Container";
 import { site } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Terms",
-  description: `Terms of use for ${site.name}.`,
+  title: "Terms of Service",
+  description: `Terms of Service for ${site.name}.`,
 };
+
+function Section({
+  number,
+  title,
+  children,
+}: {
+  number: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="border-t border-pc-line pt-10">
+      <h2 className="mb-4 text-lg font-semibold tracking-tight text-pc-white">
+        <span className="mr-3 text-accent">{number}</span>
+        {title}
+      </h2>
+      <div className="space-y-4 text-[17px] leading-[1.65] text-pc-text">
+        {children}
+      </div>
+    </section>
+  );
+}
 
 export default function TermsPage() {
   return (
     <div className="bg-navy-800 py-32">
       <Container>
-        <article className="mx-auto max-w-[720px]">
-          <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
-            Legal
-          </p>
+        <article className="mx-auto max-w-[760px]">
+          <Link
+            href="/"
+            className="mb-10 inline-block text-sm text-pc-muted transition-colors hover:text-pc-white"
+          >
+            ← Back to home
+          </Link>
+
           <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-[-0.035em] text-pc-white">
-            Terms
+            Terms of Service
           </h1>
-          <p className="mt-4 text-pc-text">
-            Last updated: August 10, 2026. These terms cover use of this website
-            and the application process.
-          </p>
+          <p className="mt-4 text-pc-muted">Last updated: August 10, 2026</p>
 
-          <div className="mt-10 space-y-8 text-[17px] leading-[1.65] text-pc-text">
-            <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
-                The site
-              </h2>
+          <div className="mt-14 space-y-10">
+            <Section number="01" title="Who these terms apply to">
               <p>
-                {site.name} is operated by {site.founder} ({site.handle}). The
-                site describes services and collects applications. Submitting an
-                application does not create a client relationship and does not
-                guarantee a call, partnership, or outcome.
+                {site.name} is operated by {site.founder} as a sole operator.
+                These terms cover the website, the application process, and any
+                engagement that follows.
               </p>
-            </section>
+            </Section>
 
-            <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
-                Two payment models
-              </h2>
+            <Section number="02" title="Applications">
               <p>
-                Creator / digital work is typically a revenue split. Physical
-                product brands typically work on a monthly retainer. Exact
-                commercial terms — scope, split percentage, retainer amount,
-                timeline, and ownership — are set per engagement in a separate
-                written agreement. Nothing on this site overrides that
-                agreement.
+                Submitting an application does not create a working relationship
+                and does not obligate me to respond. I personally read every
+                application received. I will only reach out if I believe there
+                is a genuine fit to work together. If you do not hear back, it
+                means I did not think I was the right person for your brand at
+                that time; it is not a judgement of your business. I am under no
+                obligation to provide feedback or a reason. Information you
+                submit must be accurate and must be yours to share.
               </p>
-            </section>
+            </Section>
 
-            <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
-                Your application
-              </h2>
+            <Section number="03" title="Services">
               <p>
-                You agree that the information you submit is accurate to the
-                best of your knowledge. You grant us permission to store and
-                process it as described in the{" "}
-                <Link href="/privacy" className="text-accent hover:underline">
-                  Privacy
-                </Link>{" "}
-                page so we can evaluate fit and follow up.
+                Two engagement types. Lane A (creators and digital brands):
+                building digital products and rebuilding store and sales pages,
+                scaled through the client&apos;s own social presence. Lane B
+                (physical product brands): storefront rebuilds and conversion
+                work. The specific scope of any engagement is set out in a
+                separate written agreement between the parties; these terms are
+                the general framework and the separate agreement governs where
+                the two conflict.
               </p>
-            </section>
+            </Section>
 
-            <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
-                No guarantees
-              </h2>
+            <Section number="04" title="Fees">
               <p>
-                Results depend on your audience, offer, execution, and market.
-                Past outcomes (when shown) are examples, not promises. We do
-                not guarantee revenue, follower growth, or conversion rates.
+                Lane A operates on a revenue split: an agreed percentage of
+                revenue generated by the product built, with no upfront fee.
+                Lane B operates on a flat monthly retainer billed in advance.
+                Exact percentages, amounts, billing dates and payment methods
+                are agreed in writing before work begins. Fees are
+                non-refundable except where required by law.
               </p>
-            </section>
+            </Section>
 
-            <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
-                Booking
-              </h2>
+            <Section number="05" title="Term and termination">
               <p>
-                Discovery calls are scheduled through Cal.com. Missing a booked
-                call without notice may mean we decline to reschedule. Be on
-                time and bring context.
+                Engagements are ongoing while the agreed fee is being paid.
+                Either party may end an engagement with written notice as
+                specified in the separate agreement. I may end an engagement
+                immediately for non-payment, or for conduct that is abusive,
+                unlawful, or that would damage either party&apos;s reputation.
               </p>
-            </section>
+            </Section>
 
-            <section>
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-pc-white">
-                Contact
-              </h2>
+            <Section number="06" title="What happens when payment stops">
               <p>
-                Questions:{" "}
+                This section is important, so read it carefully. If payment
+                stops, ends, or lapses for any reason, then from that date:
+              </p>
+              <ul className="list-disc space-y-3 pl-5">
+                <li>
+                  You keep everything already built and delivered up to the end
+                  of the final paid period. It remains live and it remains yours
+                  to use.
+                </li>
+                <li>
+                  All work stops immediately. No further updates, edits,
+                  revisions, fixes, optimisations, redesigns, additions, or
+                  changes of any kind will be made to your product, site,
+                  storefront, or funnel.
+                </li>
+                <li>
+                  Ongoing maintenance, hosting, security updates, platform and
+                  dependency updates, bug fixes, and any future development
+                  become your sole responsibility. I am not responsible for
+                  anything that breaks, degrades, or stops functioning after the
+                  engagement ends.
+                </li>
+                <li>
+                  No further changes to your personal brand site will be made by
+                  me. Any subsequent development is entirely down to you or a
+                  party you appoint.
+                </li>
+                <li>
+                  No support, consultation, or assistance is included after the
+                  final paid period.
+                </li>
+                <li>
+                  Resuming work after a lapse requires a new written agreement
+                  and is subject to my availability and to updated terms and
+                  rates.
+                </li>
+              </ul>
+            </Section>
+
+            <Section number="07" title="Ownership">
+              <p>
+                On full payment for the relevant period, you own the final
+                delivered work: the copy, design, product content, and page
+                builds created specifically for your brand. I retain ownership
+                of the underlying methods, frameworks, templates, reusable
+                components, and know-how used to produce it, and I remain free
+                to reuse those on other engagements. Third-party assets (fonts,
+                platforms, plugins, hosting) remain governed by their own
+                licences, which you are responsible for maintaining after the
+                engagement ends.
+              </p>
+            </Section>
+
+            <Section number="08" title="Systems and database access">
+              <p>
+                During an engagement I build and administer systems on your
+                behalf, which may include databases, content management systems,
+                analytics, email tooling, and hosting accounts. I retain
+                continued administrative access to these systems, including
+                after an engagement ends, for technical, archival, and
+                continuity purposes. You may request in writing at{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="text-accent hover:underline"
+                  className="text-accent underline-offset-2 hover:underline"
+                >
+                  {site.email}
+                </a>{" "}
+                that this access be revoked, and I will remove it within a
+                reasonable period. Note that once access is revoked I cannot
+                restore, migrate, recover, or assist with those systems at any
+                point in the future. Where such a system holds personal data
+                belonging to your own customers, you remain the data controller
+                and I act as a processor on your instructions; you may request
+                deletion of that data at any time and I will comply. See the{" "}
+                <Link
+                  href="/privacy"
+                  className="text-accent underline-offset-2 hover:underline"
+                >
+                  Privacy Policy
+                </Link>{" "}
+                for detail.
+              </p>
+            </Section>
+
+            <Section number="09" title="Your responsibilities">
+              <p>
+                Providing timely access, assets, brand materials, approvals, and
+                feedback. Reviewing at the agreed checkpoints. Ensuring anything
+                you supply is lawful and yours to use. Ensuring your product,
+                claims, pricing, and business comply with applicable law. Delays
+                in providing what is needed will extend timelines.
+              </p>
+            </Section>
+
+            <Section number="10" title="No guarantee of results">
+              <p>
+                I do not guarantee any specific revenue, conversion rate,
+                follower growth, sales volume, or business outcome. Results
+                depend on your audience, your offer, your market, your pricing,
+                your consistency, and factors outside my control. Any figures,
+                examples, or past results shown on this site are illustrative of
+                previous work and are not a promise of your results.
+              </p>
+            </Section>
+
+            <Section number="11" title="Confidentiality">
+              <p>
+                Each party will keep the other&apos;s non-public business
+                information confidential and use it only for the engagement. I
+                may reference the work publicly as a portfolio piece or case
+                study unless you ask me in writing not to.
+              </p>
+            </Section>
+
+            <Section number="12" title="Limitation of liability">
+              <p>
+                To the maximum extent permitted by law, my total liability
+                arising from an engagement is limited to the total fees you paid
+                me in the three months immediately before the event giving rise
+                to the claim. I am not liable for indirect, incidental, or
+                consequential losses, including lost profits, lost revenue, lost
+                data, or business interruption. Nothing here limits liability
+                that cannot lawfully be limited.
+              </p>
+            </Section>
+
+            <Section number="13" title="Changes to these terms">
+              <p>
+                These terms may be updated. The &quot;last updated&quot; date at
+                the top will change. Material changes affecting an active
+                engagement will be communicated directly. Continued use of the
+                site means acceptance of the current version.
+              </p>
+            </Section>
+
+            <Section number="14" title="Governing law">
+              <p>
+                Set out in the separate written agreement for each engagement.
+              </p>
+              {/* TODO: Daive — insert your governing jurisdiction here */}
+            </Section>
+
+            <Section number="15" title="Contact">
+              <p>
+                Questions about these terms:{" "}
+                <a
+                  href={`mailto:${site.email}`}
+                  className="text-accent underline-offset-2 hover:underline"
                 >
                   {site.email}
                 </a>
                 .
               </p>
-            </section>
+            </Section>
           </div>
 
-          <p className="mt-12">
-            <Link href="/" className="text-sm text-accent hover:underline">
-              ← Back to home
+          <p className="mt-16 border-t border-pc-line pt-8 text-sm text-pc-muted">
+            Also see the{" "}
+            <Link
+              href="/privacy"
+              className="text-accent underline-offset-2 hover:underline"
+            >
+              Privacy Policy
             </Link>
+            .
           </p>
         </article>
       </Container>

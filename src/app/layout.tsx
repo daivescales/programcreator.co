@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { Inter_Tight, Instrument_Serif } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
-import SmoothScroll from "@/components/system/SmoothScroll";
 import Grain from "@/components/system/Grain";
-import CustomCursor from "@/components/system/CustomCursor";
 import ScrollProgress from "@/components/system/ScrollProgress";
-import IntroLoader from "@/components/system/IntroLoader";
 import { Toaster } from "@/components/ui/sonner";
 import { faqItems } from "@/content/faq";
 import { site } from "@/lib/site-config";
@@ -111,13 +108,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <SmoothScroll>
-          <Grain />
-          <CustomCursor />
-          <ScrollProgress />
-          <IntroLoader />
-          <SiteChrome>{children}</SiteChrome>
-        </SmoothScroll>
+        <Grain />
+        <ScrollProgress />
+        <SiteChrome>{children}</SiteChrome>
         <Toaster theme="dark" position="top-center" richColors />
       </body>
     </html>

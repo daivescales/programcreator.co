@@ -20,27 +20,26 @@ import {
   type Resolver,
 } from "react-hook-form";
 import { toast } from "sonner";
-import CharDrift from "@/components/motion/CharDrift";
 import MaskText from "@/components/motion/MaskText";
-import Aurora from "@/components/system/Aurora";
+import Glow from "@/components/system/Glow";
 import {
   EASE_IN,
+  EASE_OUT,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
+import { site } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import {
   FOLLOWER_RANGE_OPTIONS,
   leadSchema,
   READY_TO_START_OPTIONS,
-  REVENUE_RANGE_OPTIONS,
-  SOURCE_OPTIONS,
   type LeadInput,
 } from "@/lib/validation";
 
 const STORAGE_KEY = "pc_apply_draft";
-const TOTAL_STEPS = 13;
+const TOTAL_STEPS = 10;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const AUTO_ADVANCE_MS = 300;
+const AUTO_ADVANCE_MS = 280;
 
 type FormValues = {
   full_name: string;
@@ -51,17 +50,13 @@ type FormValues = {
     instagram?: string;
     tiktok?: string;
     youtube?: string;
-    other?: string;
+    website?: string;
   };
-  website?: string;
   follower_range: (typeof FOLLOWER_RANGE_OPTIONS)[number] | undefined;
   has_product: "yes" | "no" | "sort_of" | undefined;
-  revenue_range: (typeof REVENUE_RANGE_OPTIONS)[number] | undefined;
   biggest_bottleneck: string;
-  goal_90_days: string;
   ready_to_start: (typeof READY_TO_START_OPTIONS)[number] | undefined;
-  budget_ack: boolean;
-  source: (typeof SOURCE_OPTIONS)[number] | undefined;
+  terms_ack: boolean;
   utm: {
     utm_source?: string;
     utm_medium?: string;
@@ -77,16 +72,12 @@ const defaultValues: FormValues = {
   email: "",
   brand_name: "",
   lane: undefined,
-  socials: { instagram: "", tiktok: "", youtube: "", other: "" },
-  website: "",
+  socials: { instagram: "", tiktok: "", youtube: "", website: "" },
   follower_range: undefined,
   has_product: undefined,
-  revenue_range: undefined,
   biggest_bottleneck: "",
-  goal_90_days: "",
   ready_to_start: undefined,
-  budget_ack: false,
-  source: undefined,
+  terms_ack: false,
   utm: {
     utm_source: undefined,
     utm_medium: undefined,
@@ -100,7 +91,11 @@ const defaultValues: FormValues = {
 type Choice = { id: string; label: string; value: string };
 
 const LANE_OPTIONS: Choice[] = [
-  { id: "creator", label: "I'm a creator with an audience", value: "creator" },
+  {
+    id: "creator",
+    label: "I'm a creator with an audience",
+    value: "creator",
+  },
   {
     id: "physical",
     label: "I run a physical product brand",
@@ -108,7 +103,7 @@ const LANE_OPTIONS: Choice[] = [
   },
   {
     id: "both",
-    label: "Both — I have an audience and I sell physical products",
+    label: "Both — audience and physical products",
     value: "physical",
   },
 ];
@@ -128,76 +123,151 @@ const STEP_FIELDS: FieldPath<FormValues>[][] = [
   ["email"],
   ["lane"],
   ["brand_name"],
-  ["socials.instagram", "socials.tiktok", "socials.youtube", "website"],
+  ["socials.instagram", "socials.tiktok", "socials.youtube", "socials.website"],
   ["follower_range"],
   ["has_product"],
-  ["revenue_range"],
   ["biggest_bottleneck"],
-  ["goal_90_days"],
   ["ready_to_start"],
-  ["budget_ack"],
-  ["source"],
+  ["terms_ack"],
 ];
 
-function padStep(n: number) {
-  return String(n).padStart(2, "0");
-}
-
-function ChoiceCards({
-  options,
-  selectedId,
-  onSelect,
+function UnderlineField({
+  id,
+  type = "text",
+  placeholder,
+  error,
+  shake,
+  prefix,
+  ...rest
 }: {
-  options: Choice[];
-  selectedId: string | null;
-  onSelect: (option: Choice) => void;
-}) {
+  id: string;
+  type?: string;
+  placeholder?: string;
+  error?: string;
+  shake?: boolean;
+  prefix?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <div className="space-y-3" role="radiogroup">
-      {options.map((option, index) => {
-        const selected = selectedId === option.id;
-        const letter = LETTERS[index];
-        return (
-          <button
-            key={option.id}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            data-letter={letter}
-            onClick={() => onSelect(option)}
-            className={cn(
-              "flex w-full items-center gap-4 rounded-[4px] border px-5 py-4 text-left transition-colors duration-[180ms]",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-              selected
-                ? "border-accent bg-accent/10"
-                : "border-pc-line bg-transparent hover:border-pc-line-2 hover:bg-white/[0.03]"
-            )}
-          >
-            <span
-              className={cn(
-                "flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] border text-xs font-medium",
-                selected
-                  ? "border-accent bg-accent text-navy-900"
-                  : "border-pc-line bg-navy-700 text-pc-muted"
-              )}
-            >
-              {letter}
-            </span>
-            <span className="flex-1 text-[15px] font-medium text-pc-white">
-              {option.label}
-            </span>
-            {selected ? (
-              <Check className="h-5 w-5 text-accent" strokeWidth={2.5} />
-            ) : null}
-          </button>
-        );
-      })}
+    <div
+      className={cn(
+        "relative",
+        shake && "animate-[field-shake_0.35s_ease-in-out]"
+      )}
+    >
+      <div className="flex items-baseline gap-1">
+        {prefix ? (
+          <span className="text-[22px] text-pc-muted md:text-[26px]" aria-hidden>
+            {prefix}
+          </span>
+        ) : null}
+        <input
+          id={id}
+          type={type}
+          placeholder={placeholder}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={cn(
+            "peer w-full border-0 bg-transparent py-3 text-[22px] text-pc-white caret-accent outline-none md:text-[26px]",
+            "placeholder:text-pc-muted/55"
+          )}
+          {...rest}
+        />
+      </div>
+      <span
+        aria-hidden
+        className="absolute bottom-0 left-0 h-px w-full bg-pc-line"
+      />
+      <span
+        aria-hidden
+        className="absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
+      />
+      {error ? (
+        <p id={`${id}-error`} className="mt-2 text-sm text-red-400" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
 
-const inputClass =
-  "w-full border-0 border-b border-pc-line bg-transparent py-3 text-xl text-pc-white placeholder:text-pc-muted transition-colors duration-[180ms] focus:border-accent focus:outline-none md:text-2xl";
+function ChoiceRows({
+  options,
+  value,
+  onSelect,
+  error,
+  shake,
+}: {
+  options: Choice[];
+  value?: string;
+  onSelect: (choice: Choice) => void;
+  error?: string;
+  shake?: boolean;
+}) {
+  const reduceMotion = usePrefersReducedMotion();
+
+  return (
+    <div
+      className={cn(
+        "space-y-2",
+        shake && "animate-[field-shake_0.35s_ease-in-out]"
+      )}
+      role="radiogroup"
+    >
+      {options.map((option, i) => {
+        const selected = value === option.id;
+        const letter = LETTERS[i] ?? String(i + 1);
+        return (
+          <motion.button
+            key={option.id}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onSelect(option)}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={
+              reduceMotion
+                ? { duration: 0.15 }
+                : { duration: 0.35, delay: i * 0.05, ease: EASE_IN }
+            }
+            className={cn(
+              "group flex w-full items-center gap-4 border px-6 py-5 text-left transition-[border-color,background-color,transform] duration-[160ms]",
+              selected
+                ? "border-accent bg-accent/[0.08]"
+                : "border-pc-line bg-transparent hover:translate-x-1 hover:border-pc-line-2 hover:bg-white/[0.03]"
+            )}
+          >
+            <span
+              className={cn(
+                "flex h-6 w-6 shrink-0 items-center justify-center border text-[11px] font-medium",
+                selected
+                  ? "border-accent text-accent"
+                  : "border-pc-line text-pc-muted"
+              )}
+            >
+              {letter}
+            </span>
+            <span className="flex-1 text-[15px] text-pc-white md:text-base">
+              {option.label}
+            </span>
+            <Check
+              className={cn(
+                "h-4 w-4 shrink-0 text-accent transition-opacity duration-[160ms]",
+                selected ? "opacity-100" : "opacity-0"
+              )}
+              aria-hidden
+            />
+          </motion.button>
+        );
+      })}
+      {error ? (
+        <p className="mt-2 text-sm text-red-400" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 export default function ApplicationForm() {
   const router = useRouter();
@@ -206,10 +276,10 @@ export default function ApplicationForm() {
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [laneChoiceId, setLaneChoiceId] = useState<string | null>(null);
+  const [shake, setShake] = useState(false);
 
   const {
     register,
@@ -231,9 +301,7 @@ export default function ApplicationForm() {
   const lane = useWatch({ control, name: "lane" });
   const followerRange = useWatch({ control, name: "follower_range" });
   const hasProduct = useWatch({ control, name: "has_product" });
-  const revenueRange = useWatch({ control, name: "revenue_range" });
   const readyToStart = useWatch({ control, name: "ready_to_start" });
-  const source = useWatch({ control, name: "source" });
 
   useEffect(() => {
     let restoredStartedAt: number | undefined;
@@ -322,6 +390,7 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     clearErrors();
+    setShake(false);
     const t = setTimeout(() => {
       const el = focusRef.current?.querySelector<HTMLElement>(
         "input:not([type=hidden]):not([tabindex='-1']), textarea, button[role=radio]"
@@ -338,15 +407,18 @@ export default function ApplicationForm() {
     []
   );
 
-  const goTo = useCallback((next: number, dir: number) => {
-    setDirection(dir);
-    setStep(next);
+  const triggerShake = useCallback(() => {
+    setShake(true);
+    window.setTimeout(() => setShake(false), 400);
   }, []);
 
   const validateStep = useCallback(async () => {
     const fields = STEP_FIELDS[step];
     const ok = await trigger(fields);
-    if (!ok) return false;
+    if (!ok) {
+      triggerShake();
+      return false;
+    }
 
     if (step === 4) {
       const v = getValues();
@@ -354,24 +426,29 @@ export default function ApplicationForm() {
         Boolean(String(v.socials?.instagram ?? "").trim()) ||
         Boolean(String(v.socials?.tiktok ?? "").trim()) ||
         Boolean(String(v.socials?.youtube ?? "").trim()) ||
-        Boolean(String(v.website ?? "").trim());
+        Boolean(String(v.socials?.website ?? "").trim());
       if (!has) {
         setError("socials.instagram", {
           message: "Drop at least one handle or a website so I can find you.",
         });
+        triggerShake();
         return false;
       }
     }
     return true;
-  }, [step, trigger, getValues, setError]);
+  }, [step, trigger, getValues, setError, triggerShake]);
+
+  const goTo = useCallback((next: number) => {
+    setStep(next);
+  }, []);
 
   const next = useCallback(async () => {
     if (!(await validateStep())) return;
-    if (step < TOTAL_STEPS - 1) goTo(step + 1, 1);
+    if (step < TOTAL_STEPS - 1) goTo(step + 1);
   }, [goTo, step, validateStep]);
 
   const back = useCallback(() => {
-    if (step > 0) goTo(step - 1, -1);
+    if (step > 0) goTo(step - 1);
   }, [goTo, step]);
 
   const selectAndAdvance = useCallback((apply: () => void) => {
@@ -379,7 +456,6 @@ export default function ApplicationForm() {
     if (advanceTimer.current) clearTimeout(advanceTimer.current);
     advanceTimer.current = setTimeout(() => {
       setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
-      setDirection(1);
     }, AUTO_ADVANCE_MS);
   }, []);
 
@@ -397,118 +473,125 @@ export default function ApplicationForm() {
         2: LANE_OPTIONS,
         5: FOLLOWER_RANGE_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
         6: HAS_PRODUCT_OPTIONS,
-        7: REVENUE_RANGE_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
-        10: READY_TO_START_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
-        12: SOURCE_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
+        8: READY_TO_START_OPTIONS.map((v) => ({ id: v, label: v, value: v })),
       };
 
-      const options = choiceMap[step];
-      if (!options || e.metaKey || e.ctrlKey || e.altKey) return;
-
-      const idx = LETTERS.indexOf(e.key.toUpperCase());
-      if (idx < 0 || idx >= options.length) return;
-      e.preventDefault();
-      const option = options[idx];
-
-      if (step === 2) {
-        selectAndAdvance(() => {
-          setLaneChoiceId(option.id);
-          setValue("lane", option.value as FormValues["lane"], {
-            shouldValidate: true,
-          });
-        });
-        return;
+      const choices = choiceMap[step];
+      if (choices && e.key.length === 1) {
+        const idx = LETTERS.indexOf(e.key.toUpperCase());
+        if (idx >= 0 && idx < choices.length) {
+          e.preventDefault();
+          const choice = choices[idx]!;
+          if (step === 2) {
+            selectAndAdvance(() => {
+              setLaneChoiceId(choice.id);
+              setValue("lane", choice.value as FormValues["lane"], {
+                shouldValidate: true,
+              });
+            });
+          } else if (step === 5) {
+            selectAndAdvance(() =>
+              setValue(
+                "follower_range",
+                choice.value as FormValues["follower_range"],
+                { shouldValidate: true }
+              )
+            );
+          } else if (step === 6) {
+            selectAndAdvance(() =>
+              setValue(
+                "has_product",
+                choice.value as FormValues["has_product"],
+                { shouldValidate: true }
+              )
+            );
+          } else if (step === 8) {
+            selectAndAdvance(() =>
+              setValue(
+                "ready_to_start",
+                choice.value as FormValues["ready_to_start"],
+                { shouldValidate: true }
+              )
+            );
+          }
+          return;
+        }
       }
 
-      const fieldByStep: Record<number, FieldPath<FormValues>> = {
-        5: "follower_range",
-        6: "has_product",
-        7: "revenue_range",
-        10: "ready_to_start",
-        12: "source",
-      };
-      const field = fieldByStep[step];
-      if (!field) return;
-
-      if (step === 12) {
-        setValue(field, option.value as never, { shouldValidate: true });
-        return;
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (step === TOTAL_STEPS - 1) {
+          void handleSubmit(onSubmit)();
+        } else {
+          void next();
+        }
       }
-
-      selectAndAdvance(() => {
-        setValue(field, option.value as never, { shouldValidate: true });
-      });
+      if (e.key === "Escape") {
+        e.preventDefault();
+        back();
+      }
     }
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [selectAndAdvance, setValue, step, submitting]);
+    // onSubmit defined below — intentionally omit to avoid rebind loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    step,
+    submitting,
+    selectAndAdvance,
+    setValue,
+    next,
+    back,
+    handleSubmit,
+  ]);
 
-  async function onValidSubmit(data: FormValues) {
+  async function onSubmit(values: FormValues) {
     setSubmitting(true);
     try {
-      const parsed = leadSchema.safeParse(data);
-      if (!parsed.success) {
-        toast.error("Check your answers and try again.");
-        setSubmitting(false);
-        return;
-      }
-
-      const payload: LeadInput = parsed.data;
+      const payload: LeadInput = leadSchema.parse(values);
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const json = (await res.json()) as { ok?: boolean; error?: string };
-
-      if (!res.ok || !json.ok) {
-        throw new Error(json.error || "Could not submit");
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Could not submit. Try again.");
       }
 
-      sessionStorage.removeItem(STORAGE_KEY);
-      const first = payload.full_name.trim().split(/\s+/)[0] || "";
-      router.push(
-        `/book?name=${encodeURIComponent(first)}&email=${encodeURIComponent(payload.email)}&lane=${encodeURIComponent(payload.lane)}`
-      );
-    } catch {
-      toast.error(
-        "Something went wrong. Your answers are still here — try again."
-      );
+      try {
+        sessionStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+
+      const first = values.full_name.trim().split(/\s+/)[0] ?? "";
+      const params = new URLSearchParams({
+        name: first,
+        email: values.email,
+        lane: values.lane ?? "",
+      });
+      router.push(`/book?${params.toString()}`);
+    } catch (err) {
       setSubmitting(false);
+      toast.error(
+        err instanceof Error ? err.message : "Something went wrong. Try again."
+      );
     }
   }
 
-  async function submitOrNext() {
-    if (step === TOTAL_STEPS - 1) {
-      if (!(await validateStep())) return;
-      void handleSubmit(onValidSubmit)();
-      return;
+  const onContinueKey = (e: ReactKeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (step === TOTAL_STEPS - 1) void handleSubmit(onSubmit)();
+      else void next();
     }
-    await next();
-  }
+  };
 
-  function onEnter(e: ReactKeyboardEvent) {
-    if (e.key !== "Enter" || e.shiftKey) return;
-    const tag = (e.target as HTMLElement).tagName.toLowerCase();
-    if (tag === "textarea") return;
-    e.preventDefault();
-    void submitOrNext();
-  }
+  const stepLabel = String(step + 1).padStart(2, "0");
+  const progress = (step + 1) / TOTAL_STEPS;
 
-  const variants = reduceMotion
-    ? {
-        enter: { opacity: 1, y: 0 },
-        center: { opacity: 1, y: 0 },
-        exit: { opacity: 1, y: 0 },
-      }
-    : {
-        enter: { opacity: 0, y: direction > 0 ? 20 : -20 },
-        center: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: direction > 0 ? -20 : 20 },
-      };
-
-  const progress = ((step + 1) / TOTAL_STEPS) * 100;
   const stepError =
     errors.full_name?.message ||
     errors.email?.message ||
@@ -517,509 +600,505 @@ export default function ApplicationForm() {
     errors.socials?.instagram?.message ||
     errors.follower_range?.message ||
     errors.has_product?.message ||
-    errors.revenue_range?.message ||
     errors.biggest_bottleneck?.message ||
-    errors.goal_90_days?.message ||
     errors.ready_to_start?.message ||
-    errors.budget_ack?.message ||
-    errors.source?.message;
+    errors.terms_ack?.message;
 
-  const showContinue =
-    [0, 1, 3, 4, 8, 9, 11].includes(step) || step === TOTAL_STEPS - 1;
-
-  if (submitting) {
-    return (
-      <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-navy-800 px-6 text-center">
-        <Aurora className="opacity-40 [&>div:first-child]:bottom-[-20%] [&>div:first-child]:left-[-15%] [&>div:first-child]:top-auto [&>div:last-child]:hidden" />
-        <CharDrift
-          as="p"
-          className="relative z-[1] text-lg text-pc-text"
-        >
-          Sending your application...
-        </CharDrift>
-      </div>
-    );
-  }
+  const variants = reduceMotion
+    ? {
+        enter: { opacity: 0 },
+        center: { opacity: 1, transition: { duration: 0.15 } },
+        exit: { opacity: 0, transition: { duration: 0.15 } },
+      }
+    : {
+        enter: { opacity: 0, y: 20 },
+        center: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.38, ease: EASE_IN },
+        },
+        exit: {
+          opacity: 0,
+          y: -20,
+          transition: { duration: 0.25, ease: EASE_OUT },
+        },
+      };
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-navy-800">
-      <Aurora className="opacity-35 [&>div:first-child]:bottom-[-25%] [&>div:first-child]:left-[-20%] [&>div:first-child]:top-auto [&>div:last-child]:hidden" />
+      <Glow className="opacity-35 [&>div]:left-[18%] [&>div]:top-auto [&>div]:bottom-[-10%] [&>div]:translate-x-0 [&>div]:translate-y-0" />
 
-      <header className="relative z-40 sticky top-0 border-b border-pc-line bg-navy-800/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between px-6">
+      <header className="relative z-[2] border-b border-pc-line">
+        <div className="flex items-center justify-between px-5 py-4 md:px-8">
           <Link
             href="/"
-            className="text-[18px] font-semibold tracking-tight text-pc-white"
+            className="text-sm font-semibold tracking-[-0.02em] text-pc-white"
           >
-            Program<span className="text-accent">Creator</span>
+            {site.name}
           </Link>
-          <p className="font-mono text-sm tabular-nums text-pc-muted">
-            {padStep(step + 1)} / {padStep(TOTAL_STEPS)}
+          <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
+            {stepLabel} / {String(TOTAL_STEPS).padStart(2, "0")}
           </p>
         </div>
-        <div className="h-[2px] w-full bg-pc-line" aria-hidden>
+        <div className="h-0.5 w-full bg-pc-line" aria-hidden>
           <motion.div
-            className="h-full bg-accent"
+            className="h-full origin-left bg-accent"
             initial={false}
-            animate={{ width: `${progress}%` }}
+            animate={{ scaleX: progress }}
             transition={
-              reduceMotion ? { duration: 0 } : { duration: 0.32, ease: EASE_IN }
+              reduceMotion
+                ? { duration: 0.15 }
+                : { type: "spring", stiffness: 280, damping: 32 }
             }
+            style={{ willChange: "transform" }}
           />
         </div>
       </header>
 
-      <div className="sr-only" aria-live="polite">
-        Question {step + 1} of {TOTAL_STEPS}
-      </div>
+      <div
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      >{`Question ${step + 1} of ${TOTAL_STEPS}`}</div>
 
-      <form
-        className="relative z-[1] flex flex-1 flex-col"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void submitOrNext();
-        }}
-        noValidate
-      >
-        <div
-          className="absolute left-[-9999px] h-0 w-0 overflow-hidden"
-          aria-hidden
-        >
-          <label htmlFor="company_website">Company website</label>
-          <input
-            id="company_website"
-            tabIndex={-1}
-            autoComplete="off"
-            {...register("company_website")}
-          />
-        </div>
-        <input
-          type="hidden"
-          {...register("startedAt", { valueAsNumber: true })}
-        />
+      <div className="relative z-[2] flex flex-1 flex-col px-5 pb-8 pt-10 md:px-8 md:pt-14">
+        <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col self-start md:ml-[max(0px,calc((100%-640px)*0.12))]">
+          {/* honeypot */}
+          <div className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden opacity-0" aria-hidden>
+            <label htmlFor="company_website">Company website</label>
+            <input
+              id="company_website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              {...register("company_website")}
+            />
+          </div>
 
-        <div
-          ref={focusRef}
-          className="mx-auto flex w-full max-w-[640px] flex-1 flex-col justify-center px-6 py-12 md:py-16"
-        >
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={step}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={
-                reduceMotion
-                  ? { duration: 0 }
-                  : { duration: 0.32, ease: EASE_IN }
-              }
-            >
-              {step === 0 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    What&apos;s your full name?
-                  </MaskText>
-                  <input
-                    className={cn(inputClass, "mt-8")}
-                    placeholder="Your name"
-                    autoComplete="name"
-                    aria-label="Full name"
-                    onKeyDown={onEnter}
-                    {...register("full_name")}
-                  />
-                </>
-              )}
-
-              {step === 1 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    What&apos;s the best email for you?
-                  </MaskText>
-                  <input
-                    type="email"
-                    className={cn(inputClass, "mt-8")}
-                    placeholder="you@email.com"
-                    autoComplete="email"
-                    aria-label="Email"
-                    onKeyDown={onEnter}
-                    {...register("email")}
-                  />
-                </>
-              )}
-
-              {step === 2 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    Which best describes you?
-                  </MaskText>
-                  <div className="mt-8">
-                    <ChoiceCards
-                      selectedId={laneChoiceId}
-                      options={LANE_OPTIONS}
-                      onSelect={(option) => {
-                        selectAndAdvance(() => {
-                          setLaneChoiceId(option.id);
-                          setValue(
-                            "lane",
-                            option.value as FormValues["lane"],
-                            { shouldValidate: true }
-                          );
-                        });
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {step === 3 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    Brand or business name?
-                  </MaskText>
-                  <input
-                    className={cn(inputClass, "mt-8")}
-                    placeholder="Brand name"
-                    aria-label="Brand name"
-                    onKeyDown={onEnter}
-                    {...register("brand_name")}
-                  />
-                </>
-              )}
-
-              {step === 4 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    Where can I see you?
-                  </MaskText>
-                  <p className="mt-3 text-[15px] text-pc-muted">
-                    At least one handle or a website.
+          <div className="relative flex-1" ref={focusRef}>
+            <AnimatePresence mode="wait">
+              {!submitting ? (
+                <motion.div
+                  key={step}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  variants={variants}
+                  onKeyDown={onContinueKey}
+                  className="w-full"
+                >
+                  <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-accent">
+                    Question {stepLabel}
                   </p>
-                  <div className="mt-8 space-y-6">
-                    {(
-                      [
-                        ["socials.instagram", "Instagram"],
-                        ["socials.tiktok", "TikTok"],
-                        ["socials.youtube", "YouTube"],
-                      ] as const
-                    ).map(([name, label]) => (
-                      <div key={name} className="flex items-center gap-2">
-                        <span className="text-pc-muted">@</span>
-                        <input
-                          className={inputClass}
-                          placeholder={label}
-                          aria-label={label}
-                          onKeyDown={onEnter}
-                          {...register(name)}
+
+                  {step === 0 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        What&apos;s your name?
+                      </MaskText>
+                      <div className="mt-8">
+                        <UnderlineField
+                          id="full_name"
+                          placeholder="Full name"
+                          autoComplete="name"
+                          error={errors.full_name?.message}
+                          shake={shake}
+                          {...register("full_name")}
                         />
                       </div>
-                    ))}
-                    <input
-                      className={inputClass}
-                      placeholder="Website or store link (optional)"
-                      aria-label="Website"
-                      onKeyDown={onEnter}
-                      {...register("website")}
-                    />
-                  </div>
-                </>
-              )}
+                    </>
+                  )}
 
-              {step === 5 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    Audience size on your main platform?
-                  </MaskText>
-                  <div className="mt-8">
-                    <ChoiceCards
-                      selectedId={followerRange ?? null}
-                      options={FOLLOWER_RANGE_OPTIONS.map((v) => ({
-                        id: v,
-                        label: v,
-                        value: v,
-                      }))}
-                      onSelect={(option) => {
-                        selectAndAdvance(() => {
-                          setValue(
-                            "follower_range",
-                            option.value as FormValues["follower_range"],
-                            { shouldValidate: true }
-                          );
-                        });
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {step === 6 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    Do you already have something you sell?
-                  </MaskText>
-                  <div className="mt-8">
-                    <ChoiceCards
-                      selectedId={hasProduct ?? null}
-                      options={HAS_PRODUCT_OPTIONS}
-                      onSelect={(option) => {
-                        selectAndAdvance(() => {
-                          setValue(
-                            "has_product",
-                            option.value as FormValues["has_product"],
-                            { shouldValidate: true }
-                          );
-                        });
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {step === 7 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    Current monthly revenue?
-                  </MaskText>
-                  <div className="mt-8">
-                    <ChoiceCards
-                      selectedId={revenueRange ?? null}
-                      options={REVENUE_RANGE_OPTIONS.map((v) => ({
-                        id: v,
-                        label: v,
-                        value: v,
-                      }))}
-                      onSelect={(option) => {
-                        selectAndAdvance(() => {
-                          setValue(
-                            "revenue_range",
-                            option.value as FormValues["revenue_range"],
-                            { shouldValidate: true }
-                          );
-                        });
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {step === 8 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    What&apos;s actually broken right now?
-                  </MaskText>
-                  <p className="mt-3 text-[15px] text-pc-muted">
-                    Be specific. This is the question I read first.
-                  </p>
-                  <textarea
-                    rows={4}
-                    className={cn(inputClass, "mt-8 resize-none")}
-                    placeholder="Type your answer"
-                    aria-label="Biggest bottleneck"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                        e.preventDefault();
-                        void next();
-                      }
-                    }}
-                    {...register("biggest_bottleneck")}
-                  />
-                </>
-              )}
-
-              {step === 9 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[24ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    If this works, what does the next 90 days look like?
-                  </MaskText>
-                  <textarea
-                    rows={4}
-                    className={cn(inputClass, "mt-8 resize-none")}
-                    placeholder="Type your answer"
-                    aria-label="90 day goal"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                        e.preventDefault();
-                        void next();
-                      }
-                    }}
-                    {...register("goal_90_days")}
-                  />
-                </>
-              )}
-
-              {step === 10 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    How soon do you want to start?
-                  </MaskText>
-                  <div className="mt-8">
-                    <ChoiceCards
-                      selectedId={readyToStart ?? null}
-                      options={READY_TO_START_OPTIONS.map((v) => ({
-                        id: v,
-                        label: v,
-                        value: v,
-                      }))}
-                      onSelect={(option) => {
-                        selectAndAdvance(() => {
-                          setValue(
-                            "ready_to_start",
-                            option.value as FormValues["ready_to_start"],
-                            { shouldValidate: true }
-                          );
-                        });
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {step === 11 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[22ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    {lane === "creator"
-                      ? "Creators work on a revenue split"
-                      : "Physical brands work on a retainer"}
-                  </MaskText>
-                  <p className="mt-4 text-[15px] leading-relaxed text-pc-text">
-                    {lane === "creator"
-                      ? "No upfront fee. We only make money when you do. That keeps incentives aligned."
-                      : "Storefront and conversion work runs on a monthly retainer. Scope is set before we start."}
-                  </p>
-                  <Controller
-                    control={control}
-                    name="budget_ack"
-                    render={({ field }) => (
-                      <label className="mt-8 flex cursor-pointer items-start gap-3 text-left text-[15px] text-pc-white">
-                        <input
-                          type="checkbox"
-                          checked={field.value === true}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                          onKeyDown={onEnter}
-                          className="mt-1 h-4 w-4 accent-[var(--pc-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  {step === 1 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        Where should I reply?
+                      </MaskText>
+                      <div className="mt-8">
+                        <UnderlineField
+                          id="email"
+                          type="email"
+                          placeholder="you@brand.com"
+                          autoComplete="email"
+                          error={errors.email?.message}
+                          shake={shake}
+                          {...register("email")}
                         />
-                        <span>
-                          {lane === "creator"
-                            ? "I understand this is a revenue split, not a flat fee."
-                            : "I understand physical product brands work on a monthly retainer."}
-                        </span>
-                      </label>
-                    )}
+                      </div>
+                    </>
+                  )}
+
+                  {step === 2 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        Which best describes you?
+                      </MaskText>
+                      <div className="mt-8">
+                        <ChoiceRows
+                          options={LANE_OPTIONS}
+                          value={
+                            laneChoiceId ??
+                            (lane === "creator" ? "creator" : lane ? "physical" : undefined)
+                          }
+                          error={errors.lane?.message}
+                          shake={shake}
+                          onSelect={(choice) =>
+                            selectAndAdvance(() => {
+                              setLaneChoiceId(choice.id);
+                              setValue(
+                                "lane",
+                                choice.value as FormValues["lane"],
+                                { shouldValidate: true }
+                              );
+                            })
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 3 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        Brand or business name?
+                      </MaskText>
+                      <div className="mt-8">
+                        <UnderlineField
+                          id="brand_name"
+                          placeholder="Brand name"
+                          error={errors.brand_name?.message}
+                          shake={shake}
+                          {...register("brand_name")}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 4 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        Where can I see you?
+                      </MaskText>
+                      <p className="mt-2 text-[15px] text-pc-muted">
+                        At least one handle or a website.
+                      </p>
+                      <div
+                        className={cn(
+                          "mt-8 space-y-5",
+                          shake && "animate-[field-shake_0.35s_ease-in-out]"
+                        )}
+                      >
+                        <UnderlineField
+                          id="instagram"
+                          placeholder="handle"
+                          prefix="@"
+                          error={errors.socials?.instagram?.message}
+                          {...register("socials.instagram")}
+                        />
+                        <UnderlineField
+                          id="tiktok"
+                          placeholder="handle"
+                          prefix="@"
+                          {...register("socials.tiktok")}
+                        />
+                        <UnderlineField
+                          id="youtube"
+                          placeholder="handle or channel"
+                          prefix="@"
+                          {...register("socials.youtube")}
+                        />
+                        <UnderlineField
+                          id="website"
+                          type="url"
+                          placeholder="https://yoursite.com"
+                          {...register("socials.website")}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 5 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        Audience size on your main platform?
+                      </MaskText>
+                      <div className="mt-8">
+                        <ChoiceRows
+                          options={FOLLOWER_RANGE_OPTIONS.map((v) => ({
+                            id: v,
+                            label: v,
+                            value: v,
+                          }))}
+                          value={followerRange}
+                          error={errors.follower_range?.message}
+                          shake={shake}
+                          onSelect={(choice) =>
+                            selectAndAdvance(() =>
+                              setValue(
+                                "follower_range",
+                                choice.value as FormValues["follower_range"],
+                                { shouldValidate: true }
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 6 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        Do you already sell something?
+                      </MaskText>
+                      <div className="mt-8">
+                        <ChoiceRows
+                          options={HAS_PRODUCT_OPTIONS}
+                          value={hasProduct}
+                          error={errors.has_product?.message}
+                          shake={shake}
+                          onSelect={(choice) =>
+                            selectAndAdvance(() =>
+                              setValue(
+                                "has_product",
+                                choice.value as FormValues["has_product"],
+                                { shouldValidate: true }
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 7 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        What&apos;s actually broken right now?
+                      </MaskText>
+                      <p className="mt-2 text-[15px] text-pc-muted">
+                        Be specific. This is the answer I read first.
+                      </p>
+                      <div
+                        className={cn(
+                          "relative mt-8",
+                          shake && "animate-[field-shake_0.35s_ease-in-out]"
+                        )}
+                      >
+                        <textarea
+                          id="biggest_bottleneck"
+                          rows={5}
+                          placeholder="What's stuck..."
+                          aria-invalid={Boolean(errors.biggest_bottleneck)}
+                          className={cn(
+                            "peer w-full resize-none border-0 bg-transparent py-3 text-[18px] leading-relaxed text-pc-white caret-accent outline-none md:text-[20px]",
+                            "placeholder:text-pc-muted/55"
+                          )}
+                          {...register("biggest_bottleneck")}
+                        />
+                        <span
+                          aria-hidden
+                          className="absolute bottom-0 left-0 h-px w-full bg-pc-line"
+                        />
+                        <span
+                          aria-hidden
+                          className="absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
+                        />
+                        {errors.biggest_bottleneck?.message ? (
+                          <p className="mt-2 text-sm text-red-400" role="alert">
+                            {errors.biggest_bottleneck.message}
+                          </p>
+                        ) : null}
+                      </div>
+                    </>
+                  )}
+
+                  {step === 8 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        How soon do you want to start?
+                      </MaskText>
+                      <div className="mt-8">
+                        <ChoiceRows
+                          options={READY_TO_START_OPTIONS.map((v) => ({
+                            id: v,
+                            label: v,
+                            value: v,
+                          }))}
+                          value={readyToStart}
+                          error={errors.ready_to_start?.message}
+                          shake={shake}
+                          onSelect={(choice) =>
+                            selectAndAdvance(() =>
+                              setValue(
+                                "ready_to_start",
+                                choice.value as FormValues["ready_to_start"],
+                                { shouldValidate: true }
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {step === 9 && (
+                    <>
+                      <MaskText
+                        as="h2"
+                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
+                      >
+                        One thing before you send this.
+                      </MaskText>
+                      <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-pc-text md:text-base">
+                        {lane === "creator"
+                          ? "This is a revenue split, not a flat fee. I'm paid a percentage of what your product earns, so there's no upfront cost — and no work happens without an active agreement. If the arrangement ends, you keep everything already built, but all further updates stop."
+                          : "Physical brands work on a flat monthly retainer. Work continues for as long as the retainer is active. If it ends, you keep everything already built, but all further updates stop and maintenance becomes yours."}
+                      </p>
+                      <div
+                        className={cn(
+                          "mt-8",
+                          shake && "animate-[field-shake_0.35s_ease-in-out]"
+                        )}
+                      >
+                        <Controller
+                          name="terms_ack"
+                          control={control}
+                          render={({ field }) => (
+                            <label className="flex cursor-pointer items-start gap-3 border border-pc-line px-5 py-4 transition-colors hover:border-pc-line-2">
+                              <input
+                                type="checkbox"
+                                checked={field.value}
+                                onChange={(e) =>
+                                  field.onChange(e.target.checked)
+                                }
+                                className="mt-1 h-4 w-4 shrink-0 accent-accent"
+                              />
+                              <span className="text-[15px] leading-relaxed text-pc-white">
+                                I&apos;ve read and accept the{" "}
+                                <Link
+                                  href="/terms"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-accent underline-offset-2 hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  Terms of Service
+                                </Link>
+                                .
+                              </span>
+                            </label>
+                          )}
+                        />
+                        {errors.terms_ack?.message ? (
+                          <p className="mt-2 text-sm text-red-400" role="alert">
+                            {errors.terms_ack.message}
+                          </p>
+                        ) : null}
+                        <p className="mt-4 text-xs leading-relaxed text-pc-muted">
+                          Applying doesn&apos;t commit you to anything. I only
+                          reach out if I think we&apos;re a good fit.
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="sending"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex min-h-[40vh] flex-col items-center justify-center"
+                >
+                  <motion.div
+                    className="mb-8 h-px w-full origin-left bg-accent"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={
+                      reduceMotion
+                        ? { duration: 0.15 }
+                        : { duration: 0.85, ease: EASE_IN }
+                    }
                   />
-                </>
+                  <p className="text-[15px] text-pc-muted">
+                    Sending your application
+                  </p>
+                </motion.div>
               )}
+            </AnimatePresence>
+          </div>
 
-              {step === 12 && (
-                <>
-                  <MaskText
-                    as="h1"
-                    className="max-w-[20ch] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold tracking-[-0.035em] text-pc-white"
-                  >
-                    How did you find me?
-                  </MaskText>
-                  <div className="mt-8">
-                    <ChoiceCards
-                      selectedId={source ?? null}
-                      options={SOURCE_OPTIONS.map((v) => ({
-                        id: v,
-                        label: v,
-                        value: v,
-                      }))}
-                      onSelect={(option) => {
-                        setValue(
-                          "source",
-                          option.value as FormValues["source"],
-                          { shouldValidate: true }
-                        );
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {stepError ? (
-                <p className="mt-4 text-sm text-red-400" role="alert">
-                  {stepError}
-                </p>
-              ) : null}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <div className="sticky bottom-0 border-t border-pc-line bg-navy-800/95 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md">
-          <div className="mx-auto flex max-w-[640px] items-center justify-between gap-4">
-            <button
-              type="button"
-              onClick={back}
-              className={cn(
-                "inline-flex items-center gap-1 text-sm text-pc-muted transition-colors hover:text-pc-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                step === 0 && "invisible"
-              )}
-              aria-label="Back"
-            >
-              <ChevronLeft size={16} />
-              Back
-            </button>
-            <div className="text-right">
-              {showContinue ? (
-                <>
+          {!submitting ? (
+            <div className="mt-10 flex items-end justify-between gap-4">
+              <div>
+                {step > 0 ? (
                   <button
                     type="button"
-                    onClick={() => void submitOrNext()}
-                    className="inline-flex h-14 items-center justify-center rounded-[4px] bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    onClick={back}
+                    className="group inline-flex items-center gap-1.5 text-sm text-pc-muted transition-colors hover:text-pc-white"
                   >
-                    {step === TOTAL_STEPS - 1
-                      ? "Submit application"
-                      : "Continue"}
+                    <ChevronLeft
+                      className="h-4 w-4 transition-transform duration-[160ms] group-hover:-translate-x-[3px]"
+                      aria-hidden
+                    />
+                    Back
                   </button>
-                  <p className="mt-2 text-[12px] text-pc-muted">press Enter ↵</p>
-                </>
-              ) : (
-                <p className="text-[12px] text-pc-muted">
-                  Select an option to continue
-                </p>
-              )}
+                ) : (
+                  <span />
+                )}
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (step === TOTAL_STEPS - 1) void handleSubmit(onSubmit)();
+                    else void next();
+                  }}
+                  className="inline-flex h-12 items-center justify-center bg-accent px-8 text-[15px] font-medium text-navy-900 transition-opacity hover:opacity-90"
+                >
+                  {step === TOTAL_STEPS - 1
+                    ? "Submit application"
+                    : "Continue"}
+                </button>
+                <p className="text-[11px] text-pc-muted">press Enter ↵</p>
+              </div>
             </div>
-          </div>
+          ) : null}
+
+          {stepError && !submitting ? (
+            <span className="sr-only" aria-live="assertive">
+              {stepError}
+            </span>
+          ) : null}
         </div>
-      </form>
+      </div>
     </div>
   );
 }

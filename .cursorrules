@@ -1,64 +1,72 @@
-# ProgramCreator — Cursor Rules (v2)
+# ProgramCreator — Cursor Rules (v3 FINAL)
 
 ## Business
-- Brand: ProgramCreator | Founder: Daive (@daivescales) | Service: Creator Product Scaling
-- Lane A (creators/digital): build product or convert store page. Payment: REVENUE SPLIT, zero upfront.
-- Lane B (physical brands): storefront rebuild + social→site. Payment: MONTHLY RETAINER.
-- Same discipline both lanes; payment model is the only structural difference — say it plainly.
-- Audience: smart 22–35 creators/founders from Daive's socials. Allergic to agency fluff.
+- Brand: ProgramCreator — agency arm of a personal brand. One-person studio. Personal, direct, signed.
+- Founder: Daive (@daivescales). First person singular always ("I build", never "we deliver").
+- Service: Creator Product Scaling.
+- Lane A (creators/digital): product + converting page, scaled via their socials. PAYMENT: revenue split, zero upfront.
+- Lane B (physical brands): storefront rebuild + social→site. PAYMENT: monthly retainer.
+- Same discipline both lanes; payment model is the only structural difference. Say it plainly.
+- Audience: inbound from socials, creators/founders 22–35 who can spot templates.
 
 ## Voice
-Confident, direct, unhurried. Short declarative sentences. Specific beats clever.
-Banned: unlock, elevate, empower, synergy, revolutionize, seamless, cutting-edge, game-changer, "in today's landscape", "we're passionate about", "let's take it to the next level".
-No exclamation marks. No emoji in UI. Understatement over hype.
+Short declarative sentences. Specific beats clever. Understatement = confidence.
+Banned: unlock, elevate, empower, synergy, revolutionize, seamless, cutting-edge, game-changer, "in today's landscape", "we're passionate about", "take it to the next level", "let's build something amazing".
+No exclamation marks. No emoji in UI.
 
-## Visual — dark editorial
-- Mid-navy page, white type, one bright accent used sparingly. Enormous whitespace. Oversized display type. Near-square radius (4px). Numbered sections (01)–(06).
-- NOT: purple, neon, glassmorphism, heavy shadows, stock office photos, emoji, rounded-everything, decorative gradients.
+## Layout — "THE DOSSIER" (anti-template)
+BANNED: 3-col icon cards, bento grids, decorative pill badges, centred hero+sub+2 CTAs, floating shadow cards, generic "Our Services/Process/Why Us" titles, gradient text/buttons/borders, emoji/3D blobs.
 
-### Tokens (exact)
---pc-navy-900 #071528 · --pc-navy-800 #0B2038 (page bg) · --pc-navy-700 #102C4C · --pc-navy-600 #16395F · --pc-navy-500 #1E4B7A
---pc-line rgba(255,255,255,0.09) · --pc-line-2 rgba(255,255,255,0.16)
---pc-white #FFFFFF · --pc-text #C2D4E8 · --pc-muted #7E97B4 (lighten to #94AAC4 if AA fails at small sizes)
---pc-accent #4D9BFF · --pc-accent-2 #A9CDFF · --pc-glow rgba(77,155,255,0.30)
+USE INSTEAD:
+- THE SPINE: lg+ 12-col grid; cols 1–2 = sticky rail (section number + vertical uppercase label); cols 3–12 = content. Mobile: rail becomes horizontal row above content.
+- Rules not boxes: 1px edge-to-edge hairlines + whitespace. Contained = hairline top/bottom, not rounded bordered cards.
+- Radius 0 everywhere (optional 0–2px on primary CTA only if tested and consistent).
+- Type is the design. Oversized display headings carry sections.
+- Tabular thinking: indexes, lists, real comparison tables — not feature cards.
+- Asymmetry: left-weighted against the spine. Only Final CTA is centred.
+- Signed: Daive signature (SVG path draw) in About strip + Footer.
 
-### Type
-- Inter Tight 400/500/600/700 — structural; headings tracking-[-0.035em]
-- Instrument Serif italic 400 ONLY — 1–2 emphasis words in display headings, colour --pc-accent-2. ~5 uses total. Never body/buttons.
-- display clamp(3rem,9vw,8rem) leading-[0.92] tracking-[-0.04em]
-- h2 clamp(2.25rem,5.5vw,4.5rem) · h3 clamp(1.25rem,2vw,1.65rem) · body 17–19px leading-[1.65] max-w-[62ch]
-- meta 12px uppercase tracking-[0.18em] text-pc-muted
+## Colour (exact)
+--pc-navy-900 #071528 · --pc-navy-800 #0B2038 (page) · --pc-navy-700 #102C4C · --pc-navy-600 #16395F
+--pc-line rgba(255,255,255,0.09) · --pc-line-2 rgba(255,255,255,0.18)
+--pc-white #FFF · --pc-text #C2D4E8 · --pc-muted #94AAC4 (AA-safe)
+--pc-accent #4D9BFF · --pc-accent-2 #A9CDFF · --pc-glow rgba(77,155,255,0.28)
+Accent only on: CTAs, section numbers, 1–2 emphasis words/screen, active states. Max ~4 accent elements per screen.
 
-### Surfaces & texture
-- Cards: bg-navy-700, 1px --pc-line, radius 4px, p-8–p-10. Elevation via border/bg lift, not shadow.
-- Section sep: full-width 1px --pc-line rules.
-- Grain: fixed feTurbulence overlay ~3.5% opacity sitewide.
-- Aurora: soft --pc-glow blooms behind hero + final CTA only (barely visible).
-- Optional 1px hero grid at 3% opacity, fade down.
+## Type
+Inter Tight 400/500/600/700 — structural; headings tracking-[-0.035em].
+Instrument Serif italic 400 — emphasis words in --pc-accent-2 + signature. ~4 uses/page. Never body/buttons/labels.
+display clamp(2.75rem,8vw,7rem) leading-[0.94] tracking-[-0.04em]
+h2 clamp(2rem,5vw,4rem) · h3 clamp(1.15rem,1.9vw,1.5rem) · body 17px leading-[1.6] max-w-[60ch]
+label 11px uppercase tracking-[0.2em] text-pc-muted
 
-### Section numbering
-Eyebrow row: "(01)" in accent · hairline that expands 0→100% on entry · uppercase 12px muted label right. Numbers 01–06.
+## Motion doctrine — CRITICAL
+HARD BANS — do not install or implement:
+✗ Lenis / Locomotive / any scroll-hijack · ✗ GSAP / ScrollTrigger · ✗ scroll-pin / sticky-stack · ✗ scroll-scrub · ✗ parallax · ✗ custom cursor · ✗ scramble/glitch/typewriter/char-shuffle · ✗ animating width/height/top/left/margin/padding
 
-## Motion (engineered, not busy)
-Libs: framer-motion, gsap+ScrollTrigger, lenis (lerp 0.09, synced to GSAP ticker).
+SCROLL may ONLY fire one-shot whileInView reveals: viewport={{ once: true, margin: "-12%" }}. Never re-run, reverse, or track progress (except ScrollProgress bar scaleX).
+
+ALL OTHER MOTION = ambient (idle CSS loops, hover, state). GPU-cheap; keeps page alive without scroll cost.
+
+Perf: transform + opacity ONLY. will-change while active then clear. Idle loops CSS when possible. ≤~6 idle loops on screen. Native 60fps scroll.
 Ease in: cubic-bezier(0.16,1,0.3,1) · out: cubic-bezier(0.65,0,0.35,1)
-Durations: micro 180ms · standard 600ms · display 900ms.
+Durations: micro 160ms · standard 500ms · display 850ms.
 
-Primitives in src/components/motion/: MaskText (word mask, signature), MaskLines, CharDrift, Reveal, ScrollScale, Parallax (±0.3 max), CountUp, Marquee, MagneticButton, ScrambleText (nav/footer only), StickyStack (Process pin).
+Primitives (src/components/motion/): MaskText, MaskLines, Reveal, RuleDraw, StaggerList, CountUp, Marquee, RotatingWord, SignalLines, PulseDot, LiveMock, MagneticButton (≤6px), IndexRow.
+Reduced motion: 0.15s opacity fades, loops freeze, magnetic off. Text in DOM without JS.
 
-Global: IntroLoader once/session · CustomCursor pointer:fine only · ScrollProgress 2px accent top · section rule expand.
-prefers-reduced-motion: no Lenis, no intro, no cursor, reveals = 0.2s opacity only. Text always in DOM for no-JS.
-
-If busy: cut ScrambleText first, then custom cursor. Keep MaskText.
+## Texture
+Grain 3.5% sitewide (mandatory). One glow bloom hero + one Final CTA (26s CSS drift, barely visible). Nothing else.
 
 ## Funnel
-Routes: / · /apply · /book · /privacy · /terms
-Every CTA → /apply (never Cal.com). Labels: "Apply to work with me" / "See the process".
-/apply → Supabase + Sheet + Resend → /book (Cal embed).
+Routes: / · /apply (10 steps) · /book · /privacy · /terms
+Landing = 9 blocks only: Hero, Ticker, Model, Lanes, Process, Proof, AboutStrip, FAQ, FinalCTA. ~5–6 screens.
+Every CTA → /apply. Labels: "Apply to work with me" / "How it works".
+/apply → Supabase + Sheet + Resend → /book.
 
 ## Tech
-Next 15 App Router, TS strict, Tailwind, Framer Motion, GSAP, Lenis, lucide-react only.
-Server Components default; motion as leaf client components.
-Config only in src/lib/site-config.ts. No lorem. No stock people photos.
-Mobile-first 375/768/1440. AA contrast. focus-visible --pc-accent rings.
-Intentional TODOs only: results data, Daive photo.
+Next 15 App Router, TS strict, Tailwind, Framer Motion only for motion, lucide-react.
+Server Components default; motion as leaf clients.
+Config in site-config.ts. No lorem. No stock people photos. 375/768/1440.
+A11y: landmarks, focus-visible --pc-accent, AA, labelled inputs.
+Intentional TODOs only: results data, Daive photo, legal jurisdiction, analytics cookies section.

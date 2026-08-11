@@ -2,10 +2,13 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useInView } from "framer-motion";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import {
+  VIEWPORT_ONCE,
+  usePrefersReducedMotion,
+} from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
-type CountUpProps = {
+export type CountUpProps = {
   to: number;
   suffix?: ReactNode;
   prefix?: ReactNode;
@@ -26,7 +29,7 @@ export default function CountUp({
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const reduced = usePrefersReducedMotion();
-  const inView = useInView(ref, { once: true, margin: "-10%" });
+  const inView = useInView(ref, VIEWPORT_ONCE);
   const [value, setValue] = useState(0);
   const started = useRef(false);
 
@@ -45,8 +48,7 @@ export default function CountUp({
 
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
-      const eased = easeOutCubic(t);
-      setValue(to * eased);
+      setValue(to * easeOutCubic(t));
       if (t < 1) raf = requestAnimationFrame(tick);
       else setValue(to);
     };
@@ -55,15 +57,11 @@ export default function CountUp({
     return () => cancelAnimationFrame(raf);
   }, [inView, reduced, to]);
 
-  const formatted = value.toFixed(decimals);
-
   return (
     <span ref={ref} className={cn(className)}>
       {prefix}
-      {formatted}
+      {value.toFixed(decimals)}
       {suffix}
     </span>
   );
 }
-
-export type { CountUpProps };

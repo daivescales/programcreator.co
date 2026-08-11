@@ -1,67 +1,69 @@
-import { MaskLines, Reveal } from "@/components/motion";
-import Container from "@/components/ui/Container";
+import { IndexRow, MaskLines, StaggerList } from "@/components/motion";
 import Heading from "@/components/ui/Heading";
-import Section from "@/components/ui/Section";
-import SectionNumber from "@/components/ui/SectionNumber";
+import Spine from "@/components/ui/Spine";
 
-const cells = [
+const rows = [
   {
     number: "01",
     title: "Build the offer",
-    body: "A digital product your audience has already told you they want — course, program, template pack, membership, coaching container. Positioned, priced, packaged, and ready to sell.",
+    body: "A digital product your audience has already told you they want. Positioned, priced, packaged, ready to sell.",
   },
   {
     number: "02",
     title: "Rebuild the page",
-    body: "The page where the money is actually made. Rewritten copy, real hierarchy, a checkout that doesn't leak on mobile, and a design that matches the brand you spent years building.",
+    body: "The page where the money is actually made. Real copy, real hierarchy, a checkout that doesn't leak on mobile.",
   },
   {
     number: "03",
     title: "Scale through your socials",
-    body: "Hooks, angles and funnel paths that route the attention you already have into the product — then we keep iterating on the page against live data.",
+    body: "Hooks and funnel paths that route your existing attention into the product, then iterate on live data.",
   },
 ] as const;
 
 export default function Model() {
   return (
-    <Section id="model" bordered className="scroll-mt-section">
-      <Container>
-        <SectionNumber number="01" label="The Model" />
+    <Spine
+      id="model"
+      number="01"
+      label="THE MODEL"
+      className="border-t border-pc-line py-28 md:py-36"
+    >
+      <Heading
+        as="h2"
+        text="You don't have a traffic problem. You have an *offer problem*."
+        className="max-w-[16ch]"
+      />
 
-        <Heading
-          as="h2"
-          text="Most brands don't have a traffic problem. They have an *offer problem*."
-          className="mt-8 max-w-[18ch]"
-        />
+      <MaskLines
+        delay={0.12}
+        className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-pc-text"
+      >
+        {
+          "You're already generating attention. Creator Product Scaling fixes what that attention lands on."
+        }
+      </MaskLines>
 
-        <MaskLines
-          delay={0.12}
-          className="mt-6 max-w-[58ch] text-lg leading-[1.65] text-pc-text"
-        >
-          {"You're already generating attention. Creator Product Scaling fixes what that attention lands on — then keeps feeding it."}
-        </MaskLines>
-
-        <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden border border-pc-line bg-pc-line md:grid-cols-3">
-          {cells.map((cell, index) => (
-            <Reveal key={cell.number} delay={0.1 * index} className="h-full">
-              <article className="group relative h-full bg-navy-800 p-8 transition-colors duration-[400ms] hover:bg-navy-700 md:p-10">
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute top-6 right-6 text-[clamp(2.5rem,4vw,3.5rem)] font-semibold leading-none text-accent opacity-[0.22] transition-opacity duration-[400ms] group-hover:opacity-40"
-                >
-                  {cell.number}
-                </span>
-                <h3 className="relative max-w-[14ch] text-[clamp(1.25rem,2vw,1.65rem)] font-semibold tracking-[-0.03em] text-pc-white">
-                  {cell.title}
-                </h3>
-                <p className="relative mt-5 max-w-[36ch] text-[17px] leading-[1.65] text-pc-text">
-                  {cell.body}
-                </p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </Container>
-    </Section>
+      <StaggerList className="mt-14 border-t border-pc-line">
+        {rows.map((row) => (
+          <IndexRow
+            key={row.number}
+            className="grid grid-cols-1 items-start gap-4 py-9 md:grid-cols-12 md:gap-6"
+          >
+            <span className="text-[13px] text-accent md:col-span-1">
+              {row.number}
+            </span>
+            <h3
+              data-index-label
+              className="text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold tracking-[-0.035em] text-pc-white transition-transform duration-200 group-hover:translate-x-1.5 md:col-span-4"
+            >
+              {row.title}
+            </h3>
+            <p className="max-w-[52ch] text-[17px] leading-[1.6] text-pc-text md:col-span-7">
+              {row.body}
+            </p>
+          </IndexRow>
+        ))}
+      </StaggerList>
+    </Spine>
   );
 }

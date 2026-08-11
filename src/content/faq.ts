@@ -7,41 +7,26 @@ export const faqItems: FAQItem[] = [
   {
     question: "How does the revenue split actually work?",
     answer:
-      "For creators and digital brands, there is no upfront fee. We agree a percentage of what the product earns, written down before anything starts. If it does not sell, I do not get paid. That is the filter — I only take brands I believe I can move.",
+      "For creators and digital brands, there is no upfront fee. You and I agree a percentage of what the product earns, written down before anything starts. If it does not sell, I do not get paid. That is the filter — I only take brands I believe I can move.",
   },
   {
-    question: "I'm a physical product brand — why a retainer instead?",
+    question: "Why a retainer for physical brands instead of a split?",
     answer:
       "Physical brands have inventory costs and real margins. A revenue split gets messy fast. A flat monthly retainer keeps the work continuous and the incentives clean. The build discipline is the same.",
   },
   {
-    question: "Do I need a big following?",
+    question: "Do I need a big following, or an existing product?",
     answer:
-      "No. Engagement and buying intent matter more than raw numbers. If people already ask what you sell, or you have traffic that dies on the page, we can talk.",
+      "No. Engagement and buying intent matter more than raw numbers. You do not always need an existing product either — some creators need the offer built from scratch, some already sell something that is not converting. Both are fine. The call is where we decide which path fits.",
   },
   {
-    question: "Do I need to already have a product?",
+    question: "What happens after I apply?",
     answer:
-      "Not always. Some creators need the offer built from scratch. Some already sell something that is not converting. Both are fine — the call is where we decide which path fits.",
+      "I read every application myself. I only reach out if I think it is a genuine fit to work together, and then we book a call. If it is not a fit, I will not chase you with a pitch.",
   },
   {
-    question: "How long does a build take?",
+    question: "What happens if I stop paying?",
     answer:
-      "Usually two to four weeks depending on the lane and how fast decisions come back. Digital products and page rebuilds move faster than anything tied to inventory or complex tech.",
-  },
-  {
-    question: "Do you handle content too, or just the page?",
-    answer:
-      "I build the product and the page, and I give you content angles and hooks that route attention into it. You still make the content — that is your relationship with the audience. I do not run your socials as an agency.",
-  },
-  {
-    question: "What actually happens on the call?",
-    answer:
-      "Twenty minutes, video, no deck. I look at your audience and what is broken, then tell you what I would build and whether I can move the number. If it is not a fit, I say so.",
-  },
-  {
-    question: "What if we're not a fit?",
-    answer:
-      "I will tell you on the call instead of selling you something that will not work. You leave with a clear answer either way.",
+      "You keep everything already built and it stays live. All work stops from that date — no further updates, changes, or fixes — and maintenance becomes your responsibility. Full detail is in the Terms of Service.",
   },
 ];

@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useSpring } from "framer-motion";
 
+/** Only scroll-linked motion allowed sitewide: progress bar scaleX. */
 export default function ScrollProgress() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {

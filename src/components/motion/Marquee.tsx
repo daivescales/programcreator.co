@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
-type MarqueeProps = {
+export type MarqueeProps = {
   children: ReactNode;
   className?: string;
   reverse?: boolean;
@@ -23,18 +23,18 @@ export default function Marquee({
     <div
       className={cn(
         "group relative overflow-hidden",
-        pauseOnHover && "hover:[&_[data-marquee-track]]:[animation-play-state:paused]",
+        pauseOnHover &&
+          "hover:[&_[data-marquee-track]]:[animation-play-state:paused]",
         className
       )}
     >
       <div
         data-marquee-track
         className={cn(
-          "flex w-max",
+          "flex w-max motion-idle",
           !reduced && "animate-marquee",
-          reverse && "direction-reverse [animation-direction:reverse]"
+          reverse && "[animation-direction:reverse]"
         )}
-        style={reduced ? undefined : { animationDuration: "40s" }}
       >
         <div className="flex shrink-0 items-center gap-8 px-4">{children}</div>
         <div className="flex shrink-0 items-center gap-8 px-4" aria-hidden>
@@ -44,5 +44,3 @@ export default function Marquee({
     </div>
   );
 }
-
-export type { MarqueeProps };

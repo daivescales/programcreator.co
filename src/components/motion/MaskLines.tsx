@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import {
   EASE_IN,
+  VIEWPORT_ONCE,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
-type MaskLinesProps = {
+export type MaskLinesProps = {
   children: string;
   className?: string;
   delay?: number;
@@ -65,7 +66,7 @@ export default function MaskLines({
   const reduced = usePrefersReducedMotion();
   const [ready, setReady] = useState(false);
   const [lines, setLines] = useState<string[] | null>(null);
-  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const inView = useInView(ref, VIEWPORT_ONCE);
 
   useEffect(() => {
     setReady(true);
@@ -108,10 +109,10 @@ export default function MaskLines({
             }
             transition={
               reduced
-                ? { duration: 0.2, delay, ease: "linear" }
+                ? { duration: 0.15, delay, ease: "linear" }
                 : {
-                    duration: 0.7,
-                    delay: delay + i * 0.06,
+                    duration: 0.85,
+                    delay: delay + i * 0.055,
                     ease: EASE_IN,
                   }
             }
@@ -123,5 +124,3 @@ export default function MaskLines({
     </p>
   );
 }
-
-export type { MaskLinesProps };

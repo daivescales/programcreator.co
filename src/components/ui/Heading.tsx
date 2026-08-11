@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import MaskText from "@/components/motion/MaskText";
 
-type HeadingProps = {
+export type HeadingProps = {
   as?: "display" | "h2" | "h3";
   text: string;
   className?: string;
@@ -10,9 +10,9 @@ type HeadingProps = {
 
 const sizeClasses = {
   display:
-    "text-[clamp(3rem,9vw,8rem)] font-semibold leading-[0.92] tracking-[-0.04em] text-white",
-  h2: "text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white",
-  h3: "text-[clamp(1.25rem,2vw,1.65rem)] font-semibold leading-[1.2] tracking-[-0.035em] text-white",
+    "text-[clamp(2.75rem,8vw,7rem)] font-semibold leading-[0.94] tracking-[-0.04em] text-pc-white",
+  h2: "text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-pc-white",
+  h3: "text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold leading-[1.2] tracking-[-0.035em] text-pc-white",
 } as const;
 
 const tagMap = {
@@ -21,6 +21,7 @@ const tagMap = {
   h3: "h3",
 } as const;
 
+/** MaskText heading with *emphasis* → serif-em. */
 export default function Heading({
   as = "h2",
   text,

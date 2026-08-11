@@ -1,181 +1,246 @@
-"use client";
-
 import Link from "next/link";
-import { Check } from "lucide-react";
-import { MaskLines, Reveal } from "@/components/motion";
-import Container from "@/components/ui/Container";
+import { MaskLines } from "@/components/motion";
 import Heading from "@/components/ui/Heading";
-import Section from "@/components/ui/Section";
-import SectionNumber from "@/components/ui/SectionNumber";
-import { cn } from "@/lib/utils";
+import Spine from "@/components/ui/Spine";
 
-const laneAItems = [
-  "Digital product built from scratch",
-  "Sales page and checkout flow",
-  "Brand-matched store page rebuild",
+const included = [
   "Content angles that drive traffic",
   "Ongoing conversion iteration",
+  "Tracking set up properly",
+  "Direct access to me, not an account manager",
 ] as const;
 
-const laneBItems = [
-  "Full storefront rebuild",
-  "Product page optimisation",
-  "Checkout and cart recovery",
-  "Social-to-site funnel mapping",
-  "Monthly iteration on live data",
-] as const;
-
-function Checklist({
-  items,
-  accent = false,
-}: {
-  items: readonly string[];
-  accent?: boolean;
-}) {
+function IncludedList() {
   return (
-    <ul className="mt-6 space-y-3">
-      {items.map((item, index) => (
-        <Reveal key={item} delay={0.05 * index}>
-          <li className="flex items-start gap-3">
-            <span
-              className={cn(
-                "mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center border",
-                accent
-                  ? "border-accent text-accent"
-                  : "border-pc-muted/50 text-pc-muted"
-              )}
-            >
-              <Check size={12} strokeWidth={2.5} aria-hidden />
-            </span>
-            <span className="text-[15px] leading-snug text-pc-text">{item}</span>
-          </li>
-        </Reveal>
+    <ul className="space-y-2.5">
+      {included.map((item) => (
+        <li key={item} className="flex items-start gap-3">
+          <span
+            aria-hidden
+            className="mt-1.5 h-2.5 w-2.5 shrink-0 bg-accent"
+          />
+          <span className="text-[15px] leading-snug text-pc-text">{item}</span>
+        </li>
       ))}
     </ul>
   );
 }
 
+function PaidA() {
+  return (
+    <p className="text-[clamp(1.35rem,2.2vw,1.85rem)] font-semibold tracking-[-0.03em] text-pc-white">
+      Revenue <span className="font-serif-italic text-accent-2">split</span>
+    </p>
+  );
+}
+
+function PaidB() {
+  return (
+    <p className="text-[clamp(1.35rem,2.2vw,1.85rem)] font-semibold tracking-[-0.03em] text-pc-white">
+      Monthly <span className="font-serif-italic text-pc-white">retainer</span>
+    </p>
+  );
+}
+
+type LaneRow =
+  | {
+      label: string;
+      kind: "text";
+      a: string;
+      b: string;
+    }
+  | {
+      label: string;
+      kind: "paid";
+    }
+  | {
+      label: string;
+      kind: "list";
+    };
+
+const rows: LaneRow[] = [
+  {
+    label: "Who it's for",
+    kind: "text",
+    a: "You have an audience. You don't have a product — or the one you have doesn't convert.",
+    b: "You have inventory and traffic. The site is where the sale is dying.",
+  },
+  {
+    label: "What I build",
+    kind: "text",
+    a: "Digital product from scratch, sales page, checkout flow, store page rebuild.",
+    b: "Full storefront rebuild, product pages, checkout and cart recovery.",
+  },
+  {
+    label: "How I'm paid",
+    kind: "paid",
+  },
+  {
+    label: "When I'm paid",
+    kind: "text",
+    a: "Only when it sells. No deposit, no upfront cost.",
+    b: "Flat monthly fee, billed in advance.",
+  },
+  {
+    label: "Why",
+    kind: "text",
+    a: "If it doesn't sell, I don't get paid. That's exactly why I'm selective about who I take.",
+    b: "Physical brands carry real costs and real margins, so a split doesn't make sense. A retainer keeps the work continuous and the incentives clean.",
+  },
+  {
+    label: "Also included",
+    kind: "list",
+  },
+];
+
+function CellA({ row }: { row: LaneRow }) {
+  if (row.kind === "paid") return <PaidA />;
+  if (row.kind === "list") return <IncludedList />;
+  return <>{row.a}</>;
+}
+
+function CellB({ row }: { row: LaneRow }) {
+  if (row.kind === "paid") return <PaidB />;
+  if (row.kind === "list") return <IncludedList />;
+  return <>{row.b}</>;
+}
+
 export default function Lanes() {
   return (
-    <Section id="lanes" bordered className="scroll-mt-section">
-      <Container>
-        <SectionNumber number="02" label="Who It's For" />
+    <Spine
+      id="lanes"
+      number="02"
+      label="THE TWO LANES"
+      className="border-t border-pc-line py-28 md:py-36"
+    >
+      <Heading
+        as="h2"
+        text="Two lanes. *Same discipline*."
+        className="max-w-[14ch]"
+      />
 
-        <Heading
-          as="h2"
-          text="Two lanes. *Same discipline*."
-          className="mt-8 max-w-[16ch]"
-        />
+      <MaskLines
+        delay={0.12}
+        className="mt-6 max-w-[54ch] text-[17px] leading-[1.6] text-pc-text"
+      >
+        {
+          "The work is identical — turn attention into something people buy. The only thing that changes is how I get paid."
+        }
+      </MaskLines>
 
-        <MaskLines
-          delay={0.12}
-          className="mt-6 max-w-[58ch] text-lg leading-[1.65] text-pc-text"
-        >
-          {"The work is identical — turn attention into something people buy. The only thing that changes is how I get paid."}
-        </MaskLines>
-
-        <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Lane A */}
-          <Reveal>
-            <article className="relative overflow-hidden border border-accent/45 bg-navy-700 p-8 md:p-12">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-pc-glow blur-3xl"
-              />
-
-              <div className="relative flex items-center justify-between gap-4">
-                <p className="text-[12px] uppercase tracking-[0.18em] text-accent">
+      <div className="mt-14 hidden overflow-hidden md:block">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b border-pc-line">
+              <th className="w-[18%] py-6 pr-4" scope="col">
+                <span className="sr-only">Category</span>
+              </th>
+              <th
+                className="w-[41%] border-t-2 border-t-accent bg-white/[0.02] px-6 py-6"
+                scope="col"
+              >
+                <p className="text-[11px] uppercase tracking-[0.2em] text-accent">
                   Lane A
                 </p>
-                <span className="border border-accent/30 bg-accent/12 px-2.5 py-1 text-[11px] uppercase tracking-wider text-accent">
-                  No upfront cost
-                </span>
-              </div>
-
-              <h3 className="relative mt-6 text-[clamp(1.6rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em] text-pc-white">
-                Creators &amp; digital brands
-              </h3>
-              <p className="relative mt-3 max-w-[42ch] text-[17px] leading-[1.65] text-pc-text">
-                You have an audience. You don&apos;t have a product — or the one
-                you have doesn&apos;t convert.
-              </p>
-
-              <div className="relative mt-8 border-t border-pc-line pt-8">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
-                  How I&apos;m paid
+                <p className="mt-2 text-[15px] text-pc-white">
+                  Creators &amp; digital brands
                 </p>
-                <p className="mt-3 text-[clamp(1.75rem,3vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white">
-                  Revenue{" "}
-                  <span className="font-serif-italic text-accent-2">split</span>
-                </p>
-                <p className="mt-4 max-w-[46ch] text-[15px] leading-[1.65] text-pc-text">
-                  No retainer. No deposit. I take an agreed percentage of what
-                  the product earns. If it doesn&apos;t sell, I don&apos;t get
-                  paid — which is exactly why I&apos;m selective about who I
-                  take.
-                </p>
-              </div>
-
-              <div className="relative mt-8 border-t border-pc-line pt-2">
-                <Checklist items={laneAItems} accent />
-              </div>
-            </article>
-          </Reveal>
-
-          {/* Lane B */}
-          <Reveal delay={0.1}>
-            <article className="relative border border-pc-line bg-navy-800 p-8 md:p-12">
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-[12px] uppercase tracking-[0.18em] text-pc-muted">
+              </th>
+              <th className="w-[41%] px-6 py-6" scope="col">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
                   Lane B
                 </p>
-                <span className="border border-pc-line bg-navy-700 px-2.5 py-1 text-[11px] uppercase tracking-wider text-pc-muted">
-                  Flat monthly
-                </span>
-              </div>
-
-              <h3 className="mt-6 text-[clamp(1.6rem,2.6vw,2.2rem)] font-semibold tracking-[-0.03em] text-pc-white">
-                Physical product brands
-              </h3>
-              <p className="mt-3 max-w-[42ch] text-[17px] leading-[1.65] text-pc-text">
-                You have inventory and you have traffic. The site is where the
-                sale is dying.
-              </p>
-
-              <div className="mt-8 border-t border-pc-line pt-8">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
-                  How I&apos;m paid
+                <p className="mt-2 text-[15px] text-pc-white">
+                  Physical product brands
                 </p>
-                <p className="mt-3 text-[clamp(1.75rem,3vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white">
-                  Monthly{" "}
-                  <span className="font-serif-italic text-pc-white">
-                    retainer
-                  </span>
-                </p>
-                <p className="mt-4 max-w-[46ch] text-[15px] leading-[1.65] text-pc-text">
-                  A flat monthly fee. Physical brands carry real costs and real
-                  margins, so a revenue split doesn&apos;t make sense — a
-                  retainer keeps the work continuous and the incentives clean.
-                </p>
-              </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.label} className="border-b border-pc-line">
+                <th
+                  scope="row"
+                  className="py-6 pr-4 align-top text-[11px] uppercase tracking-[0.2em] text-pc-muted"
+                >
+                  {row.label}
+                </th>
+                <td className="bg-white/[0.02] px-6 py-6 align-top text-[15px] leading-[1.6] text-pc-text">
+                  <CellA row={row} />
+                </td>
+                <td className="px-6 py-6 align-top text-[15px] leading-[1.6] text-pc-text">
+                  <CellB row={row} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-              <div className="mt-8 border-t border-pc-line pt-2">
-                <Checklist items={laneBItems} />
-              </div>
-            </article>
-          </Reveal>
-        </div>
-
-        <p className="mt-10 text-center text-[15px] text-pc-muted">
-          Not sure which lane you&apos;re in? That&apos;s what the call is for.{" "}
-          <Link
-            href="/apply"
-            className="text-accent underline-offset-4 transition-all hover:underline"
+      <div className="mt-14 space-y-10 md:hidden">
+        {(
+          [
+            {
+              key: "a" as const,
+              title: "Lane A",
+              subtitle: "Creators & digital brands",
+              featured: true,
+            },
+            {
+              key: "b" as const,
+              title: "Lane B",
+              subtitle: "Physical product brands",
+              featured: false,
+            },
+          ] as const
+        ).map((lane) => (
+          <div
+            key={lane.key}
+            className={
+              lane.featured
+                ? "border-t-2 border-t-accent bg-white/[0.02]"
+                : "border-t border-pc-line"
+            }
           >
-            Apply to work with me
-          </Link>
-        </p>
-      </Container>
-    </Section>
+            <div className="px-1 py-5">
+              <p
+                className={
+                  lane.featured
+                    ? "text-[11px] uppercase tracking-[0.2em] text-accent"
+                    : "text-[11px] uppercase tracking-[0.2em] text-pc-muted"
+                }
+              >
+                {lane.title}
+              </p>
+              <p className="mt-2 text-[15px] text-pc-white">{lane.subtitle}</p>
+            </div>
+            {rows.map((row) => (
+              <div
+                key={`${lane.key}-${row.label}`}
+                className="border-t border-pc-line py-5"
+              >
+                <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
+                  {row.label}
+                </p>
+                <div className="mt-3 text-[15px] leading-[1.6] text-pc-text">
+                  {lane.key === "a" ? <CellA row={row} /> : <CellB row={row} />}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-10 text-left text-[15px] text-pc-muted">
+        Not sure which lane you&apos;re in? That&apos;s what the call is for.{" "}
+        <Link
+          href="/apply"
+          className="group relative inline-block text-accent"
+        >
+          Apply to work with me
+          <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
+        </Link>
+      </p>
+    </Spine>
   );
 }

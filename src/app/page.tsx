@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import About from "@/components/sections/About";
-import Deliverables from "@/components/sections/Deliverables";
+import AboutStrip from "@/components/sections/AboutStrip";
 import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
 import Hero from "@/components/sections/Hero";
 import Lanes from "@/components/sections/Lanes";
 import Model from "@/components/sections/Model";
 import Process from "@/components/sections/Process";
-import Results from "@/components/sections/Results";
+import Proof from "@/components/sections/Proof";
 import Ticker from "@/components/sections/Ticker";
 import { site } from "@/lib/site-config";
 
@@ -25,9 +24,8 @@ export default function HomePage() {
       <Model />
       <Lanes />
       <Process />
-      <Deliverables />
-      <Results />
-      <About />
+      <Proof />
+      <AboutStrip />
       <FAQ />
       <FinalCTA />
     </>

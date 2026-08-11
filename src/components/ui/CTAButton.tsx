@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "ghost";
 type Size = "sm" | "md" | "lg";
 
-type CTAButtonProps = {
+export type CTAButtonProps = {
   children: ReactNode;
   href: string;
   variant?: Variant;
@@ -27,7 +27,7 @@ const variants: Record<Variant, string> = {
   primary:
     "group/cta relative overflow-hidden bg-accent text-navy-900 hover:text-navy-900",
   ghost:
-    "border border-pc-line bg-transparent text-white hover:border-pc-line-2 hover:bg-white/[0.03]",
+    "border border-pc-line bg-transparent text-pc-white hover:border-pc-line-2 hover:bg-white/[0.03]",
 };
 
 export default function CTAButton({
@@ -36,15 +36,14 @@ export default function CTAButton({
   variant = "primary",
   size = "lg",
   className,
-  magneticStrength = 8,
+  magneticStrength = 6,
 }: CTAButtonProps) {
   return (
     <MagneticButton strength={magneticStrength}>
       <Link
         href={href}
-        data-cursor
         className={cn(
-          "inline-flex items-center justify-center rounded-[4px] font-medium transition-colors duration-[180ms]",
+          "inline-flex items-center justify-center rounded-none font-medium transition-colors duration-[160ms]",
           sizes[size],
           variants[variant],
           className

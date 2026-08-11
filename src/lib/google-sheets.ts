@@ -7,6 +7,7 @@ function formatTimestamp(d = new Date()): string {
 
 /**
  * Append a lead row to Google Sheets. Fail-soft: logs and returns, never throws.
+ * Column order matches supabase/schema.sql + denormalised socials/utm.
  */
 export async function appendLeadToSheet(
   lead: LeadRecord & { id?: string; created_at?: string }
@@ -42,18 +43,14 @@ export async function appendLeadToSheet(
       socials.instagram ?? "",
       socials.tiktok ?? "",
       socials.youtube ?? "",
-      socials.other ?? "",
+      socials.website ?? "",
       lead.follower_range ?? "",
-      lead.website ?? "",
-      lead.revenue_range ?? "",
       lead.has_product ?? "",
       lead.biggest_bottleneck ?? "",
-      lead.goal_90_days ?? "",
       lead.ready_to_start ?? "",
-      lead.budget_ack ? "yes" : "no",
-      lead.source ?? "",
+      lead.terms_ack ? "yes" : "no",
       "new",
-      "",
+      "", // notes
       utm.utm_source ?? "",
       utm.utm_medium ?? "",
       utm.utm_campaign ?? "",
@@ -62,7 +59,7 @@ export async function appendLeadToSheet(
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
-      range: "Leads!A:Y",
+      range: "Leads!A:U",
       valueInputOption: "USER_ENTERED",
       requestBody: { values: [row] },
     });
