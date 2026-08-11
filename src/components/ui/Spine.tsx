@@ -11,7 +11,7 @@ export type SpineProps = {
 };
 
 /**
- * THE SPINE — lg+ 12-col: sticky rail cols 1–2, content cols 3–12.
+ * THE SPINE , lg+ 12-col: sticky rail cols 1-2, content cols 3-12.
  * Mobile: horizontal number | hairline | label above content.
  */
 export default function Spine({
@@ -38,7 +38,7 @@ export default function Spine({
             </span>
           </div>
 
-          {/* Desktop sticky rail — cols 1–2 */}
+          {/* Desktop sticky rail , cols 1-2 */}
           <div className="relative hidden lg:col-span-2 lg:block">
             <div className="sticky top-32 flex flex-col items-start gap-6">
               <span className="text-[13px] font-medium uppercase tracking-[0.2em] text-accent">
@@ -56,7 +56,7 @@ export default function Spine({
             </div>
           </div>
 
-          {/* Content — cols 3–12 */}
+          {/* Content , cols 3-12 */}
           <div className="min-w-0 lg:col-span-10">{children}</div>
         </div>
       </Container>

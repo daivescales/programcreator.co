@@ -37,8 +37,8 @@ export default function AboutStrip() {
               <p className="mt-3 text-[16px] leading-[1.65] text-pc-text">
                 I&apos;m Daive. I build products and pages for creators and
                 brands, and I share the process publicly as {site.handle}. You
-                work with me directly — no account manager, no outsourced team,
-                a handful of clients at a time.
+                work with me directly. No account manager, no outsourced team,
+                and only a handful of clients at a time.
               </p>
               <div className="mt-5">
                 <Signature height={28} />

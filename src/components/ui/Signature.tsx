@@ -15,7 +15,7 @@ export type SignatureProps = {
   delay?: number;
 };
 
-/** SVG "Daive" signature — pathLength draw on whileInView once. */
+/** SVG "Daive" signature , pathLength draw on whileInView once. */
 export default function Signature({
   className,
   height = 48,

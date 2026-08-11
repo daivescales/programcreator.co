@@ -15,19 +15,19 @@ import { cn } from "@/lib/utils";
 export type MagneticButtonProps = {
   children: ReactNode;
   className?: string;
-  /** Max pull toward cursor in px. Capped at 6. */
+  /** Max pull toward cursor in px. Capped at 5. */
   strength?: number;
 };
 
 export default function MagneticButton({
   children,
   className,
-  strength = 6,
+  strength = 5,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
   const [enabled, setEnabled] = useState(false);
-  const max = Math.min(Math.abs(strength), 6);
+  const max = Math.min(Math.abs(strength), 5);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);

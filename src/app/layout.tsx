@@ -33,7 +33,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || site.url;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${site.name} — Creator Product Scaling by ${site.founder}`,
+    default: `${site.name}, Creator Product Scaling by ${site.founder}`,
     template: `%s · ${site.name}`,
   },
   description,
@@ -53,12 +53,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: site.name,
-    title: `${site.name} — Creator Product Scaling by ${site.founder}`,
+    title: `${site.name}, Creator Product Scaling by ${site.founder}`,
     description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — Creator Product Scaling by ${site.founder}`,
+    title: `${site.name}, Creator Product Scaling by ${site.founder}`,
     description,
     creator: site.handle,
   },

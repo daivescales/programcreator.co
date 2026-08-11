@@ -6,13 +6,14 @@ export type HeadingProps = {
   text: string;
   className?: string;
   delay?: number;
+  underlineVariant?: 1 | 2 | 3;
 };
 
 const sizeClasses = {
   display:
-    "text-[clamp(2.75rem,8vw,7rem)] font-semibold leading-[0.94] tracking-[-0.04em] text-pc-white",
-  h2: "text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-pc-white",
-  h3: "text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold leading-[1.2] tracking-[-0.035em] text-pc-white",
+    "text-[clamp(2.75rem,8vw,6.5rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-pc-white",
+  h2: "text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.0] tracking-[-0.035em] text-pc-white",
+  h3: "text-[clamp(1.1rem,1.8vw,1.4rem)] font-semibold leading-tight tracking-[-0.035em] text-pc-white",
 } as const;
 
 const tagMap = {
@@ -21,18 +22,20 @@ const tagMap = {
   h3: "h3",
 } as const;
 
-/** MaskText heading with *emphasis* → serif-em. */
+/** *word* → serif-em · _word_ → HandUnderline */
 export default function Heading({
   as = "h2",
   text,
   className,
   delay,
+  underlineVariant = 1,
 }: HeadingProps) {
   return (
     <MaskText
       as={tagMap[as]}
       className={cn(sizeClasses[as], className)}
       delay={delay}
+      underlineVariant={underlineVariant}
     >
       {text}
     </MaskText>

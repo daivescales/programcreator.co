@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CalEmbed from "@/components/CalEmbed";
 import MaskText from "@/components/motion/MaskText";
-import PulseDot from "@/components/motion/PulseDot";
 import Glow from "@/components/system/Glow";
 import Container from "@/components/ui/Container";
 import {
@@ -52,13 +51,13 @@ function SuccessCheck() {
 
 function ProgressRow() {
   const steps = [
-    { n: "01", label: "Application ✓", state: "complete" as const },
+    { n: "01", label: "Application", state: "complete" as const },
     { n: "02", label: "Book your call", state: "active" as const },
     { n: "03", label: "We build", state: "muted" as const },
   ];
 
   return (
-    <ol className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-pc-line py-4">
+    <ol className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-pc-line py-4">
       {steps.map((s) => (
         <li
           key={s.n}
@@ -71,7 +70,6 @@ function ProgressRow() {
         >
           <span className="tabular-nums">{s.n}</span>
           <span>{s.label}</span>
-          {s.state === "active" ? <PulseDot /> : null}
         </li>
       ))}
     </ol>
@@ -88,7 +86,7 @@ function BookContent() {
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-navy-800 pb-20 pt-10 md:pt-14">
-      <Glow className="opacity-40" />
+      <Glow className="opacity-40 [&>div]:left-auto [&>div]:right-[-10%] [&>div]:top-auto [&>div]:bottom-[-15%] [&>div]:translate-x-0 [&>div]:translate-y-0" />
 
       <Container className="relative z-[1] max-w-[960px]">
         <div className="mb-10 max-w-[560px]">
@@ -103,8 +101,8 @@ function BookContent() {
                 {firstName ? `You're in, ${firstName}.` : "You're in."}
               </MaskText>
               <p className="mt-3 text-base text-pc-text md:text-lg">
-                Application received. If you&apos;d like, book your call now —
-                otherwise I&apos;ll be in touch after I&apos;ve read it.
+                Application received. If you want, book your call now. Otherwise
+                I will be in touch once I have read it.
               </p>
             </>
           ) : (
@@ -166,7 +164,7 @@ export default function BookPage() {
     <Suspense
       fallback={
         <div className="flex min-h-dvh items-center justify-center bg-navy-800">
-          <div className="h-10 w-10 animate-pulse bg-navy-700" />
+          <div className="h-10 w-10 bg-navy-700" />
         </div>
       }
     >

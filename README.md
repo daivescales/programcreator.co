@@ -1,6 +1,6 @@
 # ProgramCreator
 
-Production landing site + application funnel for **ProgramCreator** — Creator Product Scaling by Daive (`@daivescales`).
+Production landing site + application funnel for **ProgramCreator**, Creator Product Scaling by Daive (`@daivescales`).
 
 Creators and digital brands work on a **revenue split** (no upfront). Physical product brands work on a **monthly retainer**. Every CTA goes to `/apply` → leads land in Supabase, Google Sheets, and email → applicant books via Cal.com on `/book`.
 
@@ -8,27 +8,38 @@ Creators and digital brands work on a **revenue split** (no upfront). Physical p
 
 - Next.js 15 (App Router, TypeScript)
 - Tailwind CSS v4
-- Framer Motion only (ambient loops + one-shot `whileInView` reveals — no scroll hijack)
+- Framer Motion (restrained: MaskText, HandUnderline, Reveal, RuleDraw, StaggerList, IndexRow, MagneticButton, ScrollProgress)
 - Supabase (`leads` table)
 - Google Sheets API
 - Resend
 - Cal.com embed (`@calcom/embed-react`)
 
-**Not used (removed in v3):** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch text, scroll-pin / parallax.
+**Not used:** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch, marquees, counters, pulse dots, mockups, scroll-pin / parallax.
 
-## Design
+## Design (v4)
 
-Editorial dossier layout: mid-navy page (`#0B2038`), white type, accent `#4D9BFF`. Inter Tight + Instrument Serif (italic emphasis only). Radius 0. Grain overlay sitewide; soft Glow bloom on hero and Final CTA only. Sticky spine rail on landing sections. See `.cursorrules` for tokens, voice, and motion doctrine.
+Editorial dossier layout: mid-navy page (`#0B2038`), white type, accent `#4D9BFF`. Inter Tight + Instrument Serif (italic emphasis only). Radius 0. Grain overlay sitewide. Static Glow on hero, Final CTA, apply right panel, and book. Sticky spine rail on landing sections.
+
+**HandUnderline** is the signature flourish: hand-drawn SVG under a word. Used exactly 4× on the landing (hero, lanes, FAQ, Final CTA), once on the apply terms step (`_send_`), and on nav link hover. Nowhere else.
+
+Landing is **7 blocks**: Hero, Model, Lanes, Process, AboutStrip, FAQ, FinalCTA. No decorative motion toys.
+
+`/apply` is a **two-panel** branded flow (stage index left, questions right), not a bare centred form.
+
+See `.cursorrules` for tokens, voice, and motion doctrine. No em dashes in copy.
 
 ## Routes
 
 | Path | Purpose |
 |------|---------|
-| `/` | Landing (9 blocks) |
-| `/apply` | 10-step application (noindex) |
+| `/` | Landing (7 blocks) |
+| `/apply` | 10-step two-panel application (noindex) |
 | `/book` | Cal.com booking after apply (noindex) |
-| `/privacy` | Privacy Policy |
-| `/terms` | Terms of Service |
+| `/legal` | Legal index |
+| `/terms` | Terms of Service (15 sections) |
+| `/privacy` | Privacy Policy (12 sections) |
+| `/cookies` | Cookie Policy |
+| `/disclaimer` | Results and Earnings Disclaimer |
 
 ## Local setup
 
@@ -52,7 +63,7 @@ Open [http://localhost:3000](http://localhost:3000).
 4. Set:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY` (server only — never expose to the client)
+   - `SUPABASE_SERVICE_ROLE_KEY` (server only, never expose to the client)
 
 ### 2. Google Sheets
 
@@ -66,7 +77,7 @@ Open [http://localhost:3000](http://localhost:3000).
    - `GOOGLE_PRIVATE_KEY` = `private_key` from the JSON (keep `\n` escapes; wrap in quotes)
    - `GOOGLE_SHEET_ID` = the ID from the sheet URL (`/d/<THIS_ID>/edit`)
 
-Sheets writes fail soft — a Sheets outage will not block a lead (Supabase is the hard dependency).
+Sheets writes fail soft. A Sheets outage will not block a lead (Supabase is the hard dependency).
 
 ### 3. Resend
 
@@ -76,7 +87,7 @@ Sheets writes fail soft — a Sheets outage will not block a lead (Supabase is t
    - `RESEND_API_KEY`
    - `LEAD_NOTIFY_EMAIL` (inbox that receives new-lead notifications, e.g. `hello@programcreator.com`)
 
-Emails fail soft. HTML templates use the dark navy brand (`#0B2038`, `#4D9BFF`).
+Emails fail soft. Confirmation copy matches Terms §2. HTML templates use the dark navy brand (`#0B2038`, `#4D9BFF`).
 
 ### 4. Cal.com
 
@@ -110,14 +121,13 @@ NEXT_PUBLIC_SITE_URL
 
 `npm run check-env` (also runs before `npm run build`) **warns** by default when vars are missing so Vercel deploys are not blocked while credentials are still being wired. Set `FORCE_ENV_CHECK=1` to fail the build on missing vars.
 
-## Before launch — content / legal TODOs
+## Before launch, content / legal TODOs
 
-1. **Proof / results** — replace placeholders when you have real outcomes.
-2. **Photo** — add Daive’s photo in the About strip when ready.
-3. **Socials + Cal** — fill `src/lib/site-config.ts` (`socials`, `calLink`).
-4. **Governing law** — insert jurisdiction in `/terms` (HTML TODO comment in section 14).
-5. **Cookies / analytics** — update `/privacy` section 9 if you add PostHog, GA, or a Meta pixel (HTML TODO comment).
-6. **Bio link** — point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
+1. **Photo** - add Daive's photo in the About strip when ready.
+2. **Socials + Cal** - fill `src/lib/site-config.ts` (`socials`, `calLink`).
+3. **Governing law** - insert jurisdiction in `/terms` section 14 (HTML TODO comment).
+4. **Cookies / analytics** - update `/cookies` if you add PostHog, GA, or a Meta pixel (HTML TODO comment).
+5. **Bio link** - point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
 
 ## Scripts
 
@@ -135,7 +145,7 @@ npx tsc --noEmit     # typecheck
 1. Push this repo to GitHub.
 2. Import the repo in Vercel (Framework: Next.js).
 3. Paste all env vars listed above into Vercel → Project → Settings → Environment Variables.
-4. Deploy (Vercel builds from GitHub on every push to `main`). `check-env` warns by default — set `FORCE_ENV_CHECK=1` in Vercel only when you want the build to fail on missing lead-capture vars.
+4. Deploy (Vercel builds from GitHub on every push to `main`). `check-env` warns by default. Set `FORCE_ENV_CHECK=1` in Vercel only when you want the build to fail on missing lead-capture vars.
 5. Add custom domain `programcreator.com` (+ `www` redirect).
 6. Verify the Resend sending domain (SPF/DKIM/DMARC).
 7. Confirm Cal.com embed loads on `/book` (dark theme, brand `#4D9BFF`).
@@ -143,8 +153,8 @@ npx tsc --noEmit     # typecheck
 9. Submit a test lead through `/apply` → check Supabase, Sheet, and both emails.
 10. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
 
-Do **not** use `vercel --prod` as the primary path — push to GitHub and let Vercel auto-deploy.
+Do **not** use `vercel --prod` as the primary path. Push to GitHub and let Vercel auto-deploy.
 
 ## Design tokens
 
-Defined in `src/app/globals.css` as `--pc-*` and wired into Tailwind (`bg-navy-800`, `text-pc-white`, `bg-accent`, etc.). Dark theme only — see `.cursorrules` for voice, funnel, and visual rules.
+Defined in `src/app/globals.css` as `--pc-*` and wired into Tailwind (`bg-navy-800`, `text-pc-white`, `bg-accent`, etc.). Dark theme only. See `.cursorrules` for voice, funnel, and visual rules.

@@ -22,6 +22,7 @@ import {
 import { toast } from "sonner";
 import MaskText from "@/components/motion/MaskText";
 import Glow from "@/components/system/Glow";
+import Signature from "@/components/ui/Signature";
 import {
   EASE_IN,
   EASE_OUT,
@@ -103,7 +104,7 @@ const LANE_OPTIONS: Choice[] = [
   },
   {
     id: "both",
-    label: "Both — audience and physical products",
+    label: "Both, I have an audience and I sell physical products",
     value: "physical",
   },
 ];
@@ -118,6 +119,13 @@ const HAS_PRODUCT_OPTIONS: Choice[] = [
   { id: "no", label: "No, not yet", value: "no" },
 ];
 
+const STAGES = [
+  { id: "you", label: "YOU", start: 0, end: 1 },
+  { id: "brand", label: "YOUR BRAND", start: 2, end: 4 },
+  { id: "status", label: "WHERE YOU'RE AT", start: 5, end: 7 },
+  { id: "work", label: "THE WORK", start: 8, end: 9 },
+] as const;
+
 const STEP_FIELDS: FieldPath<FormValues>[][] = [
   ["full_name"],
   ["email"],
@@ -130,6 +138,30 @@ const STEP_FIELDS: FieldPath<FormValues>[][] = [
   ["ready_to_start"],
   ["terms_ack"],
 ];
+
+function stageForStep(step: number) {
+  return STAGES.find((s) => step >= s.start && step <= s.end) ?? STAGES[0];
+}
+
+function stageState(step: number, stage: (typeof STAGES)[number]) {
+  if (step > stage.end) return "complete" as const;
+  if (step >= stage.start && step <= stage.end) return "active" as const;
+  return "upcoming" as const;
+}
+
+function Wordmark({ className }: { className?: string }) {
+  return (
+    <Link
+      href="/"
+      className={cn(
+        "text-sm font-semibold tracking-[-0.02em] text-pc-white",
+        className
+      )}
+    >
+      Program<span className="text-accent">Creator</span>
+    </Link>
+  );
+}
 
 function UnderlineField({
   id,
@@ -208,13 +240,13 @@ function ChoiceRows({
   return (
     <div
       className={cn(
-        "space-y-2",
+        "space-y-3",
         shake && "animate-[field-shake_0.35s_ease-in-out]"
       )}
       role="radiogroup"
     >
       {options.map((option, i) => {
-        const selected = value === option.id;
+        const selected = value === option.id || value === option.value;
         const letter = LETTERS[i] ?? String(i + 1);
         return (
           <motion.button
@@ -223,27 +255,29 @@ function ChoiceRows({
             role="radio"
             aria-checked={selected}
             onClick={() => onSelect(option)}
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={
               reduceMotion
                 ? { duration: 0.15 }
-                : { duration: 0.35, delay: i * 0.05, ease: EASE_IN }
+                : { duration: 0.3, delay: i * 0.05, ease: EASE_IN }
             }
             className={cn(
               "group flex w-full items-center gap-4 border px-6 py-5 text-left transition-[border-color,background-color,transform] duration-[160ms]",
+              "hover:translate-x-1 hover:border-pc-line-2 hover:bg-white/[0.03]",
               selected
                 ? "border-accent bg-accent/[0.08]"
-                : "border-pc-line bg-transparent hover:translate-x-1 hover:border-pc-line-2 hover:bg-white/[0.03]"
+                : "border-pc-line bg-transparent"
             )}
           >
             <span
               className={cn(
-                "flex h-6 w-6 shrink-0 items-center justify-center border text-[11px] font-medium",
+                "flex h-6 w-6 shrink-0 items-center justify-center border text-[11px] font-medium tabular-nums",
                 selected
                   ? "border-accent text-accent"
                   : "border-pc-line text-pc-muted"
               )}
+              aria-hidden
             >
               {letter}
             </span>
@@ -266,6 +300,49 @@ function ChoiceRows({
         </p>
       ) : null}
     </div>
+  );
+}
+
+function StageIndex({ step }: { step: number }) {
+  return (
+    <nav aria-label="Application stages" className="flex flex-col gap-8">
+      {STAGES.map((stage) => {
+        const state = stageState(step, stage);
+        return (
+          <div
+            key={stage.id}
+            className={cn(
+              "relative pl-4 transition-[opacity,transform] duration-300",
+              state === "upcoming" && "opacity-40",
+              state === "active" && "translate-x-0"
+            )}
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "absolute left-0 top-0 h-full w-px bg-pc-line transition-colors duration-300",
+                state === "active" && "w-0.5 bg-accent"
+              )}
+            />
+            <div className="flex items-center gap-2">
+              <p
+                className={cn(
+                  "text-[11px] uppercase tracking-[0.2em] transition-colors duration-300",
+                  state === "active" && "text-pc-white",
+                  state === "complete" && "text-pc-muted",
+                  state === "upcoming" && "text-pc-muted"
+                )}
+              >
+                {stage.label}
+              </p>
+              {state === "complete" ? (
+                <Check className="h-3 w-3 text-accent" aria-hidden />
+              ) : null}
+            </div>
+          </div>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -373,7 +450,6 @@ export default function ApplicationForm() {
       }
     };
 
-    // Persist immediately so startedAt survives a refresh before the first edit.
     persist(getValues());
 
     const sub = watch((values) => {
@@ -534,15 +610,11 @@ export default function ApplicationForm() {
           void next();
         }
       }
-      if (e.key === "Escape") {
-        e.preventDefault();
-        back();
-      }
     }
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // onSubmit defined below — intentionally omit to avoid rebind loop
+    // onSubmit defined below. Intentionally omit to avoid rebind loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     step,
@@ -597,8 +669,9 @@ export default function ApplicationForm() {
     }
   };
 
-  const stepLabel = String(step + 1).padStart(2, "0");
   const progress = (step + 1) / TOTAL_STEPS;
+  const currentStage = stageForStep(step);
+  const stepLabel = String(step + 1).padStart(2, "0");
 
   const stepError =
     errors.full_name?.message ||
@@ -632,21 +705,23 @@ export default function ApplicationForm() {
         },
       };
 
-  return (
-    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-navy-800">
-      <Glow className="opacity-35 [&>div]:left-[18%] [&>div]:top-auto [&>div]:bottom-[-10%] [&>div]:translate-x-0 [&>div]:translate-y-0" />
+  const questionHeading =
+    "max-w-[20ch] text-[clamp(1.6rem,3.2vw,2.4rem)] font-semibold tracking-[-0.03em] text-pc-white";
 
-      <header className="relative z-[2] border-b border-pc-line">
-        <div className="flex items-center justify-between px-5 py-4 md:px-8">
-          <Link
-            href="/"
-            className="text-sm font-semibold tracking-[-0.02em] text-pc-white"
-          >
-            {site.name}
-          </Link>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
-            {stepLabel} / {String(TOTAL_STEPS).padStart(2, "0")}
-          </p>
+  return (
+    <div className="relative flex min-h-dvh flex-col bg-navy-800 lg:flex-row">
+      {/* Mobile top bar */}
+      <header className="sticky top-0 z-[3] border-b border-pc-line bg-navy-900 lg:hidden">
+        <div className="flex h-16 items-center justify-between px-5">
+          <Wordmark />
+          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-pc-muted">
+            <span className="hidden text-pc-text xs:inline sm:inline">
+              {currentStage.label}
+            </span>
+            <span className="tabular-nums text-pc-white">
+              {step + 1} of {TOTAL_STEPS}
+            </span>
+          </div>
         </div>
         <div className="h-0.5 w-full bg-pc-line" aria-hidden>
           <motion.div
@@ -663,448 +738,471 @@ export default function ApplicationForm() {
         </div>
       </header>
 
-      <div
-        className="sr-only"
-        aria-live="polite"
-        aria-atomic="true"
-      >{`Question ${step + 1} of ${TOTAL_STEPS}`}</div>
+      {/* Left panel */}
+      <aside className="relative hidden w-[38%] shrink-0 flex-col border-r border-pc-line bg-navy-900 p-10 lg:flex">
+        <Wordmark className="text-base" />
 
-      <div className="relative z-[2] flex flex-1 flex-col px-5 pb-8 pt-10 md:px-8 md:pt-14">
-        <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col self-start md:ml-[max(0px,calc((100%-640px)*0.12))]">
-          {/* honeypot */}
-          <div className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden opacity-0" aria-hidden>
-            <label htmlFor="company_website">Company website</label>
-            <input
-              id="company_website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              {...register("company_website")}
-            />
+        <div className="mt-16 flex-1">
+          <StageIndex step={step} />
+        </div>
+
+        <div className="mt-auto border-t border-pc-line pt-8">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-pc-muted">
+            Why I ask all this
+          </p>
+          <p className="mt-3 max-w-[36ch] text-[14px] leading-relaxed text-pc-text">
+            I read every application myself. The more specific you are, the
+            faster I can tell you whether I can help.
+          </p>
+          <div className="mt-5">
+            <Signature height={24} />
           </div>
+        </div>
+      </aside>
 
-          <div className="relative flex-1" ref={focusRef}>
-            <AnimatePresence mode="wait">
-              {!submitting ? (
-                <motion.div
-                  key={step}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  variants={variants}
-                  onKeyDown={onContinueKey}
-                  className="w-full"
-                >
-                  <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-accent">
-                    Question {stepLabel}
-                  </p>
+      {/* Right panel */}
+      <div className="relative flex min-h-0 flex-1 flex-col bg-navy-800 lg:w-[62%]">
+        <Glow className="opacity-30 [&>div]:left-auto [&>div]:right-[-8%] [&>div]:top-auto [&>div]:bottom-[-12%] [&>div]:translate-x-0 [&>div]:translate-y-0" />
 
-                  {step === 0 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        What&apos;s your name?
-                      </MaskText>
-                      <div className="mt-8">
-                        <UnderlineField
-                          id="full_name"
-                          placeholder="Full name"
-                          autoComplete="name"
-                          error={errors.full_name?.message}
-                          shake={shake}
-                          {...register("full_name")}
-                        />
-                      </div>
-                    </>
-                  )}
+        <div
+          className="relative z-[1] hidden h-0.5 w-full bg-pc-line lg:block"
+          aria-hidden
+        >
+          <motion.div
+            className="h-full origin-left bg-accent"
+            initial={false}
+            animate={{ scaleX: progress }}
+            transition={
+              reduceMotion
+                ? { duration: 0.15 }
+                : { type: "spring", stiffness: 280, damping: 32 }
+            }
+            style={{ willChange: "transform" }}
+          />
+        </div>
 
-                  {step === 1 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        Where should I reply?
-                      </MaskText>
-                      <div className="mt-8">
-                        <UnderlineField
-                          id="email"
-                          type="email"
-                          placeholder="you@brand.com"
-                          autoComplete="email"
-                          error={errors.email?.message}
-                          shake={shake}
-                          {...register("email")}
-                        />
-                      </div>
-                    </>
-                  )}
+        <div
+          className="sr-only"
+          aria-live="polite"
+          aria-atomic="true"
+        >{`Question ${step + 1} of ${TOTAL_STEPS}`}</div>
 
-                  {step === 2 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        Which best describes you?
-                      </MaskText>
-                      <div className="mt-8">
-                        <ChoiceRows
-                          options={LANE_OPTIONS}
-                          value={
-                            laneChoiceId ??
-                            (lane === "creator" ? "creator" : lane ? "physical" : undefined)
-                          }
-                          error={errors.lane?.message}
-                          shake={shake}
-                          onSelect={(choice) =>
-                            selectAndAdvance(() => {
-                              setLaneChoiceId(choice.id);
-                              setValue(
-                                "lane",
-                                choice.value as FormValues["lane"],
-                                { shouldValidate: true }
-                              );
-                            })
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {step === 3 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        Brand or business name?
-                      </MaskText>
-                      <div className="mt-8">
-                        <UnderlineField
-                          id="brand_name"
-                          placeholder="Brand name"
-                          error={errors.brand_name?.message}
-                          shake={shake}
-                          {...register("brand_name")}
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {step === 4 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        Where can I see you?
-                      </MaskText>
-                      <p className="mt-2 text-[15px] text-pc-muted">
-                        At least one handle or a website.
-                      </p>
-                      <div
-                        className={cn(
-                          "mt-8 space-y-5",
-                          shake && "animate-[field-shake_0.35s_ease-in-out]"
-                        )}
-                      >
-                        <UnderlineField
-                          id="instagram"
-                          placeholder="handle"
-                          prefix="@"
-                          error={errors.socials?.instagram?.message}
-                          {...register("socials.instagram")}
-                        />
-                        <UnderlineField
-                          id="tiktok"
-                          placeholder="handle"
-                          prefix="@"
-                          {...register("socials.tiktok")}
-                        />
-                        <UnderlineField
-                          id="youtube"
-                          placeholder="handle or channel"
-                          prefix="@"
-                          {...register("socials.youtube")}
-                        />
-                        <UnderlineField
-                          id="website"
-                          type="url"
-                          placeholder="https://yoursite.com"
-                          {...register("socials.website")}
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {step === 5 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        Audience size on your main platform?
-                      </MaskText>
-                      <div className="mt-8">
-                        <ChoiceRows
-                          options={FOLLOWER_RANGE_OPTIONS.map((v) => ({
-                            id: v,
-                            label: v,
-                            value: v,
-                          }))}
-                          value={followerRange}
-                          error={errors.follower_range?.message}
-                          shake={shake}
-                          onSelect={(choice) =>
-                            selectAndAdvance(() =>
-                              setValue(
-                                "follower_range",
-                                choice.value as FormValues["follower_range"],
-                                { shouldValidate: true }
-                              )
-                            )
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {step === 6 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        Do you already sell something?
-                      </MaskText>
-                      <div className="mt-8">
-                        <ChoiceRows
-                          options={HAS_PRODUCT_OPTIONS}
-                          value={hasProduct}
-                          error={errors.has_product?.message}
-                          shake={shake}
-                          onSelect={(choice) =>
-                            selectAndAdvance(() =>
-                              setValue(
-                                "has_product",
-                                choice.value as FormValues["has_product"],
-                                { shouldValidate: true }
-                              )
-                            )
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {step === 7 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        What&apos;s actually broken right now?
-                      </MaskText>
-                      <p className="mt-2 text-[15px] text-pc-muted">
-                        Be specific. This is the answer I read first.
-                      </p>
-                      <div
-                        className={cn(
-                          "relative mt-8",
-                          shake && "animate-[field-shake_0.35s_ease-in-out]"
-                        )}
-                      >
-                        <textarea
-                          id="biggest_bottleneck"
-                          rows={5}
-                          placeholder="What's stuck..."
-                          aria-invalid={Boolean(errors.biggest_bottleneck)}
-                          className={cn(
-                            "peer w-full resize-none border-0 bg-transparent py-3 text-[18px] leading-relaxed text-pc-white caret-accent outline-none md:text-[20px]",
-                            "placeholder:text-pc-muted/55"
-                          )}
-                          {...register("biggest_bottleneck")}
-                        />
-                        <span
-                          aria-hidden
-                          className="absolute bottom-0 left-0 h-px w-full bg-pc-line"
-                        />
-                        <span
-                          aria-hidden
-                          className="absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
-                        />
-                        {errors.biggest_bottleneck?.message ? (
-                          <p className="mt-2 text-sm text-red-400" role="alert">
-                            {errors.biggest_bottleneck.message}
-                          </p>
-                        ) : null}
-                      </div>
-                    </>
-                  )}
-
-                  {step === 8 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        How soon do you want to start?
-                      </MaskText>
-                      <div className="mt-8">
-                        <ChoiceRows
-                          options={READY_TO_START_OPTIONS.map((v) => ({
-                            id: v,
-                            label: v,
-                            value: v,
-                          }))}
-                          value={readyToStart}
-                          error={errors.ready_to_start?.message}
-                          shake={shake}
-                          onSelect={(choice) =>
-                            selectAndAdvance(() =>
-                              setValue(
-                                "ready_to_start",
-                                choice.value as FormValues["ready_to_start"],
-                                { shouldValidate: true }
-                              )
-                            )
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {step === 9 && (
-                    <>
-                      <MaskText
-                        as="h2"
-                        className="max-w-[20ch] text-[clamp(1.6rem,3.5vw,2.5rem)] font-semibold tracking-[-0.03em] text-pc-white"
-                      >
-                        One thing before you send this.
-                      </MaskText>
-                      <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-pc-text md:text-base">
-                        {lane === "creator"
-                          ? "This is a revenue split, not a flat fee. I'm paid a percentage of what your product earns, so there's no upfront cost — and no work happens without an active agreement. If the arrangement ends, you keep everything already built, but all further updates stop."
-                          : "Physical brands work on a flat monthly retainer. Work continues for as long as the retainer is active. If it ends, you keep everything already built, but all further updates stop and maintenance becomes yours."}
-                      </p>
-                      <div
-                        className={cn(
-                          "mt-8",
-                          shake && "animate-[field-shake_0.35s_ease-in-out]"
-                        )}
-                      >
-                        <Controller
-                          name="terms_ack"
-                          control={control}
-                          render={({ field }) => (
-                            <label className="flex cursor-pointer items-start gap-3 border border-pc-line px-5 py-4 transition-colors hover:border-pc-line-2">
-                              <input
-                                type="checkbox"
-                                checked={field.value}
-                                onChange={(e) =>
-                                  field.onChange(e.target.checked)
-                                }
-                                className="mt-1 h-4 w-4 shrink-0 accent-accent"
-                              />
-                              <span className="text-[15px] leading-relaxed text-pc-white">
-                                I&apos;ve read and accept the{" "}
-                                <Link
-                                  href="/terms"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-accent underline-offset-2 hover:underline"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  Terms of Service
-                                </Link>
-                                .
-                              </span>
-                            </label>
-                          )}
-                        />
-                        {errors.terms_ack?.message ? (
-                          <p className="mt-2 text-sm text-red-400" role="alert">
-                            {errors.terms_ack.message}
-                          </p>
-                        ) : null}
-                        <p className="mt-4 text-xs leading-relaxed text-pc-muted">
-                          Applying doesn&apos;t commit you to anything. I only
-                          reach out if I think we&apos;re a good fit.
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="sending"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex min-h-[40vh] flex-col items-center justify-center"
-                >
-                  <motion.div
-                    className="mb-8 h-px w-full origin-left bg-accent"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={
-                      reduceMotion
-                        ? { duration: 0.15 }
-                        : { duration: 0.85, ease: EASE_IN }
-                    }
-                  />
-                  <p className="text-[15px] text-pc-muted">
-                    Sending your application
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {!submitting ? (
-            <div className="mt-10 flex items-end justify-between gap-4">
-              <div>
-                {step > 0 ? (
-                  <button
-                    type="button"
-                    onClick={back}
-                    className="group inline-flex items-center gap-1.5 text-sm text-pc-muted transition-colors hover:text-pc-white"
-                  >
-                    <ChevronLeft
-                      className="h-4 w-4 transition-transform duration-[160ms] group-hover:-translate-x-[3px]"
-                      aria-hidden
-                    />
-                    Back
-                  </button>
-                ) : (
-                  <span />
-                )}
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (step === TOTAL_STEPS - 1) void handleSubmit(onSubmit)();
-                    else void next();
-                  }}
-                  className="inline-flex h-12 items-center justify-center bg-accent px-8 text-[15px] font-medium text-navy-900 transition-opacity hover:opacity-90"
-                >
-                  {step === TOTAL_STEPS - 1
-                    ? "Submit application"
-                    : "Continue"}
-                </button>
-                <p className="text-[11px] text-pc-muted">press Enter ↵</p>
-              </div>
+        <div className="relative z-[1] flex min-h-[calc(100dvh-4.125rem)] flex-1 flex-col px-5 py-8 sm:px-8 lg:min-h-0 lg:justify-center lg:px-12 lg:py-14 xl:px-20">
+          <div className="mx-auto flex w-full max-w-[620px] flex-1 flex-col lg:mx-0 lg:flex-none">
+            <div
+              className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden opacity-0"
+              aria-hidden
+            >
+              <label htmlFor="company_website">Company website</label>
+              <input
+                id="company_website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                {...register("company_website")}
+              />
             </div>
-          ) : null}
 
-          {stepError && !submitting ? (
-            <span className="sr-only" aria-live="assertive">
-              {stepError}
-            </span>
-          ) : null}
+            <div className="relative flex-1 lg:flex-none" ref={focusRef}>
+              <AnimatePresence mode="wait">
+                {!submitting ? (
+                  <motion.div
+                    key={step}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    variants={variants}
+                    onKeyDown={onContinueKey}
+                    className="w-full"
+                  >
+                    <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-accent">
+                      Question {stepLabel} of {String(TOTAL_STEPS).padStart(2, "0")}
+                    </p>
+
+                    {step === 0 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          What&apos;s your name?
+                        </MaskText>
+                        <div className="mt-8">
+                          <UnderlineField
+                            id="full_name"
+                            placeholder="Full name"
+                            autoComplete="name"
+                            error={errors.full_name?.message}
+                            shake={shake}
+                            {...register("full_name")}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 1 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          Where should I reply?
+                        </MaskText>
+                        <div className="mt-8">
+                          <UnderlineField
+                            id="email"
+                            type="email"
+                            placeholder="you@brand.com"
+                            autoComplete="email"
+                            error={errors.email?.message}
+                            shake={shake}
+                            {...register("email")}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 2 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          Which best describes you?
+                        </MaskText>
+                        <div className="mt-8">
+                          <ChoiceRows
+                            options={LANE_OPTIONS}
+                            value={
+                              laneChoiceId ??
+                              (lane === "creator"
+                                ? "creator"
+                                : lane
+                                  ? "physical"
+                                  : undefined)
+                            }
+                            error={errors.lane?.message}
+                            shake={shake}
+                            onSelect={(choice) =>
+                              selectAndAdvance(() => {
+                                setLaneChoiceId(choice.id);
+                                setValue(
+                                  "lane",
+                                  choice.value as FormValues["lane"],
+                                  { shouldValidate: true }
+                                );
+                              })
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 3 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          Brand or business name?
+                        </MaskText>
+                        <div className="mt-8">
+                          <UnderlineField
+                            id="brand_name"
+                            placeholder="Brand name"
+                            error={errors.brand_name?.message}
+                            shake={shake}
+                            {...register("brand_name")}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 4 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          Where can I see you?
+                        </MaskText>
+                        <p className="mt-2 text-[15px] text-pc-muted">
+                          At least one handle or a website.
+                        </p>
+                        <div
+                          className={cn(
+                            "mt-8 space-y-5",
+                            shake && "animate-[field-shake_0.35s_ease-in-out]"
+                          )}
+                        >
+                          <UnderlineField
+                            id="instagram"
+                            placeholder="handle"
+                            prefix="@"
+                            error={errors.socials?.instagram?.message}
+                            {...register("socials.instagram")}
+                          />
+                          <UnderlineField
+                            id="tiktok"
+                            placeholder="handle"
+                            prefix="@"
+                            {...register("socials.tiktok")}
+                          />
+                          <UnderlineField
+                            id="youtube"
+                            placeholder="handle or channel"
+                            prefix="@"
+                            {...register("socials.youtube")}
+                          />
+                          <UnderlineField
+                            id="website"
+                            type="url"
+                            placeholder="https://yoursite.com"
+                            {...register("socials.website")}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 5 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          Audience size on your main platform?
+                        </MaskText>
+                        <div className="mt-8">
+                          <ChoiceRows
+                            options={FOLLOWER_RANGE_OPTIONS.map((v) => ({
+                              id: v,
+                              label: v,
+                              value: v,
+                            }))}
+                            value={followerRange}
+                            error={errors.follower_range?.message}
+                            shake={shake}
+                            onSelect={(choice) =>
+                              selectAndAdvance(() =>
+                                setValue(
+                                  "follower_range",
+                                  choice.value as FormValues["follower_range"],
+                                  { shouldValidate: true }
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 6 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          Do you already sell something?
+                        </MaskText>
+                        <div className="mt-8">
+                          <ChoiceRows
+                            options={HAS_PRODUCT_OPTIONS}
+                            value={hasProduct}
+                            error={errors.has_product?.message}
+                            shake={shake}
+                            onSelect={(choice) =>
+                              selectAndAdvance(() =>
+                                setValue(
+                                  "has_product",
+                                  choice.value as FormValues["has_product"],
+                                  { shouldValidate: true }
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 7 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          What&apos;s actually broken right now?
+                        </MaskText>
+                        <p className="mt-2 text-[15px] text-pc-muted">
+                          Be specific. This is the answer I read first.
+                        </p>
+                        <div
+                          className={cn(
+                            "relative mt-8",
+                            shake && "animate-[field-shake_0.35s_ease-in-out]"
+                          )}
+                        >
+                          <textarea
+                            id="biggest_bottleneck"
+                            rows={5}
+                            placeholder="What's stuck..."
+                            aria-invalid={Boolean(errors.biggest_bottleneck)}
+                            className={cn(
+                              "peer w-full resize-none border-0 bg-transparent py-3 text-[18px] leading-relaxed text-pc-white caret-accent outline-none md:text-[20px]",
+                              "placeholder:text-pc-muted/55"
+                            )}
+                            {...register("biggest_bottleneck")}
+                          />
+                          <span
+                            aria-hidden
+                            className="absolute bottom-0 left-0 h-px w-full bg-pc-line"
+                          />
+                          <span
+                            aria-hidden
+                            className="absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
+                          />
+                          {errors.biggest_bottleneck?.message ? (
+                            <p className="mt-2 text-sm text-red-400" role="alert">
+                              {errors.biggest_bottleneck.message}
+                            </p>
+                          ) : null}
+                        </div>
+                      </>
+                    )}
+
+                    {step === 8 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          How soon do you want to start?
+                        </MaskText>
+                        <div className="mt-8">
+                          <ChoiceRows
+                            options={READY_TO_START_OPTIONS.map((v) => ({
+                              id: v,
+                              label: v,
+                              value: v,
+                            }))}
+                            value={readyToStart}
+                            error={errors.ready_to_start?.message}
+                            shake={shake}
+                            onSelect={(choice) =>
+                              selectAndAdvance(() =>
+                                setValue(
+                                  "ready_to_start",
+                                  choice.value as FormValues["ready_to_start"],
+                                  { shouldValidate: true }
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {step === 9 && (
+                      <>
+                        <MaskText as="h2" className={questionHeading}>
+                          One thing before you _send_ this.
+                        </MaskText>
+                        <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-pc-text md:text-base">
+                          {lane === "creator"
+                            ? "This is a revenue split, not a flat fee. I am paid a percentage of what your product earns, so there is nothing upfront. Work continues while the agreement is active. If it ends, you keep everything already built, but all further updates stop."
+                            : "Physical brands work on a flat monthly retainer. Work continues for as long as the retainer is active. If it ends, you keep everything already built, but all further updates stop and maintenance becomes yours."}
+                        </p>
+                        <div
+                          className={cn(
+                            "mt-8",
+                            shake && "animate-[field-shake_0.35s_ease-in-out]"
+                          )}
+                        >
+                          <Controller
+                            name="terms_ack"
+                            control={control}
+                            render={({ field }) => (
+                              <label className="flex cursor-pointer items-start gap-3 border border-pc-line px-5 py-4 transition-colors hover:border-pc-line-2">
+                                <input
+                                  type="checkbox"
+                                  checked={field.value}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.checked)
+                                  }
+                                  className="mt-1 h-4 w-4 shrink-0 accent-accent"
+                                />
+                                <span className="text-[15px] leading-relaxed text-pc-white">
+                                  I&apos;ve read and accept the{" "}
+                                  <Link
+                                    href="/terms"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-accent underline-offset-2 hover:underline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    Terms of Service
+                                  </Link>
+                                  .
+                                </span>
+                              </label>
+                            )}
+                          />
+                          {errors.terms_ack?.message ? (
+                            <p className="mt-2 text-sm text-red-400" role="alert">
+                              {errors.terms_ack.message}
+                            </p>
+                          ) : null}
+                          <p className="mt-4 text-xs leading-relaxed text-pc-muted">
+                            Applying does not commit you to anything. I only
+                            reach out if I think we are a good fit.
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="sending"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex min-h-[40vh] flex-col justify-center"
+                  >
+                    <motion.div
+                      className="mb-8 h-px w-full origin-left bg-accent"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={
+                        reduceMotion
+                          ? { duration: 0.15 }
+                          : { duration: 0.85, ease: EASE_IN }
+                      }
+                    />
+                    <p className="text-[15px] text-pc-muted">
+                      Sending your application
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {!submitting ? (
+              <div className="mt-10 border-t border-pc-line pt-6">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    {step > 0 ? (
+                      <button
+                        type="button"
+                        onClick={back}
+                        className="group inline-flex items-center gap-1.5 text-sm text-pc-muted transition-colors hover:text-pc-white"
+                      >
+                        <ChevronLeft
+                          className="h-4 w-4 transition-transform duration-[160ms] group-hover:-translate-x-[3px]"
+                          aria-hidden
+                        />
+                        Back
+                      </button>
+                    ) : (
+                      <span />
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (step === TOTAL_STEPS - 1)
+                          void handleSubmit(onSubmit)();
+                        else void next();
+                      }}
+                      className="inline-flex h-12 items-center justify-center bg-accent px-8 text-[15px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      {step === TOTAL_STEPS - 1
+                        ? "Submit application"
+                        : "Continue"}
+                    </button>
+                    <p className="text-[11px] text-pc-muted">press Enter</p>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {stepError && !submitting ? (
+              <span className="sr-only" aria-live="assertive">
+                {stepError}
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     const data = parsed.data;
 
-    // Honeypot — bots fill hidden fields
+    // Honeypot: bots fill hidden fields
     if (data.company_website && data.company_website.trim().length > 0) {
       return fakeOk();
     }

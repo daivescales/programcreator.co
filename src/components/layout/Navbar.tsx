@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MaskText } from "@/components/motion";
+import { HandUnderline, MaskText } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
 import {
@@ -18,9 +18,9 @@ import { cn } from "@/lib/utils";
 import { site } from "@/lib/site-config";
 
 const navLinks = [
-  { href: "/#model", label: "Model" },
-  { href: "/#lanes", label: "Lanes" },
-  { href: "/#process", label: "Process" },
+  { href: "/#model", label: "What I do" },
+  { href: "/#lanes", label: "Two lanes" },
+  { href: "/#process", label: "How it works" },
   { href: "/#faq", label: "FAQ" },
 ] as const;
 
@@ -30,6 +30,31 @@ const socials = [
   { label: "YouTube", href: site.socials.youtube, icon: YouTubeIcon },
   { label: "X", href: site.socials.x, icon: XIcon },
 ] as const;
+
+function NavLink({ href, label }: { href: string; label: string }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Link
+      href={href}
+      className="text-[12px] uppercase tracking-[0.16em] text-pc-muted transition-colors duration-[160ms] hover:text-pc-white focus-visible:text-pc-white"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+    >
+      <HandUnderline
+        trigger="hover"
+        active={hovered}
+        variant={1}
+        thickness={2.5}
+        delay={0}
+      >
+        {label}
+      </HandUnderline>
+    </Link>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -87,14 +112,7 @@ export default function Navbar() {
 
             <div className="hidden items-center gap-8 md:flex">
               {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="group relative text-[12px] uppercase tracking-[0.16em] text-pc-muted transition-colors duration-[160ms] hover:text-pc-white"
-                >
-                  {link.label}
-                  <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
-                </Link>
+                <NavLink key={link.href} href={link.href} label={link.label} />
               ))}
             </div>
 
@@ -204,10 +222,7 @@ export default function Navbar() {
                   })}
                 </div>
                 <div onClick={() => setOpen(false)}>
-                  <CTAButton
-                    href="/apply"
-                    className="w-full rounded-none"
-                  >
+                  <CTAButton href="/apply" className="w-full rounded-none">
                     Apply to work with me
                   </CTAButton>
                 </div>

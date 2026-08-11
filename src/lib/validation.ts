@@ -53,7 +53,7 @@ export const leadSchema = z
     biggest_bottleneck: z
       .string()
       .trim()
-      .min(20, "Give me a bit more — at least a couple of sentences."),
+      .min(20, "Give me a bit more. At least a couple of sentences."),
     ready_to_start: z.enum(READY_TO_START_OPTIONS, {
       error: "How soon do you want to start?",
     }),

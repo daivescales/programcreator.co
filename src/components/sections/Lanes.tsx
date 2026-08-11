@@ -7,7 +7,7 @@ const included = [
   "Content angles that drive traffic",
   "Ongoing conversion iteration",
   "Tracking set up properly",
-  "Direct access to me, not an account manager",
+  "Direct access to me rather than an account manager",
 ] as const;
 
 function IncludedList() {
@@ -17,7 +17,7 @@ function IncludedList() {
         <li key={item} className="flex items-start gap-3">
           <span
             aria-hidden
-            className="mt-1.5 h-2.5 w-2.5 shrink-0 bg-accent"
+            className="mt-1.5 h-[9px] w-[9px] shrink-0 bg-accent"
           />
           <span className="text-[15px] leading-snug text-pc-text">{item}</span>
         </li>
@@ -62,7 +62,7 @@ const rows: LaneRow[] = [
   {
     label: "Who it's for",
     kind: "text",
-    a: "You have an audience. You don't have a product — or the one you have doesn't convert.",
+    a: "You have an audience. You do not have a product, or the one you have does not convert.",
     b: "You have inventory and traffic. The site is where the sale is dying.",
   },
   {
@@ -78,17 +78,17 @@ const rows: LaneRow[] = [
   {
     label: "When I'm paid",
     kind: "text",
-    a: "Only when it sells. No deposit, no upfront cost.",
+    a: "Only when it sells. No deposit, nothing upfront.",
     b: "Flat monthly fee, billed in advance.",
   },
   {
-    label: "Why",
+    label: "Why it works this way",
     kind: "text",
-    a: "If it doesn't sell, I don't get paid. That's exactly why I'm selective about who I take.",
-    b: "Physical brands carry real costs and real margins, so a split doesn't make sense. A retainer keeps the work continuous and the incentives clean.",
+    a: "If it does not sell, I do not get paid. That is exactly why I am picky about who I take on.",
+    b: "Physical brands carry real costs and thinner margins, so a split does not make sense. A retainer keeps the work continuous and the incentives clean.",
   },
   {
-    label: "Also included",
+    label: "Both lanes include",
     kind: "list",
   },
 ];
@@ -110,26 +110,27 @@ export default function Lanes() {
     <Spine
       id="lanes"
       number="02"
-      label="THE TWO LANES"
+      label="TWO LANES"
       className="border-t border-pc-line py-28 md:py-36"
     >
       <Heading
         as="h2"
-        text="Two lanes. *Same discipline*."
+        text="Two lanes. The _same_ work."
+        underlineVariant={2}
         className="max-w-[14ch]"
       />
 
       <MaskLines
         delay={0.12}
-        className="mt-6 max-w-[54ch] text-[17px] leading-[1.6] text-pc-text"
+        className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-pc-text"
       >
         {
-          "The work is identical — turn attention into something people buy. The only thing that changes is how I get paid."
+          "The job is identical in both. Turn attention into something people buy. The only thing that changes is how I get paid."
         }
       </MaskLines>
 
       <div className="mt-14 hidden overflow-hidden md:block">
-        <table className="w-full border-collapse text-left">
+        <table className="w-full border-collapse text-left" aria-label="Lane comparison">
           <thead>
             <tr className="border-b border-pc-line">
               <th className="w-[18%] py-6 pr-4" scope="col">
@@ -143,7 +144,7 @@ export default function Lanes() {
                   Lane A
                 </p>
                 <p className="mt-2 text-[15px] text-pc-white">
-                  Creators &amp; digital brands
+                  Creators and digital brands
                 </p>
               </th>
               <th className="w-[41%] px-6 py-6" scope="col">
@@ -183,7 +184,7 @@ export default function Lanes() {
             {
               key: "a" as const,
               title: "Lane A",
-              subtitle: "Creators & digital brands",
+              subtitle: "Creators and digital brands",
               featured: true,
             },
             {
@@ -232,12 +233,12 @@ export default function Lanes() {
       </div>
 
       <p className="mt-10 text-left text-[15px] text-pc-muted">
-        Not sure which lane you&apos;re in? That&apos;s what the call is for.{" "}
+        Not sure which lane you are in. That is what the call is for.{" "}
         <Link
           href="/apply"
           className="group relative inline-block text-accent"
         >
-          Apply to work with me
+          Apply
           <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
         </Link>
       </p>

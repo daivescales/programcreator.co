@@ -6,7 +6,7 @@ const steps = [
   {
     number: "01",
     title: "You apply",
-    body: "Three minutes. It asks what you sell, who follows you, and what's currently broken.",
+    body: "Three minutes. It asks what you sell, who follows you, and what is currently broken.",
   },
   {
     number: "02",
@@ -16,12 +16,12 @@ const steps = [
   {
     number: "03",
     title: "I build",
-    body: "Product, page, funnel, depending on your lane. You review at two checkpoints. I handle the rest so you keep making content.",
+    body: "Product, page and funnel depending on your lane. You review at two checkpoints. I handle the rest so you can keep making content.",
   },
   {
     number: "04",
     title: "We scale it",
-    body: "It goes live and we drive your audience into it, then keep tightening the offer against what the data says.",
+    body: "It goes live and we drive your audience into it, then keep tightening the offer against what the data actually says.",
   },
 ] as const;
 
@@ -30,12 +30,12 @@ export default function Process() {
     <Spine
       id="process"
       number="03"
-      label="THE PROCESS"
+      label="HOW IT WORKS"
       className="border-t border-pc-line py-28 md:py-36"
     >
       <Heading
         as="h2"
-        text="From application to *first sale*."
+        text="From application to first sale."
         className="max-w-[14ch]"
       />
 
@@ -46,11 +46,7 @@ export default function Process() {
         Four steps. Two to four weeks depending on the lane.
       </MaskLines>
 
-      <div className="relative mt-14 hidden border-t border-pc-line md:block">
-        <span
-          aria-hidden
-          className="motion-idle pointer-events-none absolute top-0 left-0 z-10 h-0.5 w-16 bg-accent animate-process-scan"
-        />
+      <div className="mt-14 hidden border-t border-pc-line md:block">
         <div className="grid grid-cols-4">
           {steps.map((step, index) => (
             <Reveal key={step.number} delay={0.08 * index}>
@@ -59,7 +55,7 @@ export default function Process() {
                   index > 0 ? "border-l border-pc-line" : ""
                 }`}
               >
-                <p className="text-[clamp(2.5rem,4vw,3.5rem)] font-semibold tracking-[-0.04em] text-accent opacity-30 transition-opacity duration-[200ms] group-hover:opacity-70">
+                <p className="text-[clamp(2.5rem,4vw,3.5rem)] font-semibold tracking-[-0.04em] text-accent opacity-30 transition-opacity duration-[200ms] group-hover:opacity-[0.65]">
                   {step.number}
                 </p>
                 <h3 className="mt-4 text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold tracking-[-0.035em] text-pc-white">

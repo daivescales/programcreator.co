@@ -18,7 +18,7 @@ export async function appendLeadToSheet(
     const sheetId = process.env.GOOGLE_SHEET_ID;
 
     if (!email || !privateKey || !sheetId) {
-      console.warn("[google-sheets] Missing credentials — skipping append");
+      console.warn("[google-sheets] Missing credentials, skipping append");
       return;
     }
 

@@ -25,7 +25,7 @@ function escapeHtml(value: string): string {
 }
 
 function row(label: string, value: string | undefined, emphasise = false): string {
-  const display = value?.trim() ? escapeHtml(value) : "—";
+  const display = value?.trim() ? escapeHtml(value) : "-";
   const style = emphasise
     ? `padding:12px 0;border-bottom:1px solid ${LINE};background:rgba(77,155,255,0.08);`
     : `padding:10px 0;border-bottom:1px solid ${LINE};`;
@@ -45,7 +45,7 @@ export async function sendLeadNotification(
     const resend = getResend();
     const to = process.env.LEAD_NOTIFY_EMAIL;
     if (!resend || !to) {
-      console.warn("[email] Missing Resend config — skipping lead notification");
+      console.warn("[email] Missing Resend config, skipping lead notification");
       return;
     }
 
@@ -75,7 +75,7 @@ export async function sendLeadNotification(
       ${row("Lead ID", lead.id)}
     </table>
     <p style="margin:24px 0 0;">
-      <a href="mailto:${encodeURIComponent(lead.email)}?subject=${encodeURIComponent(`Re: ProgramCreator — ${lead.full_name}`)}"
+      <a href="mailto:${encodeURIComponent(lead.email)}?subject=${encodeURIComponent(`Re: ProgramCreator, ${lead.full_name}`)}"
          style="display:inline-block;background:${ACCENT};color:${NAVY};text-decoration:none;padding:12px 18px;font-size:14px;font-weight:500;">
         Reply to ${escapeHtml(lead.full_name.split(" ")[0] ?? lead.full_name)}
       </a>
@@ -87,7 +87,7 @@ export async function sendLeadNotification(
       from: `${site.name} <onboarding@resend.dev>`,
       to: [to],
       replyTo: lead.email,
-      subject: `New lead — ${lead.full_name} (${lead.lane})`,
+      subject: `New lead, ${lead.full_name}, ${lead.lane}`,
       html,
     });
   } catch (err) {
@@ -97,13 +97,13 @@ export async function sendLeadNotification(
 
 /**
  * Confirm receipt to the applicant. Fail-soft.
- * Wording must match Terms §2 / Prompt 7 exactly.
+ * Wording must match Terms §2 / Prompt 7 exactly. No em dashes.
  */
 export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void> {
   try {
     const resend = getResend();
     if (!resend) {
-      console.warn("[email] Missing Resend config — skipping applicant confirmation");
+      console.warn("[email] Missing Resend config, skipping applicant confirmation");
       return;
     }
 
@@ -115,10 +115,10 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
     <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:600;">Got it, ${escapeHtml(first)}.</h1>
     <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">
-      Your application is in. I read every one myself, usually within a few days. If I think we're a good fit to work together, I'll reach out with a link to book a call. If you don't hear from me, it means I didn't think I was the right person for your brand right now — that's not a judgement on what you're building.
+      Your application is in. I read every one myself, usually within a few days. If I think we are a good fit to work together, I will reach out with a link to book a call. If you do not hear from me, it means I did not think I was the right person for your brand right now, and that is not a judgement on what you are building.
     </p>
     <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
-      Daive — ${escapeHtml(site.name)}
+      Daive, ${escapeHtml(site.name)}
     </p>
   </div>
 </body></html>`;
@@ -126,7 +126,7 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
     await resend.emails.send({
       from: `${site.founder} at ${site.name} <onboarding@resend.dev>`,
       to: [lead.email],
-      subject: `Application received — ${site.name}`,
+      subject: `Application received, ${site.name}`,
       html,
     });
   } catch (err) {

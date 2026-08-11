@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import HandUnderline from "@/components/motion/HandUnderline";
 import {
   EASE_IN,
   VIEWPORT_ONCE,
@@ -14,23 +15,35 @@ export type MaskTextProps = {
   as?: "h1" | "h2" | "h3" | "p" | "span" | "div";
   className?: string;
   delay?: number;
+  /** HandUnderline variant for _underscored_ words. */
+  underlineVariant?: 1 | 2 | 3;
 };
 
 type WordToken = {
   word: string;
   emphasis: boolean;
+  underline: boolean;
   isSpace: boolean;
 };
 
-/** Parse *asterisk* emphasis into serif-em tokens. */
+/**
+ * Markup:
+ * - *word* → Instrument Serif italic (--pc-accent-2 via .serif-em)
+ * - _word_ → HandUnderline wrapper
+ */
 function parseMarkup(text: string): WordToken[] {
   const tokens: WordToken[] = [];
-  const re = /\*([^*]+)\*|([^*]+)/g;
+  const re = /\*([^*]+)\*|_([^_]+)_|([^*_]+)/g;
   let match: RegExpExecArray | null;
 
   while ((match = re.exec(text)) !== null) {
     const emphasis = match[1] !== undefined;
-    const segment = emphasis ? match[1] : (match[2] ?? "");
+    const underline = match[2] !== undefined;
+    const segment = emphasis
+      ? match[1]
+      : underline
+        ? match[2]
+        : (match[3] ?? "");
     const parts = segment.split(/(\s+)/);
 
     for (const part of parts) {
@@ -39,6 +52,7 @@ function parseMarkup(text: string): WordToken[] {
       tokens.push({
         word: part,
         emphasis: emphasis && !isSpace,
+        underline: underline && !isSpace,
         isSpace,
       });
     }
@@ -52,6 +66,7 @@ export default function MaskText({
   as: Tag = "div",
   className,
   delay = 0,
+  underlineVariant = 1,
 }: MaskTextProps) {
   const ref = useRef<HTMLElement | null>(null);
   const reduced = usePrefersReducedMotion();
@@ -65,6 +80,8 @@ export default function MaskText({
 
   let wordIndex = 0;
   const show = !ready || inView;
+  const wordCount = tokens.filter((t) => !t.isSpace).length;
+  const underlineDelay = delay + wordCount * 0.04 + 0.25;
 
   return (
     <Tag ref={ref as React.Ref<never>} className={cn(className)}>
@@ -74,35 +91,47 @@ export default function MaskText({
         }
 
         const index = wordIndex++;
+        const inner = (
+          <motion.span
+            className={cn(
+              "inline-block will-change-transform",
+              token.emphasis && "serif-em"
+            )}
+            initial={false}
+            animate={
+              reduced
+                ? { opacity: show ? 1 : 0, y: 0 }
+                : { y: show ? "0%" : "110%", opacity: 1 }
+            }
+            transition={
+              reduced
+                ? { duration: 0.15, delay, ease: "linear" }
+                : {
+                    duration: 0.8,
+                    delay: delay + index * 0.04,
+                    ease: EASE_IN,
+                  }
+            }
+          >
+            {token.word}
+          </motion.span>
+        );
 
         return (
           <span
             key={i}
-            className="inline-block overflow-hidden align-bottom pb-[0.08em]"
+            className="inline-block overflow-hidden align-bottom pb-[0.12em]"
           >
-            <motion.span
-              className={cn(
-                "inline-block will-change-transform",
-                token.emphasis && "serif-em"
-              )}
-              initial={false}
-              animate={
-                reduced
-                  ? { opacity: show ? 1 : 0, y: 0 }
-                  : { y: show ? "0%" : "110%", opacity: 1 }
-              }
-              transition={
-                reduced
-                  ? { duration: 0.15, delay, ease: "linear" }
-                  : {
-                      duration: 0.85,
-                      delay: delay + index * 0.04,
-                      ease: EASE_IN,
-                    }
-              }
-            >
-              {token.word}
-            </motion.span>
+            {token.underline ? (
+              <HandUnderline
+                variant={underlineVariant}
+                delay={reduced ? 0 : underlineDelay}
+              >
+                {inner}
+              </HandUnderline>
+            ) : (
+              inner
+            )}
           </span>
         );
       })}

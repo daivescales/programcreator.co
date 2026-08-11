@@ -8,9 +8,9 @@ import Signature from "@/components/ui/Signature";
 import { site } from "@/lib/site-config";
 
 const indexLinks = [
-  { href: "/#model", label: "Model" },
-  { href: "/#lanes", label: "Lanes" },
-  { href: "/#process", label: "Process" },
+  { href: "/#model", label: "What I do" },
+  { href: "/#lanes", label: "Two lanes" },
+  { href: "/#process", label: "How it works" },
   { href: "/#faq", label: "FAQ" },
   { href: "/apply", label: "Apply" },
 ] as const;
@@ -23,8 +23,11 @@ const elsewhere = [
 ] as const;
 
 const legal = [
-  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/legal", label: "Legal" },
   { href: "/terms", label: "Terms of Service" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/cookies", label: "Cookie Policy" },
+  { href: "/disclaimer", label: "Disclaimer" },
 ] as const;
 
 export default function Footer() {
@@ -34,7 +37,7 @@ export default function Footer() {
         <div className="overflow-hidden text-center">
           <MaskText
             as="p"
-            className="text-stroke-wordmark text-[clamp(2.5rem,12vw,10rem)] font-bold leading-none tracking-[-0.05em]"
+            className="text-stroke-wordmark text-[clamp(2.5rem,12vw,9rem)] font-bold leading-none tracking-[-0.05em]"
           >
             PROGRAMCREATOR
           </MaskText>

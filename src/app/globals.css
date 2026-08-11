@@ -67,7 +67,7 @@
   --pc-text: #c2d4e8;
   --pc-accent: #4d9bff;
   --pc-accent-2: #a9cdff;
-  --pc-glow: rgba(77, 155, 255, 0.28);
+  --pc-glow: rgba(77, 155, 255, 0.22);
 
   --background: var(--pc-navy-800);
   --foreground: var(--pc-text);

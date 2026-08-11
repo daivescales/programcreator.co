@@ -1,72 +1,56 @@
-# ProgramCreator — Cursor Rules (v3 FINAL)
+# ProgramCreator — Cursor Rules (v4 FINAL)
 
 ## Business
-- Brand: ProgramCreator — agency arm of a personal brand. One-person studio. Personal, direct, signed.
-- Founder: Daive (@daivescales). First person singular always ("I build", never "we deliver").
-- Service: Creator Product Scaling.
-- Lane A (creators/digital): product + converting page, scaled via their socials. PAYMENT: revenue split, zero upfront.
-- Lane B (physical brands): storefront rebuild + social→site. PAYMENT: monthly retainer.
-- Same discipline both lanes; payment model is the only structural difference. Say it plainly.
-- Audience: inbound from socials, creators/founders 22–35 who can spot templates.
+- Brand: ProgramCreator. Agency arm of a personal brand. One-person studio (Daive, @daivescales). First person singular only. No "team" / "we deliver".
+- Service: Creator Product Scaling. Partner with people who already have attention; build what that attention should point at.
+- Lane A (creators/digital): product + converting page, scaled via their socials. Payment: revenue split, nothing upfront.
+- Lane B (physical): storefront rebuild + social→site. Payment: monthly retainer.
+- Same work both lanes; payment is the only difference. Say it plainly.
+- Availability: limited spots, first come first served. NEVER state a specific number of open slots anywhere.
 
-## Voice
-Short declarative sentences. Specific beats clever. Understatement = confidence.
-Banned: unlock, elevate, empower, synergy, revolutionize, seamless, cutting-edge, game-changer, "in today's landscape", "we're passionate about", "take it to the next level", "let's build something amazing".
-No exclamation marks. No emoji in UI.
+## Writing (hard requirement — human, not generated)
+BANNED punctuation/structure:
+- Em dash "—" anywhere (copy, headings, labels, legal, metadata). Use period, comma, colon, or brackets.
+- En dashes in prose (hyphen only in ranges like 5k-25k).
+- "it's not just X, it's Y" · three-adjective lists · rhetorical-question headings
+- "But here's the thing" / "The truth is" / "Let's be honest" / "Imagine" openers
+- Semicolons in marketing copy
+Banned words: unlock, elevate, empower, leverage, synergy, revolutionize, seamless, cutting edge, game changer, transformative, bespoke, curated, journey, ecosystem, "in today's landscape", "we're passionate about", "take it to the next level", "let's build something amazing".
+Write: first person, short declaratives, varied length, specific over impressive, blunt OK, occasional And/So. No ! No emoji.
 
-## Layout — "THE DOSSIER" (anti-template)
-BANNED: 3-col icon cards, bento grids, decorative pill badges, centred hero+sub+2 CTAs, floating shadow cards, generic "Our Services/Process/Why Us" titles, gradient text/buttons/borders, emoji/3D blobs.
+## Layout — editorial print / dossier
+BANNED: 3-col icon cards, bento, decorative pills, centred hero+2 CTAs, floating shadow cards, "Our Services/Process/Why Us", gradients, emoji/blobs/generated imagery.
+USE: Spine (lg 12-col, rail cols 1–2 sticky number+vertical label, content 3–12; mobile horizontal rail) · rules not boxes · radius 0 everywhere · type is design · tabular indexes/tables · asymmetry (only Final CTA centred) · Signature in About + Footer.
 
-USE INSTEAD:
-- THE SPINE: lg+ 12-col grid; cols 1–2 = sticky rail (section number + vertical uppercase label); cols 3–12 = content. Mobile: rail becomes horizontal row above content.
-- Rules not boxes: 1px edge-to-edge hairlines + whitespace. Contained = hairline top/bottom, not rounded bordered cards.
-- Radius 0 everywhere (optional 0–2px on primary CTA only if tested and consistent).
-- Type is the design. Oversized display headings carry sections.
-- Tabular thinking: indexes, lists, real comparison tables — not feature cards.
-- Asymmetry: left-weighted against the spine. Only Final CTA is centred.
-- Signed: Daive signature (SVG path draw) in About strip + Footer.
+## HandUnderline — THE signature flourish
+Reusable SVG under a word: hand-drawn cubic path (not straight), dips mid, lifts ends, right overshoot 3–5%, slight -0.6deg rotation, stroke --pc-accent, round caps, pathLength draw 0.7s after heading reveal (~0.25s delay), 3 path variants, thickness/color props. Reduced motion = already drawn.
+USE EXACTLY: 4× on landing (hero, lanes heading, FAQ heading, Final CTA) + once in apply terms step + nav link hover. Nowhere else. Scarcity matters.
 
-## Colour (exact)
---pc-navy-900 #071528 · --pc-navy-800 #0B2038 (page) · --pc-navy-700 #102C4C · --pc-navy-600 #16395F
+## Colour
+--pc-navy-900 #071528 · --pc-navy-800 #0B2038 · --pc-navy-700 #102C4C · --pc-navy-600 #16395F
 --pc-line rgba(255,255,255,0.09) · --pc-line-2 rgba(255,255,255,0.18)
---pc-white #FFF · --pc-text #C2D4E8 · --pc-muted #94AAC4 (AA-safe)
---pc-accent #4D9BFF · --pc-accent-2 #A9CDFF · --pc-glow rgba(77,155,255,0.28)
-Accent only on: CTAs, section numbers, 1–2 emphasis words/screen, active states. Max ~4 accent elements per screen.
+--pc-white #FFF · --pc-text #C2D4E8 · --pc-muted #94AAC4 · --pc-accent #4D9BFF · --pc-accent-2 #A9CDFF · --pc-glow rgba(77,155,255,0.22)
+Accent only: HandUnderlines, primary CTA, section numbers, active states. Max ~4 accent elements/screen.
 
 ## Type
-Inter Tight 400/500/600/700 — structural; headings tracking-[-0.035em].
-Instrument Serif italic 400 — emphasis words in --pc-accent-2 + signature. ~4 uses/page. Never body/buttons/labels.
-display clamp(2.75rem,8vw,7rem) leading-[0.94] tracking-[-0.04em]
-h2 clamp(2rem,5vw,4rem) · h3 clamp(1.15rem,1.9vw,1.5rem) · body 17px leading-[1.6] max-w-[60ch]
-label 11px uppercase tracking-[0.2em] text-pc-muted
+Inter Tight 400/500/600/700. Instrument Serif italic ONLY for emphasis + signature (~4 uses). Never body/buttons/labels.
+display clamp(2.75rem,8vw,6.5rem) · h2 clamp(2rem,5vw,3.75rem) · body 17px max-w-[58ch] · label 11px tracking-[0.2em]
 
-## Motion doctrine — CRITICAL
-HARD BANS — do not install or implement:
-✗ Lenis / Locomotive / any scroll-hijack · ✗ GSAP / ScrollTrigger · ✗ scroll-pin / sticky-stack · ✗ scroll-scrub · ✗ parallax · ✗ custom cursor · ✗ scramble/glitch/typewriter/char-shuffle · ✗ animating width/height/top/left/margin/padding
-
-SCROLL may ONLY fire one-shot whileInView reveals: viewport={{ once: true, margin: "-12%" }}. Never re-run, reverse, or track progress (except ScrollProgress bar scaleX).
-
-ALL OTHER MOTION = ambient (idle CSS loops, hover, state). GPU-cheap; keeps page alive without scroll cost.
-
-Perf: transform + opacity ONLY. will-change while active then clear. Idle loops CSS when possible. ≤~6 idle loops on screen. Native 60fps scroll.
-Ease in: cubic-bezier(0.16,1,0.3,1) · out: cubic-bezier(0.65,0,0.35,1)
-Durations: micro 160ms · standard 500ms · display 850ms.
-
-Primitives (src/components/motion/): MaskText, MaskLines, Reveal, RuleDraw, StaggerList, CountUp, Marquee, RotatingWord, SignalLines, PulseDot, LiveMock, MagneticButton (≤6px), IndexRow.
-Reduced motion: 0.15s opacity fades, loops freeze, magnetic off. Text in DOM without JS.
+## Motion — restrained
+NO: mockups, SVG diagrams, marquees, rotating words, counters, pulse dots, parallax, custom cursor, scramble/glitch, Lenis/GSAP/ScrollTrigger/locomotive, pin, scrub.
+ONLY: MaskText, MaskLines, Reveal, RuleDraw, StaggerList, HandUnderline, IndexRow, MagneticButton (≤5px), ScrollProgress scaleX.
+Scroll: one-shot whileInView once margin "-12%" only. Animate transform+opacity only.
+Ease in [0.16,1,0.3,1] · out [0.65,0,0.35,1] · micro 160 / standard 480 / display 800.
+Reduced motion: 0.15s opacity, underlines static. Text in DOM without JS.
 
 ## Texture
-Grain 3.5% sitewide (mandatory). One glow bloom hero + one Final CTA (26s CSS drift, barely visible). Nothing else.
+Grain 3.5% sitewide. Static Glow behind hero + Final CTA only. Nothing else.
 
-## Funnel
-Routes: / · /apply (10 steps) · /book · /privacy · /terms
-Landing = 9 blocks only: Hero, Ticker, Model, Lanes, Process, Proof, AboutStrip, FAQ, FinalCTA. ~5–6 screens.
+## Site map
+/ (7 blocks: Hero, Model, Lanes, Process, AboutStrip, FAQ, FinalCTA) · /apply · /book · /legal · /terms · /privacy · /cookies · /disclaimer
 Every CTA → /apply. Labels: "Apply to work with me" / "How it works".
-/apply → Supabase + Sheet + Resend → /book.
 
 ## Tech
-Next 15 App Router, TS strict, Tailwind, Framer Motion only for motion, lucide-react.
-Server Components default; motion as leaf clients.
-Config in site-config.ts. No lorem. No stock people photos. 375/768/1440.
-A11y: landmarks, focus-visible --pc-accent, AA, labelled inputs.
-Intentional TODOs only: results data, Daive photo, legal jurisdiction, analytics cookies section.
+Next 15 App Router, TS strict, Tailwind, Framer Motion, lucide-react. Server Components default; motion as leaves.
+Config in site-config.ts. No lorem. No stock people. 375/768/1440. AA, focus-visible accent, labelled inputs.
+TODOs only: Daive photo, governing law, cookie analytics update.
