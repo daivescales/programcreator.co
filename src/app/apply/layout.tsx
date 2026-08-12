@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Apply",
   description:
-    "Apply to work with Daive at ProgramCreator. Ten questions, about four minutes.",
+    "Apply to work with Daive at ProgramCreator. Eleven questions. About three minutes.",
   robots: { index: false, follow: false },
 };
 

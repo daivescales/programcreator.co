@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandLogo from "@/components/brand/BrandLogo";
 import Container from "@/components/ui/Container";
 import SocialLinks from "@/components/ui/SocialLinks";
 import { copy } from "@/lib/copy";
@@ -12,9 +13,7 @@ export default function Footer() {
       <Container>
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-5">
-            <p className="font-wordmark text-[17px] tracking-[-0.02em] text-pc-white">
-              Program<span className="text-accent">Creator</span>
-            </p>
+            <BrandLogo height={30} />
             <p className="t-body mt-4 max-w-[32ch]">{copy.footer.tagline}</p>
             {email ? (
               <a
@@ -65,9 +64,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-pc-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[13px] text-pc-soft">{copy.footer.bottomLeft}</p>
-          <p className="text-[13px] text-pc-soft">{copy.footer.bottomRight}</p>
+        <div className="mt-16 border-t border-pc-line pt-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[13px] text-pc-text">{copy.footer.bottomLeft}</p>
+            <p className="text-[13px] text-pc-text">{copy.footer.bottomRight}</p>
+          </div>
         </div>
       </Container>
     </footer>

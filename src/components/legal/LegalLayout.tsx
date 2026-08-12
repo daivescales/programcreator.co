@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import BrandLogo from "@/components/brand/BrandLogo";
 import Container from "@/components/ui/Container";
 import SocialLinks from "@/components/ui/SocialLinks";
 import { copy } from "@/lib/copy";
@@ -48,12 +49,15 @@ export default function LegalLayout({
     <div className="bg-navy-800 py-28">
       <Container>
         <article className="mx-auto max-w-[720px]">
-          <Link
-            href="/"
-            className="mb-10 inline-block text-sm text-pc-soft transition-colors hover:text-pc-white"
-          >
-            Back to home
-          </Link>
+          <div className="mb-10 flex items-center justify-between gap-4">
+            <BrandLogo height={26} />
+            <Link
+              href="/"
+              className="text-sm text-pc-soft transition-colors hover:text-pc-white"
+            >
+              Back to home
+            </Link>
+          </div>
 
           <h1 className="t-h2">{title}</h1>
           <p className="mt-4 text-pc-soft">Last updated: {lastUpdated}</p>

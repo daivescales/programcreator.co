@@ -21,6 +21,7 @@ import {
   type Resolver,
 } from "react-hook-form";
 import { toast } from "sonner";
+import BrandLogo from "@/components/brand/BrandLogo";
 import { HandUnderline } from "@/components/marks";
 import Glow from "@/components/system/Glow";
 import {
@@ -142,17 +143,7 @@ function stageState(step: number, stage: (typeof STAGES)[number]) {
 }
 
 function Wordmark({ className }: { className?: string }) {
-  return (
-    <Link
-      href="/"
-      className={cn(
-        "font-wordmark text-sm tracking-[-0.02em] text-pc-white",
-        className
-      )}
-    >
-      Program<span className="text-accent">Creator</span>
-    </Link>
-  );
+  return <BrandLogo height={24} className={className} />;
 }
 
 /** Render copy prompts. Only `_word_` becomes HandUnderline (Q9 behind, Q11 send). */

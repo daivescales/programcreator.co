@@ -44,6 +44,10 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: site.founder }],
   creator: site.handle,
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/apple-touch-icon.png" }],
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -51,12 +55,21 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: copy.meta.ogTitle,
     description: copy.meta.description,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "ProgramCreator",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: copy.meta.ogTitle,
     description: copy.meta.description,
     creator: site.handle,
+    images: ["/og.png"],
   },
 };
 

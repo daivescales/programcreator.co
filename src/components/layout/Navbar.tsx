@@ -4,12 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import BrandLogo from "@/components/brand/BrandLogo";
 import HandUnderline from "@/components/marks/HandUnderline";
 import { MaskText } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
 import SocialLinks from "@/components/ui/SocialLinks";
-import { EASE_IN, usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import {
+  EASE_IN,
+  usePrefersReducedMotion,
+} from "@/hooks/usePrefersReducedMotion";
 import { copy } from "@/lib/copy";
 import { cn } from "@/lib/utils";
 
@@ -28,18 +32,6 @@ function NavLink({ href, label }: { href: string; label: string }) {
       <HandUnderline trigger="hover" active={hovered} variant={1} delay={0}>
         {label}
       </HandUnderline>
-    </Link>
-  );
-}
-
-function Wordmark({ onClick }: { onClick?: () => void }) {
-  return (
-    <Link
-      href="/"
-      onClick={onClick}
-      className="font-wordmark text-[15px] tracking-[-0.02em] text-pc-white"
-    >
-      Program<span className="text-accent">Creator</span>
     </Link>
   );
 }
@@ -85,13 +77,13 @@ export default function Navbar() {
         className={cn(
           "fixed top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color] duration-[250ms]",
           scrolled
-            ? "border-b border-pc-line bg-navy-800/85 backdrop-blur-xl"
+            ? "border-b border-pc-line bg-navy-800/88 backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         )}
       >
         <Container>
           <nav className="flex h-[68px] items-center justify-between">
-            <Wordmark />
+            <BrandLogo height={28} priority />
 
             <div className="hidden items-center gap-8 md:flex">
               {copy.nav.links.map((link) => (
@@ -140,7 +132,7 @@ export default function Navbar() {
             transition={{ duration: 0.28, ease: EASE_IN }}
           >
             <div className="flex h-[68px] items-center justify-between px-6">
-              <Wordmark onClick={() => setOpen(false)} />
+              <BrandLogo height={26} onClick={() => setOpen(false)} />
               <button
                 type="button"
                 className="relative inline-flex h-10 w-10 items-center justify-center"

@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import CalEmbed, {
   type CalBookingSuccessPayload,
 } from "@/components/CalEmbed";
+import BrandLogo from "@/components/brand/BrandLogo";
 import MaskText from "@/components/motion/MaskText";
 import Container from "@/components/ui/Container";
 import SocialLinks from "@/components/ui/SocialLinks";
@@ -113,6 +114,9 @@ function ThankYou({ state }: { state: ThankYouState }) {
     <div className="relative min-h-dvh bg-navy-800 py-28">
       <Container className="relative z-[1] flex justify-center">
         <div className="mx-auto max-w-[560px] text-center">
+          <div className="mb-8 flex justify-center">
+            <BrandLogo height={30} />
+          </div>
           <div className="flex justify-center">
             <SuccessCheck />
           </div>
@@ -230,7 +234,9 @@ function BookContent() {
     <div className="relative min-h-dvh bg-navy-800 pb-20 pt-10 md:pt-14">
       <Container className="relative z-[1] max-w-[960px]">
         <div className="mb-10 max-w-[560px]">
-          <SuccessCheck />
+          <div className="mb-8">
+            <BrandLogo height={28} />
+          </div>
 
           {hasParams ? (
             <>
