@@ -131,7 +131,7 @@ export default function CalEmbed({
           ...(email ? { email } : {}),
         }}
       />
-      <p className="mt-3 text-center text-sm text-pc-muted">
+      <p className="mt-3 text-center text-sm text-pc-text">
         Embed blocked?{" "}
         <a
           href={calUrl}

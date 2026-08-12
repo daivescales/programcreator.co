@@ -14,6 +14,7 @@ import {
   EASE_IN,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
+import { copy } from "@/lib/copy";
 import { site } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
@@ -60,33 +61,25 @@ function SuccessCheck() {
 }
 
 function ProgressRow({ active }: { active: "book" | "done" }) {
-  const steps = [
-    {
-      label: "Application sent",
-      state: "complete" as const,
-    },
-    {
-      label: "Book your call",
-      state: active === "book" ? ("active" as const) : ("complete" as const),
-    },
-    {
-      label: "We build",
-      state: "muted" as const,
-    },
-  ];
+  const steps = copy.booking.steps.map((label, i) => {
+    let state: "complete" | "active" | "muted" = "muted";
+    if (i === 0) state = "complete";
+    else if (i === 1) state = active === "book" ? "active" : "complete";
+    return { label, state };
+  });
 
   return (
     <ol className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] uppercase tracking-[0.14em]">
       {steps.map((s, i) => (
         <li key={s.label} className="flex items-center gap-3">
           {i > 0 ? (
-            <span className="h-1 w-1 rounded-full bg-pc-muted/50" aria-hidden />
+            <span className="h-1 w-1 rounded-full bg-pc-soft/50" aria-hidden />
           ) : null}
           <span
             className={cn(
               s.state === "complete" && "text-accent",
               s.state === "active" && "text-pc-white",
-              s.state === "muted" && "text-pc-muted"
+              s.state === "muted" && "text-pc-soft"
             )}
           >
             {s.label}
@@ -124,34 +117,29 @@ function ThankYou({ state }: { state: ThankYouState }) {
             <SuccessCheck />
           </div>
           <MaskText as="h1" className="t-display">
-            Thanks for applying.
+            {copy.booking.thanksHeading}
           </MaskText>
-          <p className="hand mt-3">see you soon</p>
+          <p className="hand mt-3">{copy.booking.thanksNote}</p>
           <p className="mt-7 text-[16px] leading-[1.7] text-pc-text">
-            Your call is booked for {when}. A calendar invite is on its way to{" "}
-            {state.email}.
+            {copy.booking.confirmation(when, state.email)}
           </p>
           <p className="mt-5 text-[16px] leading-[1.7] text-pc-text">
-            I read every application myself. If I think we are the right fit to
-            work together, you will get follow up emails from me before the call
-            with anything I need from you. If I do not think I am the right
-            person for your brand, I will tell you that on the call rather than
-            leave you guessing.
+            {copy.booking.expectation}
           </p>
           <div className="mt-8 text-left">
-            <p className="t-label">Before we talk</p>
+            <p className="t-label">{copy.booking.beforeLabel}</p>
             <ul className="mt-4 space-y-3 text-[15px] leading-relaxed text-pc-text">
-              <li>Have your numbers to hand if you have them</li>
-              <li>Know roughly what you want to be selling</li>
-              <li>Think about what is currently costing you the most</li>
+              {copy.booking.beforeItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
           </div>
           <div className="mt-10 flex flex-col items-center gap-5">
             <Link
               href="/"
-              className="text-sm text-pc-muted transition-colors hover:text-pc-white"
+              className="text-sm text-pc-soft transition-colors hover:text-pc-white"
             >
-              Back to the site
+              {copy.booking.backToSite}
             </Link>
             <SocialLinks variant="text" className="justify-center" />
           </div>
@@ -247,27 +235,24 @@ function BookContent() {
           {hasParams ? (
             <>
               <MaskText as="h1" className="t-display">
-                {firstName ? `You're in, ${firstName}.` : "You're in."}
+                {firstName
+                  ? copy.booking.heading(firstName)
+                  : copy.booking.headingNeutral}
               </MaskText>
-              <p className="t-body mt-5">
-                Application received. Book your call below and we will talk it
-                through.
-              </p>
+              <p className="t-body mt-5">{copy.booking.body}</p>
             </>
           ) : (
             <>
               <MaskText as="h1" className="t-display">
-                {`Book a call with ${site.founder}`}
+                {copy.booking.headingNeutral}
               </MaskText>
               <p className="t-body mt-5">
-                Prefer to apply first?{" "}
                 <Link
                   href="/apply"
                   className="text-accent underline-offset-2 hover:underline"
                 >
-                  Start the application
+                  {copy.booking.backToApply}
                 </Link>
-                .
               </p>
             </>
           )}
@@ -275,9 +260,8 @@ function BookContent() {
           <ProgressRow active="book" />
 
           {lane ? (
-            <p className="mt-3 text-xs text-pc-muted">
-              Lane:{" "}
-              {lane === "creator" ? "Creator / digital" : "Physical brand"}
+            <p className="mt-3 text-xs text-pc-soft">
+              {lane === "creator" ? "Lane A" : "Lane B"}
             </p>
           ) : null}
         </div>
@@ -292,16 +276,13 @@ function BookContent() {
           </div>
 
           <aside className="h-fit">
-            <h2 className="t-h3">What to expect</h2>
+            <h2 className="t-h3">{copy.booking.expectLabel}</h2>
             <ul className="mt-4 space-y-3 text-sm leading-relaxed text-pc-text">
-              <li>20 minutes</li>
-              <li>Video call</li>
-              <li>No deck</li>
-              <li>Bring your numbers if you have them</li>
-              <li>A straight answer either way</li>
+              {copy.booking.expectItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
-            <p className="mt-6 text-sm text-pc-muted">
-              Embed blocked?{" "}
+            <p className="mt-6 text-sm text-pc-text">
               <a
                 href={calHref}
                 target="_blank"

@@ -1,51 +1,62 @@
-# ProgramCreator — Cursor Rules (v6 FINAL)
+# ProgramCreator v7
 
-## Business
-- Brand: ProgramCreator. One-person studio (Daive, @daivescales). First person only. No "we deliver".
-- Creator Product Scaling. Lane A: revenue split, nothing upfront (my time; client funds ads/tooling). Lane B: monthly retainer. Same work, different pay.
-- Availability: "limited spots, first come first served" only. Never a number.
-- Socials (exact): YouTube https://www.youtube.com/@daivescales · Instagram https://www.instagram.com/daivescales/ · X https://x.com/daivescales · TikTok https://www.tiktok.com/@daivescales
-- email: "" with TODO. Never invent hello@/contact@. Empty → "Email coming soon". No Signature component.
+Premium one person studio site for Daive (@daivescales). Creator Product Scaling.
+Lane A: creators, revenue split, nothing upfront.
+Lane B: physical brands, monthly retainer.
+Limited spots, first come first served. Never state a number.
 
-## Central design principle
-Large bold type forced crowding and looked cheap. Override everything:
-1. TYPE SMALLER: largest text 3.5rem (hero only). Nothing else above 2.25rem.
-2. WEIGHT LIGHTER: headings weight 500 only. Never 600/700 except wordmark. Body 400.
-3. SPACE: sections py-28 md:py-36. ≥2.5rem heading→content. ≥4rem between groups. Delete elements before closing gaps.
+## Absolute copy rule
+All user facing copy lives in `src/lib/copy.ts` and must be pasted EXACTLY from the deck.
+Never rewrite, polish, or invent marketing copy. If something is missing, ask.
+Never use em dash, en dash, or a hyphen surrounded by spaces as a parenthetical.
+Never write: "it's not just X, it's Y", three adjective lists, rhetorical question headings,
+or openings like "But here's the thing", "The truth is", "Let's be honest", "Imagine".
+`scripts/check-copy.ts` fails the build on any dash violation in src/.
 
-## Type (six sizes only — no seventh)
-Inter Tight 400/500 (+600 wordmark only). Caveat 400 only.
-.t-display clamp(2.25rem,4.2vw,3.5rem) w500 leading-[1.08] tracking-[-0.02em]
-.t-h2 clamp(1.6rem,2.6vw,2.25rem) w500 leading-[1.15] tracking-[-0.015em]
-.t-h3 1.0625rem w500 · .t-body 16px leading-[1.7] max-w-[56ch] · .t-small 14px · .t-label 11px uppercase tracking-[0.16em]
-Caveat: 1.3x, translateY baseline, -1deg alone, accent-2, max 5 words, ~5 landing uses. Never body/buttons/labels/nav/legal.
+## Contact and socials
+email: "" with TODO. Never invent hello@/contact@. Empty renders "Email coming soon".
+Socials (exact): youtube.com/@daivescales, instagram.com/daivescales/, x.com/daivescales, tiktok.com/@daivescales.
+No Signature component. No MagneticButton. No HandCircle/HandArrow. Only HandUnderline.
 
-## HandUnderline ONLY (no circles/arrows)
-WHY IT FAILED: MaskText overflow:hidden clipped underlines below baseline.
-FIX REQUIRED: (a) MaskText onAnimationComplete → overflow:visible on word spans (b) headings with underline get padding-bottom 0.35em (c) no ancestor overflow:hidden.
-Build: relative inline-block wrapper, SVG top:100% overflow visible, viewBox 0 0 100 12 preserveAspectRatio none, cubic dip+overshoot, stroke accent 2.5 round, vector-effect non-scaling-stroke, -0.8deg, strokeDashoffset 0.7s delay 0.3s after reveal, 2 variants. Reduced motion = drawn.
-USE: landing ×3 (hero asking, FAQ apply, FinalCTA points) + nav hover. Apply ×1 (send). Nowhere else.
+## Colour (no grey token)
+--pc-navy-900 #06172C | --pc-navy-800 #0A2039 | --pc-navy-750 #0D2846
+--pc-surface rgba(255,255,255,0.03) | --pc-line 0.10 | --pc-line-2 0.20
+--pc-white #FFFFFF | --pc-text #E6F0FB (ALL body) | --pc-soft #BDD4EC (rare meta only)
+--pc-accent #4D9BFF | --pc-accent-2 #8FC0FF | --pc-accent-3 #2B7FEA | --pc-glow 0.30
+Labels are --pc-accent. Body is --pc-text near white. Never dim body. No gray/slate classes.
 
-## Colour / blockiness
-navy-900 #071528 · 800 #0B2038 · 750 #0D243D · surface rgba(255,255,255,0.025) · line 0.07 · line-2 0.13 · white · text #BCCEE3 · muted #8FA6C1 · accent #4D9BFF · accent-2 #A9CDFF · glow 0.14
-≤2 filled/bordered surfaces on entire landing. Prefer space/tone over borders. Radius 6px surfaces / 4px controls. Never 0, never >8. No navy-700 slabs, no vertical dividers, no grain, no outlined stroke wordmarks.
+## Type (six sizes only)
+Inter Tight 400/500 + 600 wordmark only. Caveat 600 handwriting.
+display clamp(2.4rem,4.4vw,3.6rem) w500 leading 1.06 tracking -0.02em
+h2 clamp(1.7rem,2.8vw,2.4rem) w500 leading 1.12 tracking -0.015em
+h3 1.125rem w500 | body 16.5px leading 1.7 max 56ch | small 14px | label 11px upper tracking 0.16em w500 accent
+.hand: Caveat 1.35em accent-2 rotate -1.5deg. Five landing uses max. Headings never above 500 except wordmark 600.
+
+## HandUnderline (only mark)
+Wrapper: relative inline-block whitespace-nowrap (REQUIRED, prevents wrap clip).
+SVG: absolute left 0 top 100% width 100% height 0.30em overflow visible.
+viewBox 0 0 100 12, preserveAspectRatio none, path x=0 to x=100 exactly (no inset).
+Variant1: M0,6.5 C22,3 40,9.5 58,6 C74,3 88,8.5 100,5
+Variant2: M0,7 C20,10 38,3.5 56,7 C72,10 86,4 100,6.5
+stroke currentColor (parent color accent), non-scaling-stroke, round caps.
+strokeWidth = clamp(fontSize*0.085, 3.5, 11). Await document.fonts.ready before draw.
+MaskText: overflow hidden during rise, overflow visible onAnimationComplete (+ timeout fallback).
+Underlined headings: padding-bottom 0.4em. No ancestor overflow hidden.
+Uses: hero asking, expect expect, FAQ apply, final points, form behind+send, nav hover.
 
 ## Motion
-NO: decorative graphics, magnetic buttons, height:auto accordion, Lenis/GSAP, scramble, marquees.
-YES: MaskText (overflow release!), MaskLines, Reveal 14px, StaggerList, HandUnderline, hover colour/3px translate/border 180ms.
-Accordion: CSS grid-template-rows 0fr→1fr (inner overflow hidden min-height 0). Never height auto.
-whileInView once margin "-10%". transform+opacity only. Ease [0.16,1,0.3,1]. micro 180 · standard 450 · reveal 700.
+Banned: lenis/gsap/ScrollTrigger/locomotive, magnetic, scramble, scroll pin/scrub, parallax, custom cursor.
+Entrances: MaskText, MaskLines, Reveal (+14px), StaggerList 0.06s, HandUnderline. whileInView once.
+Ambient CSS only: glow-drift 24s, dot-pulse 2.6s, bar-breathe 4s, cta-pulse 6s.
+Hovers 200ms: nav underline, CTA glow+lift, ghost border, list ArrowRight, process number scale, FAQ rotate plus, footer arrows, form focus rule, choice rows.
+Accordion: CSS grid-template-rows 0fr to 1fr only. Never height auto.
+Reduced motion: 0.15s fade, no ambient, underline already drawn.
 
 ## Layout
-Container max-w-[1080px]. Left-aligned; only Final CTA centred. SectionLabel horizontal only.
-Banned: icon cards, bento, pills, gradients, grain, bordered spec strips, stock photos, emoji, blobs.
-
-## Sitemap / funnel
-/ (Hero Model Lanes Process AboutStrip FAQ FinalCTA) · /apply (11 steps + closed screen, transition lock) · /book (booking + thank you) · /legal /terms /privacy /cookies /disclaimer · temp /dev/marks then delete
-CTA → /apply. Investment gate "Nothing right now" → not_qualified, no Cal. Booking APIs + webhook + sheet journey.
-
-## Writing
-No em dashes. No banned filler words. First person. Short declaratives.
+Container max-w-[1080px] px-6 md:px-10. Sections py-28 md:py-36.
+At most two filled/bordered surfaces on landing. Radius 4px controls / 6px surfaces. Cap 8px.
+Left aligned except final CTA. CTAs go to /apply never Cal.com.
+Landing order: Hero, Model, Lanes, Process, Expect, AboutStrip, FAQ, FinalCTA.
 
 ## TODOs only
-email · calLink · governing law · cookie analytics · photo note (no placeholder square)
+Business email, Cal link, photo note, governing law, cookies analytics note.

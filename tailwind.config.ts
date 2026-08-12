@@ -1,6 +1,5 @@
 import type { Config } from "tailwindcss";
 
-/** Tailwind v4 uses @theme in globals.css; this file documents shared tokens for tooling. */
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
@@ -14,9 +13,10 @@ const config: Config = {
         "pc-line-2": "var(--pc-line-2)",
         "pc-white": "var(--pc-white)",
         "pc-text": "var(--pc-text)",
-        "pc-muted": "var(--pc-muted)",
+        "pc-soft": "var(--pc-soft)",
         accent: "var(--pc-accent)",
         "accent-2": "var(--pc-accent-2)",
+        "accent-3": "var(--pc-accent-3)",
         "pc-glow": "var(--pc-glow)",
       },
       fontFamily: {

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "check-env": "npx --yes tsx scripts/check-env.ts",
-    "build": "npm run check-env && next build",
+    "check-copy": "npx --yes tsx scripts/check-copy.ts",
+    "build": "npm run check-copy && npm run check-env && next build",
     "start": "next start",
     "lint": "eslint"
   },

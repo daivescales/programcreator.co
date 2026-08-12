@@ -1,33 +1,35 @@
 # ProgramCreator
 
-Production landing site + application funnel for **ProgramCreator**, Creator Product Scaling by Daive (`@daivescales`).
+Production landing site and application funnel for **ProgramCreator**, Creator Product Scaling by Daive (`@daivescales`).
 
 Creators and digital brands work on a **revenue split** (nothing upfront for my time; client still funds ads, tooling, product costs). Physical product brands work on a **monthly retainer**. Every CTA goes to `/apply`. Qualified leads book via Cal.com on `/book`.
 
 ## Stack
 
-- Next.js 15 (App Router, TypeScript)
-- Tailwind CSS v4
-- Framer Motion (restrained: MaskText, MaskLines, Reveal, StaggerList, HandUnderline, HoverRow, ScrollProgress)
-- Supabase (`leads` table)
-- Google Sheets API (journey tracking through to booked)
-- Resend
-- Cal.com embed (`@calcom/embed-react`) + webhook backup
+* Next.js 15 (App Router, TypeScript)
+* Tailwind CSS v4
+* Framer Motion (restrained: MaskText, MaskLines, Reveal, StaggerList, HandUnderline, HoverRow, ScrollProgress)
+* Supabase (`leads` table)
+* Google Sheets API (journey tracking through to booked)
+* Resend
+* Cal.com embed (`@calcom/embed-react`) plus webhook backup
 
-**Not used:** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch, marquees, counters, pulse dots, mockups, scroll-pin / parallax, Signature, grain, cursor-following buttons, HandCircle / HandArrow.
+**Not used:** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch, marquees, counters, pulse dots, mockups, scroll pin / parallax, Signature, grain, cursor following buttons, HandCircle / HandArrow.
 
-## Design (v6)
+## Design (v7)
 
-Quiet consultancy. Mid-navy page (`#0B2038`), soft `rounded-panel` / `rounded-control`, tonal navy layering. Inter Tight + Caveat handwriting accents only. See `.cursorrules`.
+Quiet consultancy. Mid navy page (`#0A2039`), soft `rounded-panel` / `rounded-control`, tonal navy layering. Inter Tight + Caveat handwriting accents only. See `.cursorrules`.
+
+All user facing copy lives in `src/lib/copy.ts` and must be pasted verbatim. `npm run check-copy` fails the build on em dash, en dash, or spaced hyphen parentheticals in `src/` and this README.
 
 ### Type scale (six sizes only)
 
 | Class | Role |
 |-------|------|
-| `.t-display` | Hero only, clamp to 3.5rem, weight 500 |
-| `.t-h2` | Section heads, clamp to 2.25rem, weight 500 |
-| `.t-h3` | Subheads, 1.0625rem, weight 500 |
-| `.t-body` | 16px / 1.7, max 56ch |
+| `.t-display` | Hero only, clamp to 3.6rem, weight 500 |
+| `.t-h2` | Section heads, clamp to 2.4rem, weight 500 |
+| `.t-h3` | Subheads, 1.125rem, weight 500 |
+| `.t-body` | 16.5px / 1.7, max 56ch |
 | `.t-small` | 14px |
 | `.t-label` | 11px uppercase, tracking 0.16em |
 
@@ -35,29 +37,30 @@ Wordmark may use weight 600. Never 700.
 
 ### HandUnderline
 
-MaskText used to clip underlines (`overflow: hidden` on word spans). Fix: release overflow after reveal, pad headings that use underline (`padding-bottom: 0.35em`), and keep ancestors free of `overflow: hidden`. Landing uses underline on three terms (hero, FAQ, Final CTA) plus nav hover. Apply uses it once on **send**.
+MaskText used to clip underlines (`overflow: hidden` on word spans). Fix: release overflow after reveal, pad headings that use underline (`padding-bottom: 0.4em`), and keep ancestors free of `overflow: hidden`. Landing uses underline on hero asking, expect expect, FAQ apply, final points, plus nav hover. Apply uses it on Q9 **behind** and Q11 **send**.
 
-Landing is **7 blocks**: Hero, Model, Lanes, Process, AboutStrip, FAQ, FinalCTA.
+Landing order: Hero, Model, Lanes, Process, Expect, AboutStrip, FAQ, FinalCTA.
 
-`/apply` is an **11-step** two-panel flow (34/66) with an investment gate on step 9. Selecting "Nothing right now" closes the application (status `not_qualified`), sends `sendNotQualifiedNotice`, and never routes to `/book`.
+`/apply` is an **11 step** two panel flow (34/66) with an investment gate on question 9. Selecting "Nothing right now" closes the application (status `not_qualified`), sends `sendNotQualifiedNotice`, and never routes to `/book`.
 
 ### Apply stability
 
-- `isTransitioning` lock blocks Enter, Continue, letter keys, and option clicks during step changes
-- Question area `min-height` 420px desktop / 340px mobile
-- `AnimatePresence mode="wait"` (no overlapping enter/exit)
-- Focus moves to the new input after the enter transition
-- Panel scroll resets on every step change
-- Choice auto-advance waits 320ms with the lock held
-- Step transitions are a simple fade/rise (no MaskText)
+* `isTransitioning` lock blocks Enter, Continue, letter keys, and option clicks during step changes
+* Question area `min-height` 420px desktop / 340px mobile
+* `AnimatePresence mode="wait"` (no overlapping enter/exit)
+* Focus moves to the new input after the enter transition
+* Panel scroll resets on every step change
+* Choice auto advance waits 320ms with the lock held
+* Step transitions are a simple fade/rise (no MaskText)
+* Left rail Glow plus sliding accent bar between stages (transform 300ms)
 
 ## Routes
 
 | Path | Purpose |
 |------|---------|
-| `/` | Landing (7 blocks) |
-| `/apply` | 11-step two-panel application + closed screen (noindex) |
-| `/book` | Cal.com booking + thank-you state (noindex) |
+| `/` | Landing |
+| `/apply` | 11 step two panel application + closed screen (noindex) |
+| `/book` | Cal.com booking + thank you state (noindex) |
 | `/legal` | Legal index |
 | `/terms` | Terms of Service (15 sections) |
 | `/privacy` | Privacy Policy (12 sections) |
@@ -84,10 +87,10 @@ Open [http://localhost:3000](http://localhost:3000).
 1. Create a project at [supabase.com](https://supabase.com).
 2. Project Settings → API: copy **Project URL**, **anon key**, and **service role key**.
 3. SQL Editor → paste and run `supabase/schema.sql` (drops and recreates `leads` with investment / qualified / booking / sheet_row fields).
-4. Set:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY` (server only, never expose to the client)
+4. Set these env vars:
+   * `NEXT_PUBLIC_SUPABASE_URL`
+   * `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   * `SUPABASE_SERVICE_ROLE_KEY` (server only, never expose to the client)
 
 ### 2. Google Sheets
 
@@ -95,10 +98,10 @@ Open [http://localhost:3000](http://localhost:3000).
 2. Enable **Google Sheets API**.
 3. Create a **service account** → download JSON key.
 4. Create a Google Sheet (or use an existing one). Share it with the service account email as **Editor**.
-5. Set:
-   - `GOOGLE_SERVICE_ACCOUNT_EMAIL` = `client_email` from the JSON
-   - `GOOGLE_PRIVATE_KEY` = `private_key` from the JSON (keep `\n` escapes; wrap in quotes)
-   - `GOOGLE_SHEET_ID` = the ID from the sheet URL (`/d/<THIS_ID>/edit`)
+5. Set these env vars:
+   * `GOOGLE_SERVICE_ACCOUNT_EMAIL` = `client_email` from the JSON
+   * `GOOGLE_PRIVATE_KEY` = `private_key` from the JSON (keep `\n` escapes; wrap in quotes)
+   * `GOOGLE_SHEET_ID` = the ID from the sheet URL (`/d/<THIS_ID>/edit`)
 
 On first append, `ensureSheetHeaders()` creates a **Leads** tab and writes headers if needed. Columns track the full journey: Status, Qualified, Investment, Booked at, etc. `appendLeadToSheet` returns the row number stored on the lead as `sheet_row`. `markLeadBookedInSheet` updates Status → Booked and fills Booked at when a call is booked.
 
@@ -108,11 +111,11 @@ Sheets writes fail soft. A Sheets outage will not block a lead (Supabase is the 
 
 1. Create an API key at [resend.com](https://resend.com).
 2. Verify your sending domain before production.
-3. Set:
-   - `RESEND_API_KEY`
-   - `LEAD_NOTIFY_EMAIL` (your inbox for new applications; use a real address you own)
+3. Set these env vars:
+   * `RESEND_API_KEY`
+   * `LEAD_NOTIFY_EMAIL` (your inbox for new applications; use a real address you own)
 
-Emails fail soft. Templates are dark navy, no images, no em dashes. If `site.email` in `src/lib/site-config.ts` is empty (the default), confirmation emails omit the reply address line and the site shows **Email coming soon** instead of inventing an address or a broken mailto.
+Emails fail soft. Templates are dark navy with white text, no images, no dash characters in applicant wording. If `site.email` in `src/lib/site-config.ts` is empty (the default), confirmation emails omit the reply address line and the site shows **Email coming soon** instead of inventing an address or a broken mailto.
 
 ### 4. Cal.com
 
@@ -127,13 +130,13 @@ People who book from an email link (not the `/book` embed) still need the sheet 
 
 1. Generate a long random string and set `CAL_WEBHOOK_SECRET` in Vercel / `.env.local`.
 2. In Cal.com → Settings → Developer → Webhooks → New webhook:
-   - Subscriber URL: `https://programcreator.com/api/cal-webhook?secret=YOUR_CAL_WEBHOOK_SECRET`
+   * Subscriber URL: `https://programcreator.com/api/cal-webhook?secret=YOUR_CAL_WEBHOOK_SECRET`
      (query secret is verified; you can also send the same value as `x-cal-webhook-secret` or as HMAC via `x-cal-signature-256`)
-   - Event triggers: **BOOKING_CREATED**
-   - Secret: the same `CAL_WEBHOOK_SECRET` value if Cal asks for one
-3. Save. Test a booking. The handler is idempotent: a lead already marked `booked` is not double-emailed.
+   * Event triggers: **BOOKING_CREATED**
+   * Secret: the same `CAL_WEBHOOK_SECRET` value if Cal asks for one
+3. Save. Test a booking. The handler is idempotent: a lead already marked `booked` is not double emailed.
 
-`npm run check-env` **warns** if `CAL_WEBHOOK_SECRET` is missing. It does not hard-fail the local build for that var alone.
+`npm run check-env` **warns** if `CAL_WEBHOOK_SECRET` is missing. It does not hard fail the local build for that var alone.
 
 The `/book` page also POSTs to `/api/booking` on embed success (email, bookedAt, bookingRef), updates the lead, marks the sheet, and sends `sendBookingConfirmation`.
 
@@ -168,32 +171,33 @@ CAL_WEBHOOK_SECRET
 
 ### `check-env` behaviour
 
-`npm run check-env` (also runs before `npm run build`) **warns** by default when required vars are missing so Vercel deploys are not blocked while credentials are still being wired. Set `FORCE_ENV_CHECK=1` to fail the build on missing required vars. `CAL_WEBHOOK_SECRET` is always warn-only.
+`npm run check-env` (also runs before `npm run build`) **warns** by default when required vars are missing so Vercel deploys are not blocked while credentials are still being wired. Set `FORCE_ENV_CHECK=1` to fail the build on missing required vars. `CAL_WEBHOOK_SECRET` is always warn only.
 
 ## Funnel notes
 
-- Step 9 investment gate: "Nothing right now" → `qualified=false`, `status=not_qualified`, firm closed screen, `sendNotQualifiedNotice`. Never say unqualified / rejected / denied on screen.
-- Investment copy is launch costs (ads, tooling, product), not my fee. Must not contradict "nothing upfront".
-- Booking: `/api/booking` + Cal webhook → status `booked`, sheet Status/Booked at, booking confirmation. Idempotent.
-- Thank-you persists via `sessionStorage` keyed on email, with SocialLinks and a Caveat "see you soon".
-- `sheet_row` stored on the lead for sheet updates.
+* Step 9 investment gate: "Nothing right now" → `qualified=false`, `status=not_qualified`, firm closed screen, `sendNotQualifiedNotice`. Never say unqualified / rejected / denied on screen.
+* Investment copy is launch costs (ads, tooling, product), not my fee. Must not contradict "nothing upfront".
+* Booking: `/api/booking` + Cal webhook → status `booked`, sheet Status/Booked at, booking confirmation. Idempotent.
+* Thank you persists via `sessionStorage` keyed on email, with SocialLinks and a Caveat "see you soon".
+* `sheet_row` stored on the lead for sheet updates.
 
 ## Before launch, content / legal TODOs
 
-1. **Photo** - add Daive's photo in the About strip when ready.
-2. **site.email** - set a real address in `src/lib/site-config.ts`.
-3. **Socials + Cal** - fill `src/lib/site-config.ts` (`socials`, `calLink` if needed).
-4. **Governing law** - insert jurisdiction in `/terms` section 14 (HTML TODO comment).
-5. **Cookies / analytics** - update `/cookies` if you add PostHog, GA, or a Meta pixel (HTML TODO comment).
+1. **Photo:** add Daive's photo in the About strip when ready.
+2. **site.email:** set a real address in `src/lib/site-config.ts`.
+3. **Socials + Cal:** fill `src/lib/site-config.ts` (`socials`, `calLink` if needed).
+4. **Governing law:** insert jurisdiction in `/terms` section 14 (HTML TODO comment).
+5. **Cookies / analytics:** update `/cookies` if you add PostHog, GA, or a Meta pixel (HTML TODO comment).
 6. **Delete** `/dev/marks` before launch.
-7. **Bio link** - point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
+7. **Bio link:** point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
 
 ## Scripts
 
 ```bash
 npm run dev          # local dev (Turbopack)
 npm run check-env    # warn if env vars missing (FORCE_ENV_CHECK=1 to fail required)
-npm run build        # production build (runs check-env first)
+npm run check-copy   # fail on em/en dash or spaced hyphen in src/ and README
+npm run build        # production build (runs check-copy then check-env first)
 npm run start        # serve production build
 npm run lint         # ESLint
 npx tsc --noEmit     # typecheck
@@ -213,7 +217,7 @@ npx tsc --noEmit     # typecheck
 10. Configure the Cal webhook as above.
 11. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
 
-Do **not** use `vercel --prod` as the primary path. Push to GitHub and let Vercel auto-deploy.
+Do **not** use `vercel --prod` as the primary path. Push to GitHub and let Vercel auto deploy.
 
 ## Design tokens
 

@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
 } from "react";
 import {
   Controller,
@@ -27,7 +28,7 @@ import {
   EASE_OUT,
   usePrefersReducedMotion,
 } from "@/hooks/usePrefersReducedMotion";
-import { site } from "@/lib/site-config";
+import { copy } from "@/lib/copy";
 import { cn } from "@/lib/utils";
 import {
   FOLLOWER_RANGE_OPTIONS,
@@ -96,40 +97,25 @@ const defaultValues: FormValues = {
 
 type Choice = { id: string; label: string; value: string };
 
-const LANE_OPTIONS: Choice[] = [
-  {
-    id: "creator",
-    label: "I'm a creator with an audience",
-    value: "creator",
-  },
-  {
-    id: "physical",
-    label: "I run a physical product brand",
-    value: "physical",
-  },
-  {
-    id: "both",
-    label: "Both, I have an audience and I sell physical products",
-    value: "physical",
-  },
-];
+const LANE_OPTIONS: Choice[] = copy.form.questions[3].options.map((opt) => ({
+  id: opt.key,
+  label: opt.label,
+  value: opt.lane,
+}));
 
-const HAS_PRODUCT_OPTIONS: Choice[] = [
-  { id: "yes", label: "Yes, and it's selling", value: "yes" },
-  {
-    id: "sort_of",
-    label: "Yes, but it isn't converting",
-    value: "sort_of",
-  },
-  { id: "no", label: "No, not yet", value: "no" },
-];
+const HAS_PRODUCT_OPTIONS: Choice[] = copy.form.questions[7].options.map(
+  (label, i) => {
+    const values = ["yes", "sort_of", "no"] as const;
+    return { id: values[i]!, label, value: values[i]! };
+  }
+);
 
-const STAGES = [
-  { id: "you", label: "YOU", start: 0, end: 1 },
-  { id: "brand", label: "YOUR BRAND", start: 2, end: 4 },
-  { id: "status", label: "WHERE YOU'RE AT", start: 5, end: 8 },
-  { id: "work", label: "THE WORK", start: 9, end: 10 },
-] as const;
+const STAGES = copy.form.stages.map((stage) => ({
+  id: stage.key,
+  label: stage.label,
+  start: stage.from-1,
+  end: stage.to-1,
+}));
 
 const STEP_FIELDS: FieldPath<FormValues>[][] = [
   ["full_name"],
@@ -146,7 +132,7 @@ const STEP_FIELDS: FieldPath<FormValues>[][] = [
 ];
 
 function stageForStep(step: number) {
-  return STAGES.find((s) => step >= s.start && step <= s.end) ?? STAGES[0];
+  return STAGES.find((s) => step >= s.start && step <= s.end) ?? STAGES[0]!;
 }
 
 function stageState(step: number, stage: (typeof STAGES)[number]) {
@@ -166,6 +152,40 @@ function Wordmark({ className }: { className?: string }) {
     >
       Program<span className="text-accent">Creator</span>
     </Link>
+  );
+}
+
+/** Render copy prompts. Only `_word_` becomes HandUnderline (Q9 behind, Q11 send). */
+function FormPrompt({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const parts = text.split(/(_[^_]+_)/g);
+  const hasUnderline = parts.some((p) => /^_.+_$/.test(p));
+
+  return (
+    <h2
+      className={cn(
+        "max-w-[22ch] text-[clamp(1.4rem,2.4vw,1.9rem)] font-medium tracking-[-0.02em] text-pc-white",
+        hasUnderline && "pb-[0.4em]",
+        className
+      )}
+    >
+      {parts.map((part, i) => {
+        const m = /^_(.+)_$/.exec(part);
+        if (m) {
+          return (
+            <HandUnderline key={i} variant={1} delay={0.25}>
+              {m[1]}
+            </HandUnderline>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </h2>
   );
 }
 
@@ -194,7 +214,7 @@ function UnderlineField({
     >
       <div className="flex items-baseline gap-1">
         {prefix ? (
-          <span className="text-[20px] text-pc-muted" aria-hidden>
+          <span className="text-[20px] text-pc-soft" aria-hidden>
             {prefix}
           </span>
         ) : null}
@@ -206,7 +226,7 @@ function UnderlineField({
           aria-describedby={error ? `${id}-error` : undefined}
           className={cn(
             "peer w-full border-0 bg-transparent py-3 text-[20px] text-pc-white caret-accent outline-none",
-            "placeholder:text-pc-muted/55"
+            "placeholder:text-pc-soft/55"
           )}
           {...rest}
         />
@@ -278,7 +298,7 @@ function ChoiceRows({
                 "flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-control border text-[11px] font-medium tabular-nums",
                 selected
                   ? "border-accent text-accent"
-                  : "border-pc-line text-pc-muted"
+                  : "border-pc-line text-pc-soft"
               )}
               aria-hidden
             >
@@ -307,32 +327,45 @@ function ChoiceRows({
 }
 
 function StageIndex({ step }: { step: number }) {
+  const activeIndex = Math.max(
+    0,
+    STAGES.findIndex((s) => step >= s.start && step <= s.end)
+  );
+  // t-label ~1.1rem, gap-5 = 1.25rem
+  const rowRem = 1.1;
+  const gapRem = 1.25;
+
   return (
-    <nav aria-label="Application stages" className="flex flex-col gap-5">
+    <nav aria-label="Application stages" className="relative flex flex-col gap-5">
+      <span
+        aria-hidden
+        className="absolute left-0 top-0 h-full w-px bg-pc-line"
+      />
+      <span
+        aria-hidden
+        className="absolute left-0 top-0 w-0.5 bg-accent transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        style={{
+          height: `${rowRem}rem`,
+          transform: `translateY(${activeIndex * (rowRem + gapRem)}rem)`,
+        }}
+      />
       {STAGES.map((stage) => {
         const state = stageState(step, stage);
         return (
           <div
             key={stage.id}
             className={cn(
-              "relative pl-4 transition-[opacity,transform] duration-[280ms]",
+              "relative pl-4 transition-opacity duration-300",
               state === "upcoming" && "opacity-40"
             )}
           >
-            <span
-              aria-hidden
-              className={cn(
-                "absolute left-0 top-0 h-full w-px bg-pc-line transition-colors duration-[280ms]",
-                state === "active" && "w-0.5 bg-accent"
-              )}
-            />
             <div className="flex items-center gap-2">
               <p
                 className={cn(
-                  "t-label transition-colors duration-[280ms]",
+                  "t-label transition-colors duration-300",
                   state === "active" && "text-pc-white",
-                  state === "complete" && "text-pc-muted",
-                  state === "upcoming" && "text-pc-muted"
+                  state === "complete" && "text-pc-soft",
+                  state === "upcoming" && "text-pc-soft"
                 )}
               >
                 {stage.label}
@@ -345,6 +378,28 @@ function StageIndex({ step }: { step: number }) {
         );
       })}
     </nav>
+  );
+}
+
+function TermsCheckboxLabel(): ReactNode {
+  const text = copy.form.questions[11].checkbox;
+  const marker = "Terms of Service";
+  const idx = text.indexOf(marker);
+  if (idx < 0) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Link
+        href="/terms"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-accent underline-offset-2 hover:underline"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {marker}
+      </Link>
+      {text.slice(idx + marker.length)}
+    </>
   );
 }
 
@@ -424,7 +479,7 @@ export default function ApplicationForm() {
           }
         }
         if (typeof draft.step === "number") {
-          setStep(Math.min(Math.max(draft.step, 0), TOTAL_STEPS - 1));
+          setStep(Math.min(Math.max(draft.step, 0), TOTAL_STEPS-1));
         }
         if (draft.laneChoiceId) setLaneChoiceId(draft.laneChoiceId);
         if (draft.closed || draft.disqualified) setClosed(true);
@@ -513,8 +568,6 @@ export default function ApplicationForm() {
     setTransitioning(false);
   }, [clearErrors, focusStep, resetScroll, setTransitioning]);
 
-  // Unlock after the enter transition. Prefer this over waiting on child motion
-  // (HandUnderline, etc.) so focus and the lock stay predictable.
   useEffect(() => {
     if (!hydrated || submitting) return;
     const ms = reduceMotion ? 160 : 360;
@@ -549,7 +602,7 @@ export default function ApplicationForm() {
         });
         const data = (await res.json()) as { ok?: boolean; error?: string };
         if (!res.ok || !data.ok) {
-          throw new Error(data.error || "Could not submit. Try again.");
+          throw new Error(data.error || copy.validation.submitError);
         }
         try {
           sessionStorage.removeItem(STORAGE_KEY);
@@ -559,9 +612,7 @@ export default function ApplicationForm() {
       } catch (err) {
         closedPosted.current = false;
         toast.error(
-          err instanceof Error
-            ? err.message
-            : "Something went wrong. Try again."
+          err instanceof Error ? err.message : copy.validation.submitError
         );
       }
     },
@@ -597,7 +648,7 @@ export default function ApplicationForm() {
         Boolean(String(v.socials?.website ?? "").trim());
       if (!has) {
         setError("socials.instagram", {
-          message: "Drop at least one handle or a website so I can find you.",
+          message: copy.validation.socials,
         });
         triggerShake();
         return false;
@@ -619,12 +670,12 @@ export default function ApplicationForm() {
   const next = useCallback(async () => {
     if (isTransitioningRef.current) return;
     if (!(await validateStep())) return;
-    if (step < TOTAL_STEPS - 1) goTo(step + 1);
+    if (step < TOTAL_STEPS-1) goTo(step + 1);
   }, [goTo, step, validateStep]);
 
   const back = useCallback(() => {
     if (isTransitioningRef.current) return;
-    if (step > 0) goTo(step - 1);
+    if (step > 0) goTo(step-1);
   }, [goTo, step]);
 
   const selectAndAdvance = useCallback(
@@ -635,7 +686,7 @@ export default function ApplicationForm() {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
       advanceTimer.current = setTimeout(() => {
         resetScroll();
-        setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
+        setStep((s) => Math.min(s + 1, TOTAL_STEPS-1));
       }, AUTO_ADVANCE_MS);
     },
     [resetScroll, setTransitioning]
@@ -715,7 +766,7 @@ export default function ApplicationForm() {
 
       if (e.key === "Enter") {
         e.preventDefault();
-        if (step === TOTAL_STEPS - 1) {
+        if (step === TOTAL_STEPS-1) {
           void handleSubmit(onSubmit)();
         } else {
           void next();
@@ -754,7 +805,7 @@ export default function ApplicationForm() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Could not submit. Try again.");
+        throw new Error(data.error || copy.validation.submitError);
       }
 
       try {
@@ -773,7 +824,7 @@ export default function ApplicationForm() {
     } catch (err) {
       setSubmitting(false);
       toast.error(
-        err instanceof Error ? err.message : "Something went wrong. Try again."
+        err instanceof Error ? err.message : copy.validation.submitError
       );
     }
   }
@@ -782,14 +833,13 @@ export default function ApplicationForm() {
     if (e.key === "Enter") {
       e.preventDefault();
       if (isTransitioningRef.current) return;
-      if (step === TOTAL_STEPS - 1) void handleSubmit(onSubmit)();
+      if (step === TOTAL_STEPS-1) void handleSubmit(onSubmit)();
       else void next();
     }
   };
 
   const progress = (step + 1) / TOTAL_STEPS;
   const currentStage = stageForStep(step);
-  const stepLabel = String(step + 1).padStart(2, "0");
 
   const stepError =
     errors.full_name?.message ||
@@ -824,20 +874,18 @@ export default function ApplicationForm() {
         },
       };
 
-  const questionHeading =
-    "max-w-[22ch] text-[clamp(1.4rem,2.4vw,1.9rem)] font-medium tracking-[-0.02em] text-pc-white";
-
   const locked = isTransitioning || submitting;
+  const q = copy.form.questions;
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-navy-800 lg:flex-row">
       <header className="sticky top-0 z-[3] bg-navy-900 lg:hidden">
         <div className="flex h-14 items-center justify-between px-5">
           <Wordmark />
-          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-pc-muted">
+          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-pc-soft">
             <span className="text-pc-text">{currentStage.label}</span>
             <span className="tabular-nums text-pc-white">
-              {step + 1} of {TOTAL_STEPS}
+              {copy.form.questionLabel(step + 1).replace(/^Question /, "")}
             </span>
           </div>
         </div>
@@ -856,18 +904,18 @@ export default function ApplicationForm() {
         </div>
       </header>
 
-      <aside className="relative hidden w-[34%] shrink-0 flex-col bg-navy-900 p-9 lg:sticky lg:top-0 lg:flex lg:h-dvh">
-        <Wordmark className="text-base" />
+      <aside className="relative hidden w-[34%] shrink-0 flex-col overflow-hidden bg-navy-900 p-9 lg:sticky lg:top-0 lg:flex lg:h-dvh">
+        <Glow className="pointer-events-none absolute inset-0 opacity-50" />
+        <Wordmark className="relative z-[1] text-base" />
 
-        <div className="mt-16 flex-1">
+        <div className="relative z-[1] mt-16 flex-1">
           <StageIndex step={closed ? 8 : step} />
         </div>
 
-        <div className="mt-auto pt-8">
-          <p className="t-label">Why I ask all this</p>
+        <div className="relative z-[1] mt-auto pt-8">
+          <p className="t-label">{copy.form.railLabel}</p>
           <p className="mt-3 max-w-[36ch] text-[14px] leading-relaxed text-pc-text">
-            I read every application myself. The more specific you are, the
-            faster I can tell you whether I can help.
+            {copy.form.railNote}
           </p>
         </div>
       </aside>
@@ -876,8 +924,6 @@ export default function ApplicationForm() {
         ref={panelScrollRef}
         className="relative flex min-h-0 flex-1 flex-col overflow-y-auto bg-navy-800 lg:w-[66%]"
       >
-        <Glow className="pointer-events-none absolute bottom-0 right-0 opacity-40" />
-
         <div
           className="relative z-[1] hidden h-0.5 w-full bg-pc-line lg:block"
           aria-hidden
@@ -897,8 +943,8 @@ export default function ApplicationForm() {
 
         <div className="sr-only" aria-live="polite" aria-atomic="true">
           {closed
-            ? "Application closed"
-            : `Question ${step + 1} of ${TOTAL_STEPS}`}
+            ? copy.closed.label
+            : copy.form.questionLabel(step + 1)}
         </div>
 
         <div className="relative z-[1] flex min-h-[calc(100dvh-3.625rem)] flex-1 flex-col px-5 py-8 sm:px-8 lg:min-h-0 lg:justify-center lg:px-10 lg:py-14 xl:px-16">
@@ -921,7 +967,7 @@ export default function ApplicationForm() {
               className="relative min-h-[340px] flex-1 md:min-h-[420px] lg:flex-none"
               ref={focusRef}
             >
-              <AnimatePresence mode="wait" onExitComplete={undefined}>
+              <AnimatePresence mode="wait">
                 {closed ? (
                   <motion.div
                     key="closed"
@@ -931,39 +977,25 @@ export default function ApplicationForm() {
                     variants={variants}
                     className="w-full"
                   >
-                    <p className="t-label mb-3">Application closed</p>
+                    <p className="t-label mb-3">{copy.closed.label}</p>
                     <h2 className="text-[1.75rem] font-medium tracking-[-0.02em] text-pc-white">
-                      Not right now.
+                      {copy.closed.heading}
                     </h2>
                     <p className="mt-6 max-w-[46ch] text-[16px] leading-[1.7] text-pc-text">
-                      I am going to be straight with you. Every launch needs
-                      something behind it, even on a revenue split. Ads,
-                      tooling, product costs, setup. With nothing to put behind
-                      it there is no realistic way for me to move your numbers,
-                      so taking you on would waste both our time.
+                      {copy.closed.body1}
                     </p>
                     <p className="mt-4 max-w-[46ch] text-[16px] leading-[1.7] text-pc-text">
-                      That is a timing answer, not a permanent one. When you
-                      have something to work with, apply again and I will read
-                      it properly.
+                      {copy.closed.body2}
                     </p>
                     <div className="mt-10 flex flex-col gap-4">
                       <Link
                         href="/"
-                        className="inline-flex w-fit items-center text-sm text-pc-muted transition-colors hover:text-pc-white"
+                        className="inline-flex w-fit items-center text-sm text-pc-soft transition-colors hover:text-pc-white"
                       >
-                        Back to the site
+                        {copy.closed.button}
                       </Link>
-                      <p className="text-sm text-pc-muted">
-                        Free material on{" "}
-                        <a
-                          href={site.socials.youtube}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-accent underline-offset-2 hover:underline"
-                        >
-                          {site.handle}
-                        </a>
+                      <p className="text-sm text-pc-text">
+                        {copy.closed.underButton}
                       </p>
                     </div>
                   </motion.div>
@@ -978,19 +1010,15 @@ export default function ApplicationForm() {
                     className="w-full"
                   >
                     <p className="t-label mb-3 text-accent">
-                      Question {stepLabel} of{" "}
-                      {String(TOTAL_STEPS).padStart(2, "0")}
+                      {copy.form.questionLabel(step + 1)}
                     </p>
 
                     {step === 0 && (
                       <>
-                        <h2 className={questionHeading}>
-                          What&apos;s your name?
-                        </h2>
+                        <FormPrompt text={q[1].prompt} />
                         <div className="mt-8">
                           <UnderlineField
                             id="full_name"
-                            placeholder="Full name"
                             autoComplete="name"
                             error={errors.full_name?.message}
                             shake={shake}
@@ -1002,14 +1030,11 @@ export default function ApplicationForm() {
 
                     {step === 1 && (
                       <>
-                        <h2 className={questionHeading}>
-                          Where should I reply?
-                        </h2>
+                        <FormPrompt text={q[2].prompt} />
                         <div className="mt-8">
                           <UnderlineField
                             id="email"
                             type="email"
-                            placeholder="you@brand.com"
                             autoComplete="email"
                             error={errors.email?.message}
                             shake={shake}
@@ -1021,20 +1046,11 @@ export default function ApplicationForm() {
 
                     {step === 2 && (
                       <>
-                        <h2 className={questionHeading}>
-                          Which best describes you?
-                        </h2>
+                        <FormPrompt text={q[3].prompt} />
                         <div className="mt-8">
                           <ChoiceRows
                             options={LANE_OPTIONS}
-                            value={
-                              laneChoiceId ??
-                              (lane === "creator"
-                                ? "creator"
-                                : lane
-                                  ? "physical"
-                                  : undefined)
-                            }
+                            value={laneChoiceId ?? undefined}
                             error={errors.lane?.message}
                             shake={shake}
                             disabled={locked}
@@ -1055,13 +1071,10 @@ export default function ApplicationForm() {
 
                     {step === 3 && (
                       <>
-                        <h2 className={questionHeading}>
-                          Brand or business name?
-                        </h2>
+                        <FormPrompt text={q[4].prompt} />
                         <div className="mt-8">
                           <UnderlineField
                             id="brand_name"
-                            placeholder="Brand name"
                             error={errors.brand_name?.message}
                             shake={shake}
                             {...register("brand_name")}
@@ -1072,11 +1085,9 @@ export default function ApplicationForm() {
 
                     {step === 4 && (
                       <>
-                        <h2 className={questionHeading}>
-                          Where can I see you?
-                        </h2>
-                        <p className="mt-2 text-[15px] text-pc-muted">
-                          At least one handle or a website.
+                        <FormPrompt text={q[5].prompt} />
+                        <p className="mt-2 text-[15px] text-pc-text">
+                          {q[5].helper}
                         </p>
                         <div
                           className={cn(
@@ -1086,27 +1097,27 @@ export default function ApplicationForm() {
                         >
                           <UnderlineField
                             id="instagram"
-                            placeholder="handle"
+                            placeholder="instagram"
                             prefix="@"
                             error={errors.socials?.instagram?.message}
                             {...register("socials.instagram")}
                           />
                           <UnderlineField
                             id="tiktok"
-                            placeholder="handle"
+                            placeholder="tiktok"
                             prefix="@"
                             {...register("socials.tiktok")}
                           />
                           <UnderlineField
                             id="youtube"
-                            placeholder="handle or channel"
+                            placeholder="youtube"
                             prefix="@"
                             {...register("socials.youtube")}
                           />
                           <UnderlineField
                             id="website"
                             type="url"
-                            placeholder="https://yoursite.com"
+                            placeholder="website"
                             {...register("socials.website")}
                           />
                         </div>
@@ -1115,9 +1126,7 @@ export default function ApplicationForm() {
 
                     {step === 5 && (
                       <>
-                        <h2 className={questionHeading}>
-                          Audience size on your main platform?
-                        </h2>
+                        <FormPrompt text={q[6].prompt} />
                         <div className="mt-8">
                           <ChoiceRows
                             options={FOLLOWER_RANGE_OPTIONS.map((v) => ({
@@ -1145,9 +1154,7 @@ export default function ApplicationForm() {
 
                     {step === 6 && (
                       <>
-                        <h2 className={questionHeading}>
-                          Do you already sell something?
-                        </h2>
+                        <FormPrompt text={q[7].prompt} />
                         <div className="mt-8">
                           <ChoiceRows
                             options={HAS_PRODUCT_OPTIONS}
@@ -1171,11 +1178,9 @@ export default function ApplicationForm() {
 
                     {step === 7 && (
                       <>
-                        <h2 className={questionHeading}>
-                          What&apos;s actually broken right now?
-                        </h2>
-                        <p className="mt-2 text-[15px] text-pc-muted">
-                          Be specific. This is the answer I read first.
+                        <FormPrompt text={q[8].prompt} />
+                        <p className="mt-2 text-[15px] text-pc-text">
+                          {q[8].helper}
                         </p>
                         <div
                           className={cn(
@@ -1186,11 +1191,10 @@ export default function ApplicationForm() {
                           <textarea
                             id="biggest_bottleneck"
                             rows={5}
-                            placeholder="What's stuck..."
                             aria-invalid={Boolean(errors.biggest_bottleneck)}
                             className={cn(
                               "peer w-full resize-none border-0 bg-transparent py-3 text-[18px] leading-relaxed text-pc-white caret-accent outline-none md:text-[20px]",
-                              "placeholder:text-pc-muted/55"
+                              "placeholder:text-pc-soft/55"
                             )}
                             {...register("biggest_bottleneck")}
                           />
@@ -1216,14 +1220,9 @@ export default function ApplicationForm() {
 
                     {step === 8 && (
                       <>
-                        <h2 className={questionHeading}>
-                          What can you put behind this to get it launched?
-                        </h2>
-                        <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-pc-muted">
-                          This is not my fee. Creators still pay nothing upfront.
-                          This is what you can put behind the launch itself,
-                          things like ads, tooling, product costs and setup. It
-                          tells me what we are working with.
+                        <FormPrompt text={q[9].prompt} />
+                        <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-pc-text">
+                          {q[9].helper}
                         </p>
                         <div className="mt-8">
                           <ChoiceRows
@@ -1258,9 +1257,7 @@ export default function ApplicationForm() {
 
                     {step === 9 && (
                       <>
-                        <h2 className={questionHeading}>
-                          How soon do you want to start?
-                        </h2>
+                        <FormPrompt text={q[10].prompt} />
                         <div className="mt-8">
                           <ChoiceRows
                             options={READY_TO_START_OPTIONS.map((v) => ({
@@ -1288,22 +1285,11 @@ export default function ApplicationForm() {
 
                     {step === 10 && (
                       <>
-                        <h2
-                          className={cn(
-                            questionHeading,
-                            "pb-[0.35em]"
-                          )}
-                        >
-                          One thing before you{" "}
-                          <HandUnderline variant={1} delay={0.3}>
-                            send
-                          </HandUnderline>{" "}
-                          this.
-                        </h2>
+                        <FormPrompt text={q[11].heading} />
                         <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-pc-text md:text-base">
                           {lane === "creator"
-                            ? "This is a revenue split, not a flat fee. I am paid a percentage of what your product earns, so there is nothing upfront. Work continues while the agreement is active. If it ends, you keep everything already built, but all further updates stop."
-                            : "Physical brands work on a flat monthly retainer. Work continues for as long as the retainer is active. If it ends, you keep everything already built, but all further updates stop and maintenance becomes yours."}
+                            ? q[11].creatorBody
+                            : q[11].physicalBody}
                         </p>
                         <div
                           className={cn(
@@ -1325,17 +1311,7 @@ export default function ApplicationForm() {
                                   className="mt-1 h-4 w-4 shrink-0 accent-accent"
                                 />
                                 <span className="text-[15px] leading-relaxed text-pc-white">
-                                  I&apos;ve read and accept the{" "}
-                                  <Link
-                                    href="/terms"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-accent underline-offset-2 hover:underline"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    Terms of Service
-                                  </Link>
-                                  .
+                                  <TermsCheckboxLabel />
                                 </span>
                               </label>
                             )}
@@ -1348,9 +1324,8 @@ export default function ApplicationForm() {
                               {errors.terms_ack.message}
                             </p>
                           ) : null}
-                          <p className="mt-4 text-xs leading-relaxed text-pc-muted">
-                            Applying does not commit you to anything. I only
-                            reach out if I think we are a good fit.
+                          <p className="mt-4 text-xs leading-relaxed text-pc-text">
+                            {q[11].underCheckbox}
                           </p>
                         </div>
                       </>
@@ -1373,9 +1348,7 @@ export default function ApplicationForm() {
                           : { duration: 0.85, ease: EASE_IN }
                       }
                     />
-                    <p className="text-[15px] text-pc-muted">
-                      Sending your application
-                    </p>
+                    <p className="text-[15px] text-pc-text">{copy.sending}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1390,13 +1363,13 @@ export default function ApplicationForm() {
                         type="button"
                         onClick={back}
                         disabled={locked}
-                        className="group inline-flex items-center gap-1.5 text-sm text-pc-muted transition-colors hover:text-pc-white disabled:opacity-50"
+                        className="group inline-flex items-center gap-1.5 text-sm text-pc-soft transition-colors hover:text-pc-white disabled:opacity-50"
                       >
                         <ChevronLeft
                           className="h-4 w-4 transition-transform duration-[180ms] group-hover:-translate-x-[3px]"
                           aria-hidden
                         />
-                        Back
+                        {copy.form.back}
                       </button>
                     ) : (
                       <span />
@@ -1408,17 +1381,19 @@ export default function ApplicationForm() {
                       disabled={locked}
                       onClick={() => {
                         if (locked) return;
-                        if (step === TOTAL_STEPS - 1)
+                        if (step === TOTAL_STEPS-1)
                           void handleSubmit(onSubmit)();
                         else void next();
                       }}
                       className="inline-flex h-12 items-center justify-center rounded-control bg-accent px-8 text-[15px] font-medium text-navy-900 transition-opacity hover:opacity-90 disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
-                      {step === TOTAL_STEPS - 1
-                        ? "Submit application"
-                        : "Continue"}
+                      {step === TOTAL_STEPS-1
+                        ? copy.form.submit
+                        : copy.form.continue}
                     </button>
-                    <p className="text-[12px] text-pc-muted">press Enter</p>
+                    <p className="text-[12px] text-pc-soft">
+                      {copy.form.enterHint}
+                    </p>
                   </div>
                 </div>
               </div>

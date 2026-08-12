@@ -1,13 +1,14 @@
 import { Resend } from "resend";
+import { copy } from "@/lib/copy";
 import { contactEmail, site } from "@/lib/site-config";
 import type { LeadRecord } from "@/lib/validation";
 
-const NAVY = "#0B2038";
-const NAVY_CARD = "#102C4C";
-const LINE = "rgba(255,255,255,0.09)";
+const NAVY = "#06172C";
+const NAVY_CARD = "#0A2039";
+const LINE = "rgba(255,255,255,0.10)";
 const WHITE = "#FFFFFF";
-const TEXT = "#C2D4E8";
-const MUTED = "#94AAC4";
+const TEXT = "#E6F0FB";
+const SOFT = "#BDD4EC";
 const ACCENT = "#4D9BFF";
 
 function getResend(): Resend | null {
@@ -25,13 +26,13 @@ function escapeHtml(value: string): string {
 }
 
 function row(label: string, value: string | undefined, emphasise = false): string {
-  const display = value?.trim() ? escapeHtml(value) : "-";
+  const shown = value?.trim() ? escapeHtml(value) : "n/a";
   const style = emphasise
     ? `padding:12px 0;border-bottom:1px solid ${LINE};background:rgba(77,155,255,0.08);`
     : `padding:10px 0;border-bottom:1px solid ${LINE};`;
   return `<tr>
-    <td style="${style}width:160px;vertical-align:top;color:${MUTED};font-size:13px;padding-right:16px;">${escapeHtml(label)}</td>
-    <td style="${style}color:${WHITE};font-size:14px;white-space:pre-wrap;">${display}</td>
+    <td style="${style}width:160px;vertical-align:top;color:${SOFT};font-size:13px;padding-right:16px;">${escapeHtml(label)}</td>
+    <td style="${style}color:${WHITE};font-size:14px;white-space:pre-wrap;">${shown}</td>
   </tr>`;
 }
 
@@ -47,7 +48,7 @@ function shell(body: string): string {
 function replyLineHtml(): string {
   const email = contactEmail();
   if (!email) return "";
-  return `<p style="margin:20px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">Reply to ${escapeHtml(email)}</p>`;
+  return `<p style="margin:20px 0 0;color:${SOFT};font-size:13px;line-height:1.5;">Reply to ${escapeHtml(email)}</p>`;
 }
 
 function replyLineText(): string {
@@ -56,8 +57,16 @@ function replyLineText(): string {
   return `\n\nReply to ${email}`;
 }
 
+function signoffHtml(): string {
+  return `<p style="margin:28px 0 0;color:${SOFT};font-size:13px;line-height:1.5;">${escapeHtml(copy.emails.applicantSignoff)}</p>`;
+}
+
+function signoffText(): string {
+  return copy.emails.applicantSignoff;
+}
+
 /**
- * Notify Daive of a new lead. Fail-soft.
+ * Notify Daive of a new lead. Fail soft.
  */
 export async function sendLeadNotification(
   lead: LeadRecord & { id?: string }
@@ -126,7 +135,7 @@ export async function sendLeadNotification(
 }
 
 /**
- * Confirm receipt to the applicant. Fail-soft.
+ * Confirm receipt to the applicant. Fail soft.
  */
 export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void> {
   try {
@@ -137,18 +146,16 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
     }
 
     const first = lead.full_name.split(" ")[0] ?? lead.full_name;
-    const body = `Your application is in. I read every one myself, usually within a few days. If I think we are a good fit to work together, I will reach out. If you do not hear from me, it means I did not think I was the right person for your brand right now, and that is not a judgement on what you are building.`;
+    const body = copy.emails.applicantConfirmation;
 
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
     <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:500;">Got it, ${escapeHtml(first)}.</h1>
-    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(body)}</p>
-    <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
-      Daive, ${escapeHtml(site.name)}
-    </p>
+    <p style="margin:0 0 16px;color:${WHITE};font-size:15px;line-height:1.6;">${escapeHtml(body)}</p>
+    ${signoffHtml()}
     ${replyLineHtml()}`);
 
-    const text = `Got it, ${first}.\n\n${body}\n\nDaive, ${site.name}${replyLineText()}`;
+    const text = `Got it, ${first}.\n\n${body}\n\n${signoffText()}${replyLineText()}`;
 
     await resend.emails.send({
       from: `${site.founder} at ${site.name} <onboarding@resend.dev>`,
@@ -163,7 +170,7 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
 }
 
 /**
- * Confirm a booked call. Fail-soft.
+ * Confirm a booked call. Fail soft.
  */
 export async function sendBookingConfirmation(
   lead: LeadRecord,
@@ -187,18 +194,16 @@ export async function sendBookingConfirmation(
       // keep raw
     }
 
-    const body = `Your call is booked for ${when}. A calendar invite is on its way. Bring your numbers if you have them, and a clear sense of what is currently costing you the most. I will only follow up after the call if we are a fit.`;
+    const body = copy.booking.confirmation(when, lead.email);
 
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
     <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:500;">See you soon, ${escapeHtml(first)}.</h1>
-    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(body)}</p>
-    <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
-      Daive, ${escapeHtml(site.name)}
-    </p>
+    <p style="margin:0 0 16px;color:${WHITE};font-size:15px;line-height:1.6;">${escapeHtml(body)}</p>
+    ${signoffHtml()}
     ${replyLineHtml()}`);
 
-    const text = `See you soon, ${first}.\n\n${body}\n\nDaive, ${site.name}${replyLineText()}`;
+    const text = `See you soon, ${first}.\n\n${body}\n\n${signoffText()}${replyLineText()}`;
 
     await resend.emails.send({
       from: `${site.founder} at ${site.name} <onboarding@resend.dev>`,
@@ -213,7 +218,7 @@ export async function sendBookingConfirmation(
 }
 
 /**
- * Soft notice for the investment gate path. Fail-soft.
+ * Soft notice for the investment gate path. Fail soft.
  */
 export async function sendNotQualifiedNotice(lead: LeadRecord): Promise<void> {
   try {
@@ -224,22 +229,18 @@ export async function sendNotQualifiedNotice(lead: LeadRecord): Promise<void> {
     }
 
     const first = lead.full_name.split(" ")[0] ?? lead.full_name;
-    const p1 =
-      "I am going to be straight with you. Every launch needs something behind it, even on a revenue split. Ads, tooling, product costs, setup. With nothing to put behind it there is no realistic way for me to move your numbers, so taking you on would waste both our time.";
-    const p2 =
-      "That is a timing answer, not a permanent one. When you have something to work with, apply again and I will read it properly.";
+    const p1 = copy.emails.notQualifiedBody1;
+    const p2 = copy.emails.notQualifiedBody2;
 
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
     <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:500;">Not right now, ${escapeHtml(first)}.</h1>
-    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(p1)}</p>
-    <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(p2)}</p>
-    <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
-      Daive, ${escapeHtml(site.name)}
-    </p>
+    <p style="margin:0 0 16px;color:${WHITE};font-size:15px;line-height:1.6;">${escapeHtml(p1)}</p>
+    <p style="margin:0 0 16px;color:${WHITE};font-size:15px;line-height:1.6;">${escapeHtml(p2)}</p>
+    ${signoffHtml()}
     ${replyLineHtml()}`);
 
-    const text = `Not right now, ${first}.\n\n${p1}\n\n${p2}\n\nDaive, ${site.name}${replyLineText()}`;
+    const text = `Not right now, ${first}.\n\n${p1}\n\n${p2}\n\n${signoffText()}${replyLineText()}`;
 
     await resend.emails.send({
       from: `${site.founder} at ${site.name} <onboarding@resend.dev>`,

@@ -200,7 +200,7 @@ export async function markLeadBookedInSheet(
     const needle = email.trim().toLowerCase();
     let targetIndex = -1;
 
-    for (let i = rows.length - 1; i >= 1; i -= 1) {
+    for (let i = rows.length-1; i >= 1; i -= 1) {
       const rowEmail = String(rows[i]?.[2] ?? "").trim().toLowerCase();
       if (rowEmail === needle) {
         targetIndex = i;

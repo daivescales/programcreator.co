@@ -49,7 +49,7 @@ export default function LegalIndexPage() {
             <span className="text-[17px] font-medium tracking-[-0.02em] text-pc-white transition-colors duration-[180ms] group-hover:text-accent">
               {doc.label}
             </span>
-            <span className="col-span-2 max-w-[46ch] text-[15px] leading-relaxed text-pc-muted md:col-span-1">
+            <span className="col-span-2 max-w-[46ch] text-[15px] leading-relaxed text-pc-text md:col-span-1">
               {doc.meta}
             </span>
           </Link>

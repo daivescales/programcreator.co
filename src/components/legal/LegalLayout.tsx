@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import Container from "@/components/ui/Container";
 import SocialLinks from "@/components/ui/SocialLinks";
+import { copy } from "@/lib/copy";
 import { contactEmail } from "@/lib/site-config";
 
 const LEGAL_LINKS = [
@@ -19,11 +20,11 @@ export type LegalLayoutProps = {
   currentPath: (typeof LEGAL_LINKS)[number]["href"] | "/legal";
 };
 
-/** Renders site email or "Email coming soon" when unset. Never invents an address. */
+/** Renders site email or Email coming soon when unset. Never invents an address. */
 export function ContactEmail({ className }: { className?: string }) {
   const email = contactEmail();
   if (!email) {
-    return <span className={className}>Email coming soon</span>;
+    return <span className={className}>{copy.footer.emailComingSoon}</span>;
   }
   return (
     <a
@@ -49,13 +50,13 @@ export default function LegalLayout({
         <article className="mx-auto max-w-[720px]">
           <Link
             href="/"
-            className="mb-10 inline-block text-sm text-pc-muted transition-colors hover:text-pc-white"
+            className="mb-10 inline-block text-sm text-pc-soft transition-colors hover:text-pc-white"
           >
-            ← Back to home
+            Back to home
           </Link>
 
           <h1 className="t-h2">{title}</h1>
-          <p className="mt-4 text-pc-muted">Last updated: {lastUpdated}</p>
+          <p className="mt-4 text-pc-soft">Last updated: {lastUpdated}</p>
 
           <div className="mt-14 space-y-10">{children}</div>
 
@@ -92,7 +93,7 @@ export default function LegalLayout({
               <SocialLinks variant="text" />
             </div>
 
-            <p className="mt-8 text-sm text-pc-muted">
+            <p className="mt-8 text-sm text-pc-soft">
               Contact: <ContactEmail />
             </p>
           </nav>

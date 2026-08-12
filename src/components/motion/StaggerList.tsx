@@ -26,7 +26,7 @@ export default function StaggerList({
   children,
   className,
   delay = 0,
-  stagger = 0.05,
+  stagger = 0.06,
 }: StaggerListProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
@@ -49,7 +49,7 @@ export default function StaggerList({
           animate={
             reduced
               ? { opacity: show ? 1 : 0, y: 0 }
-              : { opacity: show ? 1 : 0, y: show ? 0 : 20 }
+              : { opacity: show ? 1 : 0, y: show ? 0 : 14 }
           }
           transition={
             reduced

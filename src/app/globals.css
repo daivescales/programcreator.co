@@ -14,9 +14,10 @@
   --color-pc-line-2: var(--pc-line-2);
   --color-pc-white: var(--pc-white);
   --color-pc-text: var(--pc-text);
-  --color-pc-muted: var(--pc-muted);
+  --color-pc-soft: var(--pc-soft);
   --color-accent: var(--pc-accent);
   --color-accent-2: var(--pc-accent-2);
+  --color-accent-3: var(--pc-accent-3);
   --color-pc-glow: var(--pc-glow);
 
   --color-background: var(--pc-navy-800);
@@ -24,7 +25,7 @@
   --color-primary: var(--pc-accent);
   --color-primary-foreground: var(--pc-navy-900);
   --color-muted: var(--pc-navy-750);
-  --color-muted-foreground: var(--pc-muted);
+  --color-muted-foreground: var(--pc-text);
   --color-destructive: #f87171;
   --color-border: var(--pc-line);
   --color-ring: var(--pc-accent);
@@ -37,25 +38,75 @@
 
   --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-glow-drift: glow-drift 24s ease-in-out infinite;
+  --animate-dot-pulse: dot-pulse 2.6s ease-in-out infinite;
+  --animate-bar-breathe: bar-breathe 4s ease-in-out infinite;
+  --animate-cta-pulse: cta-pulse 6s ease-in-out infinite;
 }
 
 :root {
-  --pc-navy-900: #071528;
-  --pc-navy-800: #0b2038;
-  --pc-navy-750: #0d243d;
-  --pc-surface: rgba(255, 255, 255, 0.025);
-  --pc-line: rgba(255, 255, 255, 0.07);
-  --pc-line-2: rgba(255, 255, 255, 0.13);
+  --pc-navy-900: #06172c;
+  --pc-navy-800: #0a2039;
+  --pc-navy-750: #0d2846;
+  --pc-surface: rgba(255, 255, 255, 0.03);
+  --pc-line: rgba(255, 255, 255, 0.1);
+  --pc-line-2: rgba(255, 255, 255, 0.2);
   --pc-white: #ffffff;
-  --pc-muted: #8fa6c1;
-  --pc-text: #bccee3;
+  --pc-text: #e6f0fb;
+  --pc-soft: #bdd4ec;
   --pc-accent: #4d9bff;
-  --pc-accent-2: #a9cdff;
-  --pc-glow: rgba(77, 155, 255, 0.14);
+  --pc-accent-2: #8fc0ff;
+  --pc-accent-3: #2b7fea;
+  --pc-glow: rgba(77, 155, 255, 0.3);
 
   --background: var(--pc-navy-800);
   --foreground: var(--pc-text);
   --radius: 6px;
+}
+
+@keyframes glow-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(28px, -22px) scale(1.04);
+  }
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(77, 155, 255, 0.45);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(77, 155, 255, 0);
+    opacity: 0.85;
+  }
+}
+
+@keyframes bar-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes cta-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
 }
 
 @layer base {
@@ -89,30 +140,30 @@
 
 @layer utilities {
   .t-display {
-    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+    font-size: clamp(2.4rem, 4.4vw, 3.6rem);
     font-weight: 500;
-    line-height: 1.08;
+    line-height: 1.06;
     letter-spacing: -0.02em;
     color: var(--pc-white);
   }
 
   .t-h2 {
-    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+    font-size: clamp(1.7rem, 2.8vw, 2.4rem);
     font-weight: 500;
-    line-height: 1.15;
+    line-height: 1.12;
     letter-spacing: -0.015em;
     color: var(--pc-white);
   }
 
   .t-h3 {
-    font-size: 1.0625rem;
+    font-size: 1.125rem;
     font-weight: 500;
-    line-height: 1.375;
+    line-height: 1.35;
     color: var(--pc-white);
   }
 
   .t-body {
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: 400;
     line-height: 1.7;
     max-width: 56ch;
@@ -128,20 +179,20 @@
 
   .t-label {
     font-size: 11px;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.4;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--pc-muted);
+    color: var(--pc-accent);
   }
 
   .hand {
     font-family: var(--font-hand), cursive;
-    font-size: 1.3em;
-    font-weight: 400;
+    font-size: 1.35em;
+    font-weight: 600;
     color: var(--pc-accent-2);
     display: inline-block;
-    transform: rotate(-1deg) translateY(0.06em);
+    transform: rotate(-1.5deg) translateY(0.06em);
     line-height: 1;
   }
 
@@ -161,7 +212,22 @@
     scroll-margin-top: 110px;
   }
 
-  /* Accordion open/close without height:auto jank */
+  .animate-glow-drift {
+    animation: glow-drift 24s ease-in-out infinite;
+  }
+
+  .animate-dot-pulse {
+    animation: dot-pulse 2.6s ease-in-out infinite;
+  }
+
+  .animate-bar-breathe {
+    animation: bar-breathe 4s ease-in-out infinite;
+  }
+
+  .animate-cta-pulse {
+    animation: cta-pulse 6s ease-in-out infinite;
+  }
+
   .accordion-grid {
     display: grid;
     grid-template-rows: 0fr;
@@ -185,5 +251,12 @@
 
   .accordion-grid {
     transition: none;
+  }
+
+  .animate-glow-drift,
+  .animate-dot-pulse,
+  .animate-bar-breathe,
+  .animate-cta-pulse {
+    animation: none !important;
   }
 }

@@ -5,10 +5,8 @@ import { useState, type ReactNode } from "react";
 import Heading from "@/components/ui/Heading";
 import Section from "@/components/ui/Section";
 import SectionLabel from "@/components/ui/SectionLabel";
-import { faqItems } from "@/content/faq";
+import { copy, faqItems } from "@/lib/copy";
 import { cn } from "@/lib/utils";
-
-export { faqItems };
 
 function renderAnswer(answer: string): ReactNode {
   if (!answer.includes("Terms of Service")) return answer;
@@ -32,19 +30,19 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <Section id="faq" tone="750">
-      <SectionLabel number="04" label="Questions" />
+    <Section id="faq" tone="800">
+      <SectionLabel number={copy.faq.number} label={copy.faq.label} />
 
       <div className="mt-6 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-32">
             <Heading
               as="h2"
-              text="Before you _apply_."
-              underlineVariant={2}
+              text={copy.faq.heading}
+              underlineVariant={1}
               className="max-w-[12ch]"
             />
-            <p className="hand mt-4">ask me the rest on the call</p>
+            <p className="hand mt-4">{copy.faq.note}</p>
           </div>
         </div>
 
@@ -68,7 +66,7 @@ export default function FAQ() {
                 >
                   <span
                     className={cn(
-                      "text-[16px] font-medium transition-colors duration-[180ms]",
+                      "text-[16.5px] font-medium transition-colors duration-200",
                       isOpen
                         ? "text-accent"
                         : "text-pc-white group-hover:text-accent-2"
@@ -78,15 +76,13 @@ export default function FAQ() {
                   </span>
                   <span
                     aria-hidden
-                    className="relative flex h-5 w-5 shrink-0 items-center justify-center"
+                    className={cn(
+                      "relative flex h-5 w-5 shrink-0 items-center justify-center transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                      isOpen && "rotate-90"
+                    )}
                   >
-                    <span className="absolute h-px w-5 bg-pc-muted" />
-                    <span
-                      className={cn(
-                        "absolute h-5 w-px bg-pc-muted transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
-                        isOpen && "scale-y-0"
-                      )}
-                    />
+                    <span className="absolute h-px w-5 bg-pc-text" />
+                    <span className="absolute h-5 w-px bg-pc-text" />
                   </span>
                 </button>
 
@@ -99,7 +95,7 @@ export default function FAQ() {
                   <div className="accordion-inner">
                     <p
                       className={cn(
-                        "t-body max-w-[54ch] pb-8 transition-opacity duration-[200ms]",
+                        "t-body max-w-[54ch] pb-8 transition-opacity duration-200",
                         isOpen ? "opacity-100 delay-[60ms]" : "opacity-0"
                       )}
                     >

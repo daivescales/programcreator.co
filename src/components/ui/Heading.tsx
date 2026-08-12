@@ -21,7 +21,7 @@ const tagMap = {
   h3: "h3",
 } as const;
 
-/** *word* → Caveat (.hand) · _word_ → HandUnderline */
+/** *word* → Caveat (.hand) · _word_ → HandUnderline via MaskText (pb 0.4em). */
 export default function Heading({
   as = "h2",
   text,

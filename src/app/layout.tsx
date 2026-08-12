@@ -3,7 +3,7 @@ import { Caveat, Inter_Tight } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
 import ScrollProgress from "@/components/system/ScrollProgress";
 import { Toaster } from "@/components/ui/sonner";
-import { faqItems } from "@/content/faq";
+import { copy, faqItems } from "@/lib/copy";
 import { contactEmail, site } from "@/lib/site-config";
 import "./globals.css";
 
@@ -17,14 +17,11 @@ const interTight = Inter_Tight({
 
 const caveat = Caveat({
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["600"],
   display: "swap",
   preload: true,
   variable: "--font-hand",
 });
-
-const description =
-  "I build digital products for creators and rebuild storefronts for physical brands, then scale them through the audience you already have. Creators pay a revenue split. Product brands pay a retainer.";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || site.url;
 const email = contactEmail();
@@ -32,10 +29,10 @@ const email = contactEmail();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${site.name}, Creator Product Scaling by ${site.founder}`,
-    template: `%s · ${site.name}`,
+    default: copy.meta.titleDefault,
+    template: copy.meta.titleTemplate,
   },
-  description,
+  description: copy.meta.description,
   keywords: [
     "ProgramCreator",
     "Creator Product Scaling",
@@ -52,13 +49,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: site.name,
-    title: `${site.name}, Creator Product Scaling by ${site.founder}`,
-    description,
+    title: copy.meta.ogTitle,
+    description: copy.meta.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name}, Creator Product Scaling by ${site.founder}`,
-    description,
+    title: copy.meta.ogTitle,
+    description: copy.meta.description,
     creator: site.handle,
   },
 };
@@ -75,7 +72,7 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: site.name,
-    description,
+    description: copy.meta.description,
     url: siteUrl,
     founder: {
       "@type": "Person",

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import AboutStrip from "@/components/sections/AboutStrip";
+import Expect from "@/components/sections/Expect";
 import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
 import Hero from "@/components/sections/Hero";
 import Lanes from "@/components/sections/Lanes";
 import Model from "@/components/sections/Model";
 import Process from "@/components/sections/Process";
-import { site } from "@/lib/site-config";
+import { copy } from "@/lib/copy";
 
 export const metadata: Metadata = {
-  title: `${site.name}, Creator Product Scaling by ${site.founder}`,
-  description:
-    "I build digital products for creators and rebuild storefronts for physical brands, then scale them through the audience you already have. Creators pay a revenue split. Product brands pay a retainer.",
+  title: copy.meta.titleDefault,
+  description: copy.meta.description,
 };
 
 export default function HomePage() {
@@ -21,6 +21,7 @@ export default function HomePage() {
       <Model />
       <Lanes />
       <Process />
+      <Expect />
       <AboutStrip />
       <FAQ />
       <FinalCTA />

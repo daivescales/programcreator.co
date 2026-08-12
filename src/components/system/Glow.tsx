@@ -2,10 +2,12 @@ import { cn } from "@/lib/utils";
 
 export type GlowProps = {
   className?: string;
+  /** Use cta-pulse instead of glow-drift (FinalCTA). */
+  pulse?: boolean;
 };
 
-/** Static soft glow bloom (hero + Final CTA only). Not animated. */
-export default function Glow({ className }: GlowProps) {
+/** Soft glow bloom. Drift by default; FinalCTA can add animate-cta-pulse. */
+export default function Glow({ className, pulse = false }: GlowProps) {
   return (
     <div
       aria-hidden
@@ -14,7 +16,12 @@ export default function Glow({ className }: GlowProps) {
         className
       )}
     >
-      <div className="absolute left-1/2 top-1/2 h-[min(70vw,520px)] w-[min(70vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-pc-glow blur-[110px] opacity-90" />
+      <div
+        className={cn(
+          "absolute left-1/2 top-1/2 h-[min(80vw,640px)] w-[min(80vw,640px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-pc-glow opacity-90 blur-[140px]",
+          pulse ? "animate-cta-pulse" : "animate-glow-drift"
+        )}
+      />
     </div>
   );
 }

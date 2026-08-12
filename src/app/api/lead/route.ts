@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     if (
       typeof data.startedAt !== "number" ||
-      Date.now() - data.startedAt < MIN_FILL_MS
+      Date.now()-data.startedAt < MIN_FILL_MS
     ) {
       return fakeOk();
     }

@@ -10,14 +10,8 @@ import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
 import SocialLinks from "@/components/ui/SocialLinks";
 import { EASE_IN, usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { copy } from "@/lib/copy";
 import { cn } from "@/lib/utils";
-
-const navLinks = [
-  { href: "/#model", label: "What I do" },
-  { href: "/#lanes", label: "Two lanes" },
-  { href: "/#process", label: "How it works" },
-  { href: "/#faq", label: "FAQ" },
-] as const;
 
 function NavLink({ href, label }: { href: string; label: string }) {
   const [hovered, setHovered] = useState(false);
@@ -25,7 +19,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="t-small text-pc-muted transition-colors duration-[180ms] hover:text-pc-white focus-visible:text-pc-white"
+      className="t-small text-pc-text transition-colors duration-200 hover:text-pc-white focus-visible:text-pc-white"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
@@ -100,14 +94,14 @@ export default function Navbar() {
             <Wordmark />
 
             <div className="hidden items-center gap-8 md:flex">
-              {navLinks.map((link) => (
+              {copy.nav.links.map((link) => (
                 <NavLink key={link.href} href={link.href} label={link.label} />
               ))}
             </div>
 
             <div className="hidden md:block">
               <CTAButton href="/apply" size="sm">
-                Apply
+                {copy.nav.apply}
               </CTAButton>
             </div>
 
@@ -160,7 +154,7 @@ export default function Navbar() {
 
             <div className="flex flex-1 flex-col px-6 pt-8 pb-10">
               <div className="flex flex-col gap-5">
-                {navLinks.map((link, index) => (
+                {copy.nav.links.map((link, index) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -182,7 +176,7 @@ export default function Navbar() {
                 <SocialLinks variant="icon" />
                 <div onClick={() => setOpen(false)}>
                   <CTAButton href="/apply" className="w-full">
-                    Apply to work with me
+                    {copy.nav.apply}
                   </CTAButton>
                 </div>
               </div>

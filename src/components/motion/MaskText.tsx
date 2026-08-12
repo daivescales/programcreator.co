@@ -24,7 +24,6 @@ type WordToken = {
   isSpace: boolean;
 };
 
-/** *word* → Caveat · _word_ → HandUnderline */
 function parseMarkup(text: string): WordToken[] {
   const tokens: WordToken[] = [];
   const re = /\*([^*]+)\*|_([^_]+)_|([^*_]+)/g;
@@ -69,18 +68,14 @@ export default function MaskText({
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const tokens = parseMarkup(children);
   const hasUnderline = tokens.some((t) => t.underline);
+  const show = !ready || inView;
+  const wordCount = tokens.filter((t) => !t.isSpace).length;
+  const underlineDelay = delay + wordCount * 0.035 + 0.3;
 
   useEffect(() => {
     setReady(true);
   }, []);
 
-  const show = !ready || inView;
-  const wordCount = tokens.filter((t) => !t.isSpace).length;
-  const underlineDelay = delay + wordCount * 0.035 + 0.3;
-
-  // Release overflow after each word finishes rising. Timeout is required because
-  // initial={false} can skip the animation and never fire onAnimationComplete,
-  // which previously left underlines clipped forever inside overflow:hidden.
   useEffect(() => {
     if (!show) return;
 
@@ -104,9 +99,9 @@ export default function MaskText({
       );
     });
 
-    return () => {
-      timers.forEach((id) => window.clearTimeout(id));
-    };
+    return () => timers.forEach((id) => window.clearTimeout(id));
+    // tokens derived from children; length is the stable dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- tokens rebuilt each render from children
   }, [show, reduced, delay, children, tokens.length]);
 
   let wordIndex = 0;
@@ -114,7 +109,7 @@ export default function MaskText({
   return (
     <Tag
       ref={ref as React.Ref<never>}
-      className={cn(hasUnderline && "pb-[0.35em]", className)}
+      className={cn(hasUnderline && "pb-[0.4em]", className)}
     >
       {tokens.map((token, i) => {
         if (token.isSpace) {
@@ -160,8 +155,6 @@ export default function MaskText({
           </span>
         );
 
-        // Underline wraps the clip box as a sibling of the SVG (HandUnderline
-        // outer is overflow-visible), so the mark is never clipped.
         if (token.underline) {
           return (
             <HandUnderline

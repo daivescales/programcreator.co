@@ -107,13 +107,13 @@ export default function SocialLinks({
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1.5 text-[15px] text-pc-muted transition-colors duration-[180ms] hover:text-pc-white"
+              className="group inline-flex items-center gap-1.5 text-[15px] text-pc-text transition-colors duration-200 hover:text-pc-white"
             >
               {link.label}
               <ArrowUpRight
                 size={14}
                 aria-hidden
-                className="transition-transform duration-[180ms] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </a>
           </li>
@@ -133,7 +133,7 @@ export default function SocialLinks({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.label}
-              className="flex h-10 w-10 items-center justify-center rounded-control text-pc-muted transition-colors duration-[180ms] hover:text-accent"
+              className="flex h-10 w-10 items-center justify-center rounded-control text-pc-text transition-colors duration-200 hover:text-accent"
             >
               <Icon size={18} aria-hidden />
             </a>
