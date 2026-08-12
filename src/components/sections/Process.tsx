@@ -21,8 +21,8 @@ const steps = [
   },
   {
     number: "04",
-    title: "I scale it",
-    body: "It goes live and I drive your audience into it, then keep tightening the offer against what the data actually says.",
+    title: "We scale it",
+    body: "It goes live and we drive your audience into it, then keep tightening the offer against what the data actually says.",
   },
 ] as const;
 

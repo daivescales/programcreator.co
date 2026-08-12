@@ -24,8 +24,8 @@ export type HandUnderlineProps = {
 };
 
 /**
- * Hand-drawn underline. Must sit outside MaskText overflow until reveal completes.
- * SVG at top:100% so it is not clipped by the word box during animation.
+ * Hand-drawn underline. The SVG is a sibling of the clipped word content
+ * (not inside overflow:hidden), so it can never be clipped by MaskText.
  */
 export default function HandUnderline({
   children,
@@ -72,9 +72,13 @@ export default function HandUnderline({
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
             initial={false}
-            animate={{ pathLength: active ? 1 : 0 }}
+            animate={{
+              pathLength: active ? 1 : 0,
+              opacity: active ? 1 : 0,
+            }}
             transition={{
               pathLength: { duration: reduced ? 0.15 : 0.3, ease: EASE_IN },
+              opacity: { duration: 0.12, ease: "linear" },
             }}
           />
         ) : (

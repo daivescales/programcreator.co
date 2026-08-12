@@ -74,17 +74,42 @@ export default function MaskText({
     setReady(true);
   }, []);
 
-  useEffect(() => {
-    if (!reduced) return;
-    const all: Record<number, boolean> = {};
-    for (let i = 0; i < tokens.length; i++) all[i] = true;
-    setReleased(all);
-  }, [reduced, tokens.length]);
-
-  let wordIndex = 0;
   const show = !ready || inView;
   const wordCount = tokens.filter((t) => !t.isSpace).length;
   const underlineDelay = delay + wordCount * 0.035 + 0.3;
+
+  // Release overflow after each word finishes rising. Timeout is required because
+  // initial={false} can skip the animation and never fire onAnimationComplete,
+  // which previously left underlines clipped forever inside overflow:hidden.
+  useEffect(() => {
+    if (!show) return;
+
+    if (reduced) {
+      const all: Record<number, boolean> = {};
+      for (let i = 0; i < tokens.length; i++) all[i] = true;
+      setReleased(all);
+      return;
+    }
+
+    const timers: number[] = [];
+    let wordIdx = 0;
+    tokens.forEach((token, i) => {
+      if (token.isSpace) return;
+      const index = wordIdx++;
+      const ms = (delay + index * 0.035 + 0.7) * 1000 + 40;
+      timers.push(
+        window.setTimeout(() => {
+          setReleased((prev) => ({ ...prev, [i]: true }));
+        }, ms)
+      );
+    });
+
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+    };
+  }, [show, reduced, delay, children, tokens.length]);
+
+  let wordIndex = 0;
 
   return (
     <Tag
@@ -99,56 +124,60 @@ export default function MaskText({
         const index = wordIndex++;
         const overflowVisible = reduced || released[i];
 
-        const inner = (
-          <motion.span
-            className={cn(
-              "inline-block will-change-transform",
-              token.emphasis && "hand"
-            )}
-            initial={false}
-            animate={
-              reduced
-                ? { opacity: show ? 1 : 0, y: 0 }
-                : { y: show ? "0%" : "105%", opacity: 1 }
-            }
-            transition={
-              reduced
-                ? { duration: 0.15, delay, ease: "linear" }
-                : {
-                    duration: 0.7,
-                    delay: delay + index * 0.035,
-                    ease: EASE_IN,
-                  }
-            }
-            onAnimationComplete={() => {
-              if (!reduced) {
-                setReleased((prev) => ({ ...prev, [i]: true }));
-              }
-            }}
+        const wordMotion = (
+          <span
+            className="inline-block align-bottom"
+            style={{ overflow: overflowVisible ? "visible" : "hidden" }}
           >
-            {token.word}
-          </motion.span>
+            <motion.span
+              className={cn(
+                "inline-block will-change-transform",
+                token.emphasis && "hand"
+              )}
+              initial={false}
+              animate={
+                reduced
+                  ? { opacity: show ? 1 : 0, y: 0 }
+                  : { y: show ? "0%" : "105%", opacity: 1 }
+              }
+              transition={
+                reduced
+                  ? { duration: 0.15, delay, ease: "linear" }
+                  : {
+                      duration: 0.7,
+                      delay: delay + index * 0.035,
+                      ease: EASE_IN,
+                    }
+              }
+              onAnimationComplete={() => {
+                if (!reduced) {
+                  setReleased((prev) => ({ ...prev, [i]: true }));
+                }
+              }}
+            >
+              {token.word}
+            </motion.span>
+          </span>
         );
 
+        // Underline wraps the clip box as a sibling of the SVG (HandUnderline
+        // outer is overflow-visible), so the mark is never clipped.
+        if (token.underline) {
+          return (
+            <HandUnderline
+              key={i}
+              variant={underlineVariant}
+              delay={reduced ? 0 : underlineDelay}
+              className="align-bottom"
+            >
+              {wordMotion}
+            </HandUnderline>
+          );
+        }
+
         return (
-          <span
-            key={i}
-            className="inline-block align-bottom"
-            style={{
-              overflow: overflowVisible ? "visible" : "hidden",
-              paddingBottom: token.underline ? "0.35em" : undefined,
-            }}
-          >
-            {token.underline ? (
-              <HandUnderline
-                variant={underlineVariant}
-                delay={reduced ? 0 : underlineDelay}
-              >
-                {inner}
-              </HandUnderline>
-            ) : (
-              inner
-            )}
+          <span key={i} className="inline-block align-bottom">
+            {wordMotion}
           </span>
         );
       })}
