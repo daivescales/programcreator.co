@@ -9,9 +9,7 @@
   --color-navy-900: var(--pc-navy-900);
   --color-navy-800: var(--pc-navy-800);
   --color-navy-750: var(--pc-navy-750);
-  --color-navy-700: var(--pc-navy-700);
-  --color-navy-600: var(--pc-navy-600);
-
+  --color-pc-surface: var(--pc-surface);
   --color-pc-line: var(--pc-line);
   --color-pc-line-2: var(--pc-line-2);
   --color-pc-white: var(--pc-white);
@@ -23,11 +21,9 @@
 
   --color-background: var(--pc-navy-800);
   --color-foreground: var(--pc-text);
-  --color-card: var(--pc-navy-700);
-  --color-card-foreground: var(--pc-white);
   --color-primary: var(--pc-accent);
   --color-primary-foreground: var(--pc-navy-900);
-  --color-muted: var(--pc-navy-700);
+  --color-muted: var(--pc-navy-750);
   --color-muted-foreground: var(--pc-muted);
   --color-destructive: #f87171;
   --color-border: var(--pc-line);
@@ -46,17 +42,16 @@
 :root {
   --pc-navy-900: #071528;
   --pc-navy-800: #0b2038;
-  --pc-navy-750: #0e2742;
-  --pc-navy-700: #12304f;
-  --pc-navy-600: #17395c;
+  --pc-navy-750: #0d243d;
+  --pc-surface: rgba(255, 255, 255, 0.025);
   --pc-line: rgba(255, 255, 255, 0.07);
-  --pc-line-2: rgba(255, 255, 255, 0.14);
+  --pc-line-2: rgba(255, 255, 255, 0.13);
   --pc-white: #ffffff;
-  --pc-muted: #94aac4;
-  --pc-text: #c6d6e9;
+  --pc-muted: #8fa6c1;
+  --pc-text: #bccee3;
   --pc-accent: #4d9bff;
   --pc-accent-2: #a9cdff;
-  --pc-glow: rgba(77, 155, 255, 0.18);
+  --pc-glow: rgba(77, 155, 255, 0.14);
 
   --background: var(--pc-navy-800);
   --foreground: var(--pc-text);
@@ -70,11 +65,11 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 120px;
+    scroll-padding-top: 110px;
   }
 
   body {
-    @apply overflow-x-hidden bg-navy-800 font-sans text-pc-text antialiased;
+    @apply overflow-x-hidden bg-navy-800 font-sans font-normal text-pc-text antialiased;
   }
 
   *:focus {
@@ -93,14 +88,65 @@
 }
 
 @layer utilities {
+  .t-display {
+    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--pc-white);
+  }
+
+  .t-h2 {
+    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--pc-white);
+  }
+
+  .t-h3 {
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.375;
+    color: var(--pc-white);
+  }
+
+  .t-body {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    max-width: 56ch;
+    color: var(--pc-text);
+  }
+
+  .t-small {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--pc-text);
+  }
+
+  .t-label {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pc-muted);
+  }
+
   .hand {
     font-family: var(--font-hand), cursive;
-    font-size: 1.25em;
+    font-size: 1.3em;
     font-weight: 400;
     color: var(--pc-accent-2);
-    transform: rotate(-0.7deg) translateY(0.06em);
     display: inline-block;
+    transform: rotate(-1deg) translateY(0.06em);
     line-height: 1;
+  }
+
+  .font-wordmark {
+    font-weight: 600;
   }
 
   .rounded-panel {
@@ -112,23 +158,32 @@
   }
 
   .scroll-mt-section {
-    scroll-margin-top: 120px;
+    scroll-margin-top: 110px;
   }
 
-  .serif-em {
-    /* back-compat alias → Caveat handwriting */
-    font-family: var(--font-hand), cursive;
-    font-size: 1.25em;
-    font-style: normal;
-    font-weight: 500;
-    color: var(--pc-accent-2);
-    display: inline-block;
-    transform: rotate(-0.6deg) translateY(0.05em);
+  /* Accordion open/close without height:auto jank */
+  .accordion-grid {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .accordion-grid[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+
+  .accordion-grid > .accordion-inner {
+    overflow: hidden;
+    min-height: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .accordion-grid {
+    transition: none;
   }
 }

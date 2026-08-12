@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HoverRow } from "@/components/motion";
+import Link from "next/link";
 import LegalLayout from "@/components/legal/LegalLayout";
 import { site } from "@/lib/site-config";
 
@@ -40,19 +40,19 @@ export default function LegalIndexPage() {
     <LegalLayout title="Legal" currentPath="/legal">
       <div className="border-t border-pc-line">
         {docs.map((doc) => (
-          <HoverRow
+          <Link
             key={doc.href}
             href={doc.href}
-            className="grid grid-cols-[auto_1fr] gap-4 py-7 md:grid-cols-[auto_1fr_1.2fr] md:gap-8"
+            className="group grid grid-cols-[auto_1fr] gap-4 border-b border-pc-line py-7 transition-colors duration-[180ms] md:grid-cols-[auto_1fr_1.2fr] md:gap-8"
           >
             <span className="text-[13px] text-accent">{doc.index}</span>
-            <span className="text-[17px] font-medium tracking-[-0.02em] text-pc-white">
+            <span className="text-[17px] font-medium tracking-[-0.02em] text-pc-white transition-colors duration-[180ms] group-hover:text-accent">
               {doc.label}
             </span>
             <span className="col-span-2 max-w-[46ch] text-[15px] leading-relaxed text-pc-muted md:col-span-1">
               {doc.meta}
             </span>
-          </HoverRow>
+          </Link>
         ))}
       </div>
     </LegalLayout>

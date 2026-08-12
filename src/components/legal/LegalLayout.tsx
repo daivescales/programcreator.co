@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import Container from "@/components/ui/Container";
+import SocialLinks from "@/components/ui/SocialLinks";
 import { contactEmail } from "@/lib/site-config";
 
 const LEGAL_LINKS = [
@@ -36,16 +37,16 @@ export function ContactEmail({ className }: { className?: string }) {
 
 export default function LegalLayout({
   title,
-  lastUpdated = "August 11, 2026",
+  lastUpdated = "August 12, 2026",
   children,
   currentPath,
 }: LegalLayoutProps) {
   const others = LEGAL_LINKS.filter((l) => l.href !== currentPath);
 
   return (
-    <div className="bg-navy-800 py-32">
+    <div className="bg-navy-800 py-28">
       <Container>
-        <article className="mx-auto max-w-[740px]">
+        <article className="mx-auto max-w-[720px]">
           <Link
             href="/"
             className="mb-10 inline-block text-sm text-pc-muted transition-colors hover:text-pc-white"
@@ -53,9 +54,7 @@ export default function LegalLayout({
             ← Back to home
           </Link>
 
-          <h1 className="text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-[-0.035em] text-pc-white">
-            {title}
-          </h1>
+          <h1 className="t-h2">{title}</h1>
           <p className="mt-4 text-pc-muted">Last updated: {lastUpdated}</p>
 
           <div className="mt-14 space-y-10">{children}</div>
@@ -64,9 +63,7 @@ export default function LegalLayout({
             aria-label="Related legal documents"
             className="mt-16 border-t border-pc-line pt-8"
           >
-            <p className="mb-4 text-[11px] uppercase tracking-[0.2em] text-pc-muted">
-              Also see
-            </p>
+            <p className="t-label mb-4">Also see</p>
             <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
               {others.map((link) => (
                 <li key={link.href}>
@@ -89,6 +86,15 @@ export default function LegalLayout({
                 </li>
               ) : null}
             </ul>
+
+            <div className="mt-8">
+              <p className="t-label mb-4">Elsewhere</p>
+              <SocialLinks variant="text" />
+            </div>
+
+            <p className="mt-8 text-sm text-pc-muted">
+              Contact: <ContactEmail />
+            </p>
           </nav>
         </article>
       </Container>
@@ -107,11 +113,11 @@ export function LegalSection({
 }) {
   return (
     <section className="pt-10">
-      <h2 className="mb-4 text-lg font-semibold tracking-tight text-pc-white">
+      <h2 className="t-h3 mb-4">
         <span className="mr-3 text-accent">{number}</span>
         {title}
       </h2>
-      <div className="space-y-4 text-[17px] leading-[1.75] text-pc-text">
+      <div className="space-y-4 text-[16px] leading-[1.75] text-pc-text">
         {children}
       </div>
     </section>

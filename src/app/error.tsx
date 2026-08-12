@@ -15,13 +15,9 @@ export default function Error({
   return (
     <section className="flex min-h-[70vh] items-center bg-navy-800 py-24 text-center">
       <Container>
-        <p className="mb-4 text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
-          Error
-        </p>
-        <h1 className="text-[clamp(2rem,4vw,3rem)] font-semibold tracking-[-0.035em] text-pc-white">
-          Something went wrong.
-        </h1>
-        <p className="mx-auto mt-4 max-w-[50ch] text-lg text-pc-text">
+        <p className="t-label mb-4 text-accent">Error</p>
+        <h1 className="t-h2">Something went wrong.</h1>
+        <p className="t-body mx-auto mt-4">
           Refresh and try again.
           {email ? (
             <>
@@ -36,14 +32,14 @@ export default function Error({
               .
             </>
           ) : (
-            <> If it keeps happening, email is coming soon.</>
+            <> If it keeps happening, Email coming soon.</>
           )}
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <button
             type="button"
             onClick={reset}
-            className="inline-flex h-14 items-center justify-center rounded-control bg-accent px-9 text-[17px] font-medium text-navy-900 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex h-12 items-center justify-center rounded-control bg-accent px-7 text-[15px] font-medium text-navy-900 transition-[color,transform] duration-[180ms] hover:-translate-y-px hover:bg-[#6aafff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Try again
           </button>

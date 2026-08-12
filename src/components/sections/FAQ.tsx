@@ -2,16 +2,10 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
-import { motion } from "framer-motion";
-import Annotation from "@/components/ui/Annotation";
 import Heading from "@/components/ui/Heading";
 import Section from "@/components/ui/Section";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { faqItems } from "@/content/faq";
-import {
-  EASE_IN,
-  usePrefersReducedMotion,
-} from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
 export { faqItems };
@@ -36,109 +30,86 @@ function renderAnswer(answer: string): ReactNode {
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
-  const reduced = usePrefersReducedMotion();
 
   return (
-    <Section id="faq" tone="750" className="scroll-mt-section">
+    <Section id="faq" tone="750">
       <SectionLabel number="04" label="Questions" />
 
       <div className="mt-6 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
-          <div className="lg:sticky lg:top-40">
+          <div className="lg:sticky lg:top-32">
             <Heading
               as="h2"
               text="Before you _apply_."
-              underlineVariant={3}
+              underlineVariant={2}
               className="max-w-[12ch]"
             />
-            <div className="mt-5">
-              <Annotation className="text-[20px]">
-                ask me the rest on the call
-              </Annotation>
-            </div>
+            <p className="hand mt-4">ask me the rest on the call</p>
           </div>
         </div>
 
         <div className="lg:col-span-7 lg:col-start-6">
-          <div>
-            {faqItems.map((item, index) => {
-              const isOpen = open === index;
-              const number = String(index + 1).padStart(2, "0");
-              const isFirst = index === 0;
-              const isLast = index === faqItems.length - 1;
+          {faqItems.map((item, index) => {
+            const isOpen = open === index;
+            const panelId = `faq-panel-${index}`;
+            const isFirst = index === 0;
 
-              return (
-                <div
-                  key={item.question}
-                  className={cn(
-                    !isFirst && "border-t border-pc-line",
-                    isLast && "border-b-0"
-                  )}
+            return (
+              <div
+                key={item.question}
+                className={cn(!isFirst && "border-t border-pc-line")}
+              >
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  onClick={() => setOpen(isOpen ? null : index)}
+                  className="group flex w-full items-center justify-between gap-4 py-7 text-left"
                 >
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    onClick={() => setOpen(isOpen ? null : index)}
-                    className="group grid w-full grid-cols-[auto_1fr_auto] items-center gap-4 py-8 text-left"
-                  >
-                    <span
-                      className={cn(
-                        "text-[12px] tabular-nums transition-colors duration-[300ms]",
-                        isOpen ? "text-accent" : "text-pc-muted"
-                      )}
-                    >
-                      {number}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[clamp(1rem,1.4vw,1.15rem)] font-medium tracking-[-0.02em] transition-[color,transform] duration-[300ms]",
-                        isOpen
-                          ? "text-accent"
-                          : "text-pc-white group-hover:translate-x-1"
-                      )}
-                    >
-                      {item.question}
-                    </span>
-                    <span
-                      aria-hidden
-                      className="relative flex h-5 w-5 shrink-0 items-center justify-center"
-                    >
-                      <span className="absolute h-px w-5 bg-pc-muted" />
-                      <span
-                        className={cn(
-                          "absolute h-5 w-px bg-pc-muted transition-transform duration-[300ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
-                          isOpen && "scale-y-0"
-                        )}
-                      />
-                    </span>
-                  </button>
-
-                  <motion.div
-                    initial={false}
-                    animate={
+                  <span
+                    className={cn(
+                      "text-[16px] font-medium transition-colors duration-[180ms]",
                       isOpen
-                        ? { height: "auto", opacity: 1 }
-                        : { height: 0, opacity: 0 }
-                    }
-                    transition={{
-                      duration: reduced ? 0.15 : 0.35,
-                      ease: EASE_IN,
-                    }}
-                    className="overflow-hidden"
+                        ? "text-accent"
+                        : "text-pc-white group-hover:text-accent-2"
+                    )}
                   >
+                    {item.question}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="relative flex h-5 w-5 shrink-0 items-center justify-center"
+                  >
+                    <span className="absolute h-px w-5 bg-pc-muted" />
+                    <span
+                      className={cn(
+                        "absolute h-5 w-px bg-pc-muted transition-transform duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                        isOpen && "scale-y-0"
+                      )}
+                    />
+                  </span>
+                </button>
+
+                <div
+                  id={panelId}
+                  role="region"
+                  className="accordion-grid"
+                  data-open={isOpen ? "true" : "false"}
+                >
+                  <div className="accordion-inner">
                     <p
                       className={cn(
-                        "max-w-[54ch] pb-10 text-[17px] leading-[1.75] text-pc-text transition-transform duration-[300ms]",
-                        isOpen ? "translate-y-0" : "translate-y-2"
+                        "t-body max-w-[54ch] pb-8 transition-opacity duration-[200ms]",
+                        isOpen ? "opacity-100 delay-[60ms]" : "opacity-0"
                       )}
                     >
                       {renderAnswer(item.answer)}
                     </p>
-                  </motion.div>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </Section>

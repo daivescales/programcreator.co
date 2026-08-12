@@ -14,14 +14,12 @@ export default function SectionLabel({
 }: SectionLabelProps) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <span className="text-[12px] tabular-nums text-accent">{number}</span>
+      <span className="t-label !tracking-[0.16em] text-accent">{number}</span>
       <span
         aria-hidden
         className="h-px w-6 shrink-0 bg-pc-line-2"
       />
-      <span className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
-        {label}
-      </span>
+      <span className="t-label">{label}</span>
     </div>
   );
 }

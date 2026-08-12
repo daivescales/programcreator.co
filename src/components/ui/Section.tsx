@@ -30,7 +30,7 @@ export default function Section({
     <section
       id={id}
       className={cn(
-        "scroll-mt-section py-32 md:py-44",
+        "scroll-mt-section py-28 md:py-36",
         tones[tone],
         className
       )}

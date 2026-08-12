@@ -1,4 +1,6 @@
-import { HoverRow, MaskLines, StaggerList } from "@/components/motion";
+"use client";
+
+import { MaskLines, StaggerList } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import Heading from "@/components/ui/Heading";
 import Section from "@/components/ui/Section";
@@ -29,35 +31,32 @@ export default function Model() {
         <SectionLabel number="01" label="What I do" />
         <Heading
           as="h2"
-          text="You don't have a traffic problem. You have an offer problem."
-          className="mt-6 max-w-[16ch]"
+          text="You don't have a traffic problem. You have an *offer* problem."
+          className="mt-6 max-w-[20ch]"
         />
 
-        <MaskLines
-          delay={0.12}
-          className="mt-6 max-w-[50ch] text-[17px] leading-[1.65] text-pc-text"
-        >
+        <MaskLines delay={0.12} className="t-body mt-5 max-w-[50ch]">
           {
             "You are already getting attention. Creator Product Scaling fixes what that attention lands on."
           }
         </MaskLines>
 
-        <StaggerList className="mt-16">
+        <StaggerList className="mt-14">
           {rows.map((row) => (
-            <HoverRow
+            <div
               key={row.number}
-              className="grid grid-cols-1 items-start gap-4 py-10 md:grid-cols-12 md:gap-6"
+              className="group grid grid-cols-1 items-start gap-3 py-8 md:grid-cols-12 md:gap-6"
             >
               <span className="text-[13px] text-accent md:col-span-1">
                 {row.number}
               </span>
-              <h3 className="text-[clamp(1.15rem,1.9vw,1.5rem)] font-semibold tracking-[-0.035em] text-pc-white md:col-span-4">
+              <h3 className="t-h3 transition-[color,transform] duration-[180ms] group-hover:translate-x-[3px] group-hover:text-accent md:col-span-3">
                 {row.title}
               </h3>
-              <p className="max-w-[50ch] text-[17px] leading-[1.65] text-pc-text md:col-span-7">
+              <p className="t-body max-w-[48ch] md:col-span-7 md:col-start-6">
                 {row.body}
               </p>
-            </HoverRow>
+            </div>
           ))}
         </StaggerList>
       </Container>

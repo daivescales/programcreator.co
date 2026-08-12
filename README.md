@@ -8,28 +8,55 @@ Creators and digital brands work on a **revenue split** (nothing upfront for my 
 
 - Next.js 15 (App Router, TypeScript)
 - Tailwind CSS v4
-- Framer Motion (restrained: MaskText, HandUnderline, Reveal, HoverRow, StaggerList, MagneticButton, ScrollProgress, marks)
+- Framer Motion (restrained: MaskText, MaskLines, Reveal, StaggerList, HandUnderline, HoverRow, ScrollProgress)
 - Supabase (`leads` table)
 - Google Sheets API (journey tracking through to booked)
 - Resend
 - Cal.com embed (`@calcom/embed-react`) + webhook backup
 
-**Not used:** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch, marquees, counters, pulse dots, mockups, scroll-pin / parallax, Signature, grain.
+**Not used:** Lenis, GSAP, ScrollTrigger, custom cursor, scramble/glitch, marquees, counters, pulse dots, mockups, scroll-pin / parallax, Signature, grain, cursor-following buttons, HandCircle / HandArrow.
 
-## Design (v5)
+## Design (v6)
 
-Quiet expensive consultancy: mid-navy page (`#0B2038`), soft `rounded-panel` / `rounded-control`, tonal navy layering, Inter Tight + Caveat handwriting accents only. See `.cursorrules`.
+Quiet consultancy. Mid-navy page (`#0B2038`), soft `rounded-panel` / `rounded-control`, tonal navy layering. Inter Tight + Caveat handwriting accents only. See `.cursorrules`.
+
+### Type scale (six sizes only)
+
+| Class | Role |
+|-------|------|
+| `.t-display` | Hero only, clamp to 3.5rem, weight 500 |
+| `.t-h2` | Section heads, clamp to 2.25rem, weight 500 |
+| `.t-h3` | Subheads, 1.0625rem, weight 500 |
+| `.t-body` | 16px / 1.7, max 56ch |
+| `.t-small` | 14px |
+| `.t-label` | 11px uppercase, tracking 0.16em |
+
+Wordmark may use weight 600. Never 700.
+
+### HandUnderline
+
+MaskText used to clip underlines (`overflow: hidden` on word spans). Fix: release overflow after reveal, pad headings that use underline (`padding-bottom: 0.35em`), and keep ancestors free of `overflow: hidden`. Landing uses underline on three terms (hero, FAQ, Final CTA) plus nav hover. Apply uses it once on **send**.
 
 Landing is **7 blocks**: Hero, Model, Lanes, Process, AboutStrip, FAQ, FinalCTA.
 
-`/apply` is an **11-step** two-panel flow (36/64) with an investment gate on step 9. Selecting "Nothing right now" closes the application (status `not_qualified`), sends `sendNotQualifiedNotice`, and never routes to `/book`.
+`/apply` is an **11-step** two-panel flow (34/66) with an investment gate on step 9. Selecting "Nothing right now" closes the application (status `not_qualified`), sends `sendNotQualifiedNotice`, and never routes to `/book`.
+
+### Apply stability
+
+- `isTransitioning` lock blocks Enter, Continue, letter keys, and option clicks during step changes
+- Question area `min-height` 420px desktop / 340px mobile
+- `AnimatePresence mode="wait"` (no overlapping enter/exit)
+- Focus moves to the new input after the enter transition
+- Panel scroll resets on every step change
+- Choice auto-advance waits 320ms with the lock held
+- Step transitions are a simple fade/rise (no MaskText)
 
 ## Routes
 
 | Path | Purpose |
 |------|---------|
 | `/` | Landing (7 blocks) |
-| `/apply` | 11-step two-panel application + DQ gate (noindex) |
+| `/apply` | 11-step two-panel application + closed screen (noindex) |
 | `/book` | Cal.com booking + thank-you state (noindex) |
 | `/legal` | Legal index |
 | `/terms` | Terms of Service (15 sections) |
@@ -114,7 +141,7 @@ The `/book` page also POSTs to `/api/booking` on embed success (email, bookedAt,
 
 Set `NEXT_PUBLIC_SITE_URL=https://programcreator.com` (metadata, sitemap, OG).
 
-Leave `site.email` as `""` until you have a real address. Never invent a contact address.
+Leave `site.email` as `""` until you have a real address. Never invent a contact address. Use `contactEmail()` anywhere UI needs an address; empty renders **Email coming soon**.
 
 ## Environment variables
 
@@ -145,9 +172,10 @@ CAL_WEBHOOK_SECRET
 
 ## Funnel notes
 
-- Step 9 investment gate: "Nothing right now" → `qualified=false`, `status=not_qualified`, soft DQ screen, `sendNotQualifiedNotice`. Never say unqualified / rejected / denied on screen.
+- Step 9 investment gate: "Nothing right now" → `qualified=false`, `status=not_qualified`, firm closed screen, `sendNotQualifiedNotice`. Never say unqualified / rejected / denied on screen.
 - Investment copy is launch costs (ads, tooling, product), not my fee. Must not contradict "nothing upfront".
 - Booking: `/api/booking` + Cal webhook → status `booked`, sheet Status/Booked at, booking confirmation. Idempotent.
+- Thank-you persists via `sessionStorage` keyed on email, with SocialLinks and a Caveat "see you soon".
 - `sheet_row` stored on the lead for sheet updates.
 
 ## Before launch, content / legal TODOs
@@ -180,8 +208,8 @@ npx tsc --noEmit     # typecheck
 5. Add custom domain `programcreator.com` (+ `www` redirect).
 6. Verify the Resend sending domain (SPF/DKIM/DMARC).
 7. Confirm Cal.com embed loads on `/book` (dark theme, brand `#4D9BFF`).
-8. Re-run `supabase/schema.sql` when upgrading (v5 drops and recreates `leads`).
-9. Submit a test lead through `/apply` → check Supabase, Sheet, and emails. Test the investment DQ path. Book a call and confirm status / sheet / confirmation email.
+8. Re-run `supabase/schema.sql` when upgrading (drops and recreates `leads`).
+9. Submit a test lead through `/apply` → check Supabase, Sheet, and emails. Test the investment closed path. Book a call and confirm status / sheet / confirmation email.
 10. Configure the Cal webhook as above.
 11. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
 

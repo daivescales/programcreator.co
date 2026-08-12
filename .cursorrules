@@ -1,63 +1,51 @@
-# ProgramCreator — Cursor Rules (v5 FINAL)
+# ProgramCreator — Cursor Rules (v6 FINAL)
 
 ## Business
-- Brand: ProgramCreator. One-person studio (Daive, @daivescales). First person only. No "we deliver" / team language.
-- Service: Creator Product Scaling. Build what existing attention should point at.
-- Lane A (creators/digital): product + converting page. Payment: revenue split, nothing upfront (covers my time only; client still funds ads/tooling/product costs).
-- Lane B (physical): storefront rebuild. Payment: monthly retainer.
-- Same work both lanes; payment is the only difference.
-- Availability: "limited spots, first come first served" only. NEVER a number of spots.
-- Email: site.email is "" until set. Helper contactEmail() returns string|null. Never invent hello@/contact@. Empty → render "Email coming soon", never broken mailto.
-- NO signature graphic anywhere. Do not build Signature.
+- Brand: ProgramCreator. One-person studio (Daive, @daivescales). First person only. No "we deliver".
+- Creator Product Scaling. Lane A: revenue split, nothing upfront (my time; client funds ads/tooling). Lane B: monthly retainer. Same work, different pay.
+- Availability: "limited spots, first come first served" only. Never a number.
+- Socials (exact): YouTube https://www.youtube.com/@daivescales · Instagram https://www.instagram.com/daivescales/ · X https://x.com/daivescales · TikTok https://www.tiktok.com/@daivescales
+- email: "" with TODO. Never invent hello@/contact@. Empty → "Email coming soon". No Signature component.
 
-## Writing
-Banned: em dash "—" anywhere; "not just X, it's Y"; three-adjective lists; rhetorical-question headings; "But here's the thing"/"The truth is"/"Let's be honest"/"Imagine"; semicolons in marketing copy.
-Banned words: unlock, elevate, empower, leverage, synergy, revolutionize, seamless, cutting edge, game changer, transformative, bespoke, curated, journey, ecosystem, "in today's landscape", "we're passionate about", "take it to the next level".
-Write: first person, short declaratives, varied length, specific, understated, blunt OK. No ! No emoji.
+## Central design principle
+Large bold type forced crowding and looked cheap. Override everything:
+1. TYPE SMALLER: largest text 3.5rem (hero only). Nothing else above 2.25rem.
+2. WEIGHT LIGHTER: headings weight 500 only. Never 600/700 except wordmark. Body 400.
+3. SPACE: sections py-28 md:py-36. ≥2.5rem heading→content. ≥4rem between groups. Delete elements before closing gaps.
 
-## Visual — quiet expensive consultancy (NOT blocky v4)
-AVOID: squared corners everywhere, hairline grids dividing everything, vertical/rotated text, giant outlined stroke text, icon cards, bento, pills, gradients, centred hero+2 CTAs, "Our Services" titles, grain overlays, stock office photos.
-DO:
-- Space primary: sections py-32 md:py-44. Cut elements before shrinking gaps.
-- Soft geometry: rounded-panel 6px, rounded-control 4px. Never 0, never >8px.
-- Tonal layering: alternate navy-800 / navy-750. Borders rare (≤1–2/screen), low contrast.
-- Body ≤58ch, headings ≤16ch. Asymmetry left-weighted; only Final CTA centred.
-- One focal point per screen. Quiet hierarchy (few sizes).
-- SectionLabel: horizontal eyebrow only (number accent + 24px hairline + muted label). NO sticky spine rail, NO rotated text.
+## Type (six sizes only — no seventh)
+Inter Tight 400/500 (+600 wordmark only). Caveat 400 only.
+.t-display clamp(2.25rem,4.2vw,3.5rem) w500 leading-[1.08] tracking-[-0.02em]
+.t-h2 clamp(1.6rem,2.6vw,2.25rem) w500 leading-[1.15] tracking-[-0.015em]
+.t-h3 1.0625rem w500 · .t-body 16px leading-[1.7] max-w-[56ch] · .t-small 14px · .t-label 11px uppercase tracking-[0.16em]
+Caveat: 1.3x, translateY baseline, -1deg alone, accent-2, max 5 words, ~5 landing uses. Never body/buttons/labels/nav/legal.
 
-## Colour
---pc-navy-900 #071528 · --pc-navy-800 #0B2038 · --pc-navy-750 #0E2742 · --pc-navy-700 #12304F · --pc-navy-600 #17395C
---pc-line rgba(255,255,255,0.07) · --pc-line-2 rgba(255,255,255,0.14)
---pc-white #FFF · --pc-text #C6D6E9 · --pc-muted #94AAC4 · --pc-accent #4D9BFF · --pc-accent-2 #A9CDFF · --pc-glow rgba(77,155,255,0.18)
-Accent: handwriting/marks, primary CTA, section numbers, active. Max ~4 accent elements/screen.
+## HandUnderline ONLY (no circles/arrows)
+WHY IT FAILED: MaskText overflow:hidden clipped underlines below baseline.
+FIX REQUIRED: (a) MaskText onAnimationComplete → overflow:visible on word spans (b) headings with underline get padding-bottom 0.35em (c) no ancestor overflow:hidden.
+Build: relative inline-block wrapper, SVG top:100% overflow visible, viewBox 0 0 100 12 preserveAspectRatio none, cubic dip+overshoot, stroke accent 2.5 round, vector-effect non-scaling-stroke, -0.8deg, strokeDashoffset 0.7s delay 0.3s after reveal, 2 variants. Reduced motion = drawn.
+USE: landing ×3 (hero asking, FAQ apply, FinalCTA points) + nav hover. Apply ×1 (send). Nowhere else.
 
-## Type — two fonts only
-Inter Tight 400/500/600/700 structural.
-Caveat 400/600 handwriting ONLY. Scale ~1.25x vs surrounding, slight translateY baseline fix, rotation -1.5° to -0.5° when alone. Colour accent-2 (or accent). Max ~6 words. ~8 uses on landing. Never body/buttons/labels/nav/legal.
-display clamp(2.75rem,7.5vw,6rem) · h2 clamp(2rem,4.5vw,3.5rem) · body 17px leading-[1.65]
-
-## Marks (src/components/marks/)
-HandUnderline (3 variants), HandCircle (imperfect open ellipse, 2 variants), HandArrow (curved + two-stroke head, 2 variants). pathLength draw; reduced motion = static.
-Budget landing: Underline×4 (hero asking, lanes same, FAQ apply, FinalCTA points) · Circle×2 (Revenue split, step 02) · Arrow×2 (hero CTA annotation, Lane A annotation) · nav hover Underline. Apply: Underline×2 (behind, send). No more.
+## Colour / blockiness
+navy-900 #071528 · 800 #0B2038 · 750 #0D243D · surface rgba(255,255,255,0.025) · line 0.07 · line-2 0.13 · white · text #BCCEE3 · muted #8FA6C1 · accent #4D9BFF · accent-2 #A9CDFF · glow 0.14
+≤2 filled/bordered surfaces on entire landing. Prefer space/tone over borders. Radius 6px surfaces / 4px controls. Never 0, never >8. No navy-700 slabs, no vertical dividers, no grain, no outlined stroke wordmarks.
 
 ## Motion
-NO: mockups, diagrams, marquees, counters, pulse, parallax, cursor, scramble, Lenis/GSAP, pin, scrub, grain, Signature.
-ONLY: MaskText, MaskLines, Reveal, StaggerList, marks, HoverRow, MagneticButton (≤5px), ScrollProgress scaleX.
-whileInView once margin "-12%". transform+opacity only.
-Ease [0.16,1,0.3,1] / [0.65,0,0.35,1]. micro 160 · standard 480 · display 800.
+NO: decorative graphics, magnetic buttons, height:auto accordion, Lenis/GSAP, scramble, marquees.
+YES: MaskText (overflow release!), MaskLines, Reveal 14px, StaggerList, HandUnderline, hover colour/3px translate/border 180ms.
+Accordion: CSS grid-template-rows 0fr→1fr (inner overflow hidden min-height 0). Never height auto.
+whileInView once margin "-10%". transform+opacity only. Ease [0.16,1,0.3,1]. micro 180 · standard 450 · reveal 700.
 
-## Texture
-Static Glow hero + Final CTA only. No grain.
+## Layout
+Container max-w-[1080px]. Left-aligned; only Final CTA centred. SectionLabel horizontal only.
+Banned: icon cards, bento, pills, gradients, grain, bordered spec strips, stock photos, emoji, blobs.
 
-## Sitemap
-/ (Hero, Model, Lanes, Process, AboutStrip, FAQ, FinalCTA) · /apply (11 steps + DQ gate) · /book (booking + thank-you) · /legal · /terms · /privacy · /cookies · /disclaimer · temporary /dev/marks (delete before launch)
-CTA → /apply always.
+## Sitemap / funnel
+/ (Hero Model Lanes Process AboutStrip FAQ FinalCTA) · /apply (11 steps + closed screen, transition lock) · /book (booking + thank you) · /legal /terms /privacy /cookies /disclaimer · temp /dev/marks then delete
+CTA → /apply. Investment gate "Nothing right now" → not_qualified, no Cal. Booking APIs + webhook + sheet journey.
 
-## Funnel notes
-- investment_range on step 9; "Nothing right now" → not_qualified, no /book, sendNotQualifiedNotice. Never say unqualified/rejected/denied on screen.
-- Investment copy must not contradict "nothing upfront" (it's launch costs, not my fee).
-- Booking: /api/booking + Cal webhook update status booked, sheet Status/Booked at, booking confirmation. Idempotent.
-- sheet_row stored on lead for sheet updates.
+## Writing
+No em dashes. No banned filler words. First person. Short declaratives.
 
 ## TODOs only
-Daive photo · governing law · cookie analytics · site.email · calLink if needed.
+email · calLink · governing law · cookie analytics · photo note (no placeholder square)

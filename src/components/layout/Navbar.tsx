@@ -4,19 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { HandUnderline } from "@/components/marks";
+import HandUnderline from "@/components/marks/HandUnderline";
 import { MaskText } from "@/components/motion";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
-import {
-  InstagramIcon,
-  TikTokIcon,
-  XIcon,
-  YouTubeIcon,
-} from "@/components/ui/social-icons";
+import SocialLinks from "@/components/ui/SocialLinks";
 import { EASE_IN, usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
-import { site } from "@/lib/site-config";
 
 const navLinks = [
   { href: "/#model", label: "What I do" },
@@ -25,34 +19,33 @@ const navLinks = [
   { href: "/#faq", label: "FAQ" },
 ] as const;
 
-const socials = [
-  { label: "Instagram", href: site.socials.instagram, icon: InstagramIcon },
-  { label: "TikTok", href: site.socials.tiktok, icon: TikTokIcon },
-  { label: "YouTube", href: site.socials.youtube, icon: YouTubeIcon },
-  { label: "X", href: site.socials.x, icon: XIcon },
-] as const;
-
 function NavLink({ href, label }: { href: string; label: string }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <Link
       href={href}
-      className="text-[13px] text-pc-muted transition-colors duration-[160ms] hover:text-pc-white focus-visible:text-pc-white"
+      className="t-small text-pc-muted transition-colors duration-[180ms] hover:text-pc-white focus-visible:text-pc-white"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
     >
-      <HandUnderline
-        trigger="hover"
-        active={hovered}
-        variant={1}
-        thickness={2.5}
-        delay={0}
-      >
+      <HandUnderline trigger="hover" active={hovered} variant={1} delay={0}>
         {label}
       </HandUnderline>
+    </Link>
+  );
+}
+
+function Wordmark({ onClick }: { onClick?: () => void }) {
+  return (
+    <Link
+      href="/"
+      onClick={onClick}
+      className="font-wordmark text-[15px] tracking-[-0.02em] text-pc-white"
+    >
+      Program<span className="text-accent">Creator</span>
     </Link>
   );
 }
@@ -92,8 +85,6 @@ export default function Navbar() {
     };
   }, [open]);
 
-  const activeSocials = socials.filter((s) => s.href);
-
   return (
     <>
       <header
@@ -105,13 +96,8 @@ export default function Navbar() {
         )}
       >
         <Container>
-          <nav className="flex h-[76px] items-center justify-between">
-            <Link
-              href="/"
-              className="text-[16px] font-semibold tracking-[-0.02em] text-pc-white"
-            >
-              Program<span className="text-accent">Creator</span>
-            </Link>
+          <nav className="flex h-[68px] items-center justify-between">
+            <Wordmark />
 
             <div className="hidden items-center gap-8 md:flex">
               {navLinks.map((link) => (
@@ -120,11 +106,7 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:block">
-              <CTAButton
-                href="/apply"
-                size="sm"
-                className="h-10 rounded-control px-5 text-[13px]"
-              >
+              <CTAButton href="/apply" size="sm">
                 Apply
               </CTAButton>
             </div>
@@ -161,16 +143,10 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_IN }}
+            transition={{ duration: 0.28, ease: EASE_IN }}
           >
-            <div className="flex h-[76px] items-center justify-between px-6">
-              <Link
-                href="/"
-                className="text-[16px] font-semibold tracking-[-0.02em] text-pc-white"
-                onClick={() => setOpen(false)}
-              >
-                Program<span className="text-accent">Creator</span>
-              </Link>
+            <div className="flex h-[68px] items-center justify-between px-6">
+              <Wordmark onClick={() => setOpen(false)} />
               <button
                 type="button"
                 className="relative inline-flex h-10 w-10 items-center justify-center"
@@ -194,7 +170,7 @@ export default function Navbar() {
                     <MaskText
                       as="span"
                       delay={reduced ? 0 : 0.06 * index}
-                      className="block text-[clamp(1.75rem,7vw,2.75rem)] font-semibold tracking-[-0.035em]"
+                      className="t-h2 block"
                     >
                       {link.label}
                     </MaskText>
@@ -203,30 +179,9 @@ export default function Navbar() {
               </div>
 
               <div className="mt-auto space-y-6">
-                {activeSocials.length > 0 && (
-                  <div className="flex items-center gap-3">
-                    {activeSocials.map((social) => {
-                      const Icon = social.icon;
-                      return (
-                        <a
-                          key={social.label}
-                          href={social.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={social.label}
-                          className="flex h-10 w-10 items-center justify-center rounded-control text-pc-muted transition-colors duration-[160ms] hover:text-accent"
-                        >
-                          <Icon size={18} />
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
+                <SocialLinks variant="icon" />
                 <div onClick={() => setOpen(false)}>
-                  <CTAButton
-                    href="/apply"
-                    className="w-full rounded-control"
-                  >
+                  <CTAButton href="/apply" className="w-full">
                     Apply to work with me
                   </CTAButton>
                 </div>

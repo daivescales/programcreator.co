@@ -6,13 +6,9 @@ export default function NotFound() {
   return (
     <section className="flex min-h-[70vh] items-center bg-navy-800 py-24 text-center">
       <Container>
-        <p className="mb-4 text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
-          404
-        </p>
-        <h1 className="text-[clamp(2rem,4vw,3rem)] font-semibold tracking-[-0.035em] text-pc-white">
-          This page does not exist.
-        </h1>
-        <p className="mx-auto mt-4 max-w-[50ch] text-lg text-pc-text">
+        <p className="t-label mb-4 text-accent">404</p>
+        <h1 className="t-h2">This page does not exist.</h1>
+        <p className="t-body mx-auto mt-4">
           The link may be broken, or the page may have moved.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -21,7 +17,7 @@ export default function NotFound() {
             Back home
           </CTAButton>
         </div>
-        <p className="mt-6 text-sm text-pc-muted">
+        <p className="t-small mt-6 text-pc-muted">
           Or read the{" "}
           <Link href="/#faq" className="text-accent underline underline-offset-4">
             FAQ

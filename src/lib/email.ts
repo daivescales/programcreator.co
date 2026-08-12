@@ -82,7 +82,7 @@ export async function sendLeadNotification(
     const qualified = lead.qualified !== false;
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${qualified ? "New application" : "Not qualified"}</p>
-    <h1 style="margin:0 0 8px;color:${WHITE};font-size:22px;font-weight:600;">${escapeHtml(lead.full_name)}</h1>
+    <h1 style="margin:0 0 8px;color:${WHITE};font-size:22px;font-weight:500;">${escapeHtml(lead.full_name)}</h1>
     <p style="margin:0 0 20px;color:${TEXT};font-size:14px;">${escapeHtml(lead.lane)} · ${escapeHtml(lead.brand_name ?? "")}</p>
     <table style="width:100%;border-collapse:collapse;">
       ${row("Email", lead.email)}
@@ -141,7 +141,7 @@ export async function sendApplicantConfirmation(lead: LeadRecord): Promise<void>
 
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
-    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:600;">Got it, ${escapeHtml(first)}.</h1>
+    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:500;">Got it, ${escapeHtml(first)}.</h1>
     <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(body)}</p>
     <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
       Daive, ${escapeHtml(site.name)}
@@ -191,7 +191,7 @@ export async function sendBookingConfirmation(
 
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
-    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:600;">See you soon, ${escapeHtml(first)}.</h1>
+    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:500;">See you soon, ${escapeHtml(first)}.</h1>
     <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(body)}</p>
     <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">
       Daive, ${escapeHtml(site.name)}
@@ -231,7 +231,7 @@ export async function sendNotQualifiedNotice(lead: LeadRecord): Promise<void> {
 
     const html = shell(`
     <p style="margin:0 0 4px;color:${ACCENT};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">${escapeHtml(site.name)}</p>
-    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:600;">Not right now, ${escapeHtml(first)}.</h1>
+    <h1 style="margin:0 0 12px;color:${WHITE};font-size:22px;font-weight:500;">Not right now, ${escapeHtml(first)}.</h1>
     <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(p1)}</p>
     <p style="margin:0 0 16px;color:${TEXT};font-size:15px;line-height:1.6;">${escapeHtml(p2)}</p>
     <p style="margin:28px 0 0;color:${MUTED};font-size:13px;line-height:1.5;">

@@ -8,10 +8,10 @@ export const site = {
   // TODO: Daive, replace with your real Cal.com link
   calLink: "daivescales/discovery",
   socials: {
-    instagram: "",
-    tiktok: "",
-    youtube: "",
-    x: "",
+    youtube: "https://www.youtube.com/@daivescales",
+    instagram: "https://www.instagram.com/daivescales/",
+    x: "https://x.com/daivescales",
+    tiktok: "https://www.tiktok.com/@daivescales",
   },
 } as const;
 

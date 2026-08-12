@@ -39,12 +39,12 @@ export default function Reveal({
       animate={
         reduced
           ? { opacity: show ? 1 : 0, y: 0 }
-          : { opacity: show ? 1 : 0, y: show ? 0 : 16 }
+          : { opacity: show ? 1 : 0, y: show ? 0 : 14 }
       }
       transition={
         reduced
           ? { duration: 0.15, delay, ease: "linear" }
-          : { duration: 0.5, delay, ease: EASE_IN }
+          : { duration: 0.7, delay, ease: EASE_IN }
       }
     >
       {children}

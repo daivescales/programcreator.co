@@ -1,35 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { HandCircle } from "@/components/marks";
 import { MaskLines, Reveal } from "@/components/motion";
-import Annotation from "@/components/ui/Annotation";
 import Heading from "@/components/ui/Heading";
 import Section from "@/components/ui/Section";
 import SectionLabel from "@/components/ui/SectionLabel";
 
-const included = [
-  "content angles that drive traffic",
-  "ongoing conversion iteration",
-  "tracking set up properly",
-  "direct access to me rather than an account manager",
-] as const;
-
-type LanePanel = {
+type Lane = {
   key: "a" | "b";
   title: string;
   subtitle: string;
-  featured: boolean;
-  rows: { label: string; value: ReactNode }[];
+  accent: boolean;
+  rows: { label: string; value: string; emphasize?: boolean }[];
 };
 
-const lanes: LanePanel[] = [
+const lanes: Lane[] = [
   {
     key: "a",
     title: "Lane A",
     subtitle: "Creators and digital brands",
-    featured: true,
+    accent: true,
     rows: [
       {
         label: "Who it's for",
@@ -43,11 +33,8 @@ const lanes: LanePanel[] = [
       },
       {
         label: "How I'm paid",
-        value: (
-          <p className="text-[clamp(1.5rem,2.5vw,2rem)] font-semibold tracking-[-0.03em] text-pc-white">
-            <HandCircle variant={1}>Revenue split</HandCircle>
-          </p>
-        ),
+        value: "Revenue split",
+        emphasize: true,
       },
       {
         label: "When I'm paid",
@@ -64,7 +51,7 @@ const lanes: LanePanel[] = [
     key: "b",
     title: "Lane B",
     subtitle: "Physical product brands",
-    featured: false,
+    accent: false,
     rows: [
       {
         label: "Who it's for",
@@ -78,11 +65,8 @@ const lanes: LanePanel[] = [
       },
       {
         label: "How I'm paid",
-        value: (
-          <p className="text-[clamp(1.5rem,2.5vw,2rem)] font-semibold tracking-[-0.03em] text-pc-white">
-            Monthly retainer
-          </p>
-        ),
+        value: "Monthly retainer",
+        emphasize: true,
       },
       {
         label: "When I'm paid",
@@ -97,46 +81,27 @@ const lanes: LanePanel[] = [
   },
 ];
 
-function LaneCard({ lane }: { lane: LanePanel }) {
+function LaneColumn({ lane }: { lane: Lane }) {
   return (
-    <article
-      className={
-        lane.featured
-          ? "rounded-panel border border-accent/30 bg-navy-700 p-8 md:p-10"
-          : "rounded-panel border border-pc-line bg-navy-750 p-8 md:p-10"
-      }
-    >
-      <p
-        className={
-          lane.featured
-            ? "text-[12px] uppercase tracking-[0.18em] text-accent"
-            : "text-[12px] uppercase tracking-[0.18em] text-pc-muted"
-        }
-      >
+    <article>
+      <div
+        aria-hidden
+        className={`mb-5 h-0.5 w-10 ${lane.accent ? "bg-accent" : "bg-pc-line"}`}
+      />
+      <p className={`t-label ${lane.accent ? "text-accent" : ""}`}>
         {lane.title}
       </p>
-      <h3 className="mt-2 text-[clamp(1.15rem,1.9vw,1.4rem)] font-semibold tracking-[-0.03em] text-pc-white">
-        {lane.subtitle}
-      </h3>
+      <h3 className="t-h3 mt-2">{lane.subtitle}</h3>
 
-      <div className="mt-8 space-y-0">
-        {lane.rows.map((row, index) => (
-          <div
-            key={row.label}
-            className={
-              index === 0
-                ? "pb-6"
-                : index === lane.rows.length - 1
-                  ? "border-t border-pc-line pt-6"
-                  : "border-t border-pc-line py-6"
-            }
-          >
-            <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
-              {row.label}
-            </p>
-            <div className="mt-3 text-[16px] leading-[1.65] text-pc-text">
-              {row.value}
-            </div>
+      <div className="mt-8 space-y-7">
+        {lane.rows.map((row) => (
+          <div key={row.label}>
+            <p className="t-label">{row.label}</p>
+            {row.emphasize ? (
+              <p className="t-h3 mt-1.5">{row.value}</p>
+            ) : (
+              <p className="t-body mt-1.5">{row.value}</p>
+            )}
           </div>
         ))}
       </div>
@@ -146,64 +111,37 @@ function LaneCard({ lane }: { lane: LanePanel }) {
 
 export default function Lanes() {
   return (
-    <Section id="lanes" tone="800" className="scroll-mt-section">
+    <Section id="lanes" tone="800">
       <SectionLabel number="02" label="Two lanes" />
 
       <Heading
         as="h2"
-        text="Two lanes. The _same_ work."
-        underlineVariant={2}
+        text="Two lanes. The same work."
         className="mt-6 max-w-[14ch]"
       />
 
-      <MaskLines
-        delay={0.12}
-        className="mt-6 max-w-[52ch] text-[17px] leading-[1.65] text-pc-text"
-      >
+      <MaskLines delay={0.12} className="t-body mt-5 max-w-[52ch]">
         {
           "The job is identical in both. Turn attention into something people buy. The only thing that changes is how I get paid."
         }
       </MaskLines>
 
       <Reveal delay={0.2}>
-        <div className="relative mt-14">
-          <div className="mb-3 lg:absolute lg:-top-2 lg:left-0 lg:mb-0 lg:-translate-y-full">
-            <div className="hidden lg:block">
-              <Annotation arrow="ltr" arrowPosition="after">
-                most people land here
-              </Annotation>
-            </div>
-            <p className="hand text-[16px] lg:hidden">most people land here</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
-            {lanes.map((lane) => (
-              <LaneCard key={lane.key} lane={lane} />
-            ))}
-          </div>
+        <div className="mt-14 grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-16">
+          {lanes.map((lane) => (
+            <LaneColumn key={lane.key} lane={lane} />
+          ))}
         </div>
       </Reveal>
 
       <Reveal delay={0.28}>
-        <div className="mt-10">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-pc-muted">
-            Both lanes include
+        <div className="mt-14">
+          <p className="t-label">Both lanes include</p>
+          <p className="mt-3 text-[15px] leading-[1.65] text-pc-text">
+            Content angles that drive traffic, ongoing conversion iteration,
+            tracking set up properly, and direct access to me rather than an
+            account manager.
           </p>
-          <ul className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:gap-y-2">
-            {included.map((item, index) => (
-              <li
-                key={item}
-                className="flex items-center gap-3 text-[15px] text-pc-text"
-              >
-                {index > 0 && (
-                  <span aria-hidden className="hidden text-pc-muted sm:inline">
-                    ·
-                  </span>
-                )}
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </Reveal>
 

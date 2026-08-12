@@ -1,4 +1,4 @@
--- ProgramCreator leads schema (v5)
+-- ProgramCreator leads schema (v6)
 -- Run this in the Supabase SQL Editor.
 --
 -- If you already have an older `leads` table, drop and recreate:

@@ -7,22 +7,20 @@ import CTAButton from "@/components/ui/CTAButton";
 
 export default function FinalCTA() {
   return (
-    <section className="relative flex items-center overflow-hidden bg-navy-900 py-40">
+    <section className="relative flex items-center bg-navy-900 py-32">
       <Glow className="opacity-70" />
 
       <Container className="relative z-10">
         <div className="mx-auto max-w-[900px] text-center">
           <Reveal>
-            <p className="text-[12px] uppercase tracking-[0.2em] text-accent">
-              Applications open
-            </p>
+            <p className="t-label text-accent">Applications open</p>
           </Reveal>
 
           <MaskText
             as="h2"
             delay={0.08}
             underlineVariant={1}
-            className="mx-auto mt-6 max-w-[16ch] text-[clamp(2rem,5vw,4rem)] font-semibold leading-[0.95] tracking-[-0.035em] text-pc-white"
+            className="t-display mx-auto mt-5 max-w-[18ch]"
           >
             {
               "You already have the attention. Let's build the thing it _points_ to."
@@ -31,7 +29,7 @@ export default function FinalCTA() {
 
           <MaskLines
             delay={0.2}
-            className="mx-auto mt-6 max-w-[50ch] text-[17px] leading-[1.65] text-pc-text"
+            className="t-body mx-auto mt-6 max-w-[48ch]"
           >
             {
               "Apply below. I read every one. If I think we are a fit, I will reach out and we will get on a call."
@@ -39,11 +37,11 @@ export default function FinalCTA() {
           </MaskLines>
 
           <Reveal delay={0.35}>
-            <div className="mt-10 flex justify-center">
+            <div className="mt-9 flex justify-center">
               <CTAButton
                 href="/apply"
                 size="lg"
-                className="h-14 rounded-control px-10 text-[16px]"
+                className="h-[3.25rem] px-9 text-[15px]"
               >
                 Apply to work with me
               </CTAButton>

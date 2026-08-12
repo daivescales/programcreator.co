@@ -111,7 +111,7 @@ export default function CalEmbed({
     <div className={cn("relative min-h-[560px] w-full", className)}>
       {!ready && (
         <div
-          className="absolute inset-0 animate-pulse rounded-panel bg-navy-700"
+          className="absolute inset-0 animate-pulse rounded-panel bg-navy-750"
           aria-hidden
         />
       )}

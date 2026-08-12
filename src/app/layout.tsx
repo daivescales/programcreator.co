@@ -9,7 +9,7 @@ import "./globals.css";
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   display: "swap",
   preload: true,
   variable: "--font-sans",
@@ -17,7 +17,7 @@ const interTight = Inter_Tight({
 
 const caveat = Caveat({
   subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["400"],
   display: "swap",
   preload: true,
   variable: "--font-hand",
@@ -63,6 +63,13 @@ export const metadata: Metadata = {
   },
 };
 
+const sameAs = [
+  site.socials.youtube,
+  site.socials.instagram,
+  site.socials.x,
+  site.socials.tiktok,
+];
+
 const jsonLd = [
   {
     "@context": "https://schema.org",
@@ -73,8 +80,9 @@ const jsonLd = [
     founder: {
       "@type": "Person",
       name: site.founder,
-      sameAs: [`https://x.com/${site.handle.replace("@", "")}`],
+      sameAs,
     },
+    sameAs,
     areaServed: "Worldwide",
     ...(email ? { email } : {}),
   },
@@ -102,7 +110,7 @@ export default function RootLayout({
       lang="en"
       className={`${interTight.variable} ${caveat.variable}`}
     >
-      <body className="bg-navy-800 font-sans text-pc-text antialiased">
+      <body className="bg-navy-800 font-sans font-normal text-pc-text antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

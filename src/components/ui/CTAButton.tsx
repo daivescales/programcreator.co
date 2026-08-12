@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import MagneticButton from "@/components/motion/MagneticButton";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "ghost";
@@ -14,7 +13,6 @@ export type CTAButtonProps = {
   variant?: Variant;
   size?: Size;
   className?: string;
-  magneticStrength?: number;
 };
 
 const sizes: Record<Size, string> = {
@@ -36,21 +34,18 @@ export default function CTAButton({
   variant = "primary",
   size = "lg",
   className,
-  magneticStrength = 5,
 }: CTAButtonProps) {
   return (
-    <MagneticButton strength={magneticStrength}>
-      <Link
-        href={href}
-        className={cn(
-          "inline-flex items-center justify-center rounded-control font-medium transition-[background-color,border-color,color,transform] duration-[160ms]",
-          sizes[size],
-          variants[variant],
-          className
-        )}
-      >
-        {children}
-      </Link>
-    </MagneticButton>
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center justify-center rounded-control font-medium transition-[background-color,border-color,color,transform] duration-[180ms]",
+        sizes[size],
+        variants[variant],
+        className
+      )}
+    >
+      {children}
+    </Link>
   );
 }
