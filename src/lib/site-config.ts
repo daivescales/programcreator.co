@@ -2,7 +2,7 @@ export const site = {
   name: "ProgramCreator",
   founder: "Daive",
   handle: "@daivescales",
-  url: "https://programcreator.com",
+  url: "https://programcreator.co",
   // TODO: Daive, add your real business email here
   email: "",
   // TODO: Daive, replace with your real Cal.com link

@@ -130,7 +130,7 @@ People who book from an email link (not the `/book` embed) still need the sheet 
 
 1. Generate a long random string and set `CAL_WEBHOOK_SECRET` in Vercel / `.env.local`.
 2. In Cal.com → Settings → Developer → Webhooks → New webhook:
-   * Subscriber URL: `https://programcreator.com/api/cal-webhook?secret=YOUR_CAL_WEBHOOK_SECRET`
+   * Subscriber URL: `https://programcreator.co/api/cal-webhook?secret=YOUR_CAL_WEBHOOK_SECRET`
      (query secret is verified; you can also send the same value as `x-cal-webhook-secret` or as HMAC via `x-cal-signature-256`)
    * Event triggers: **BOOKING_CREATED**
    * Secret: the same `CAL_WEBHOOK_SECRET` value if Cal asks for one
@@ -142,7 +142,7 @@ The `/book` page also POSTs to `/api/booking` on embed success (email, bookedAt,
 
 ### 5. Site URL and contact email
 
-Set `NEXT_PUBLIC_SITE_URL=https://programcreator.com` (metadata, sitemap, OG).
+Set `NEXT_PUBLIC_SITE_URL=https://programcreator.co` (metadata, sitemap, OG).
 
 Leave `site.email` as `""` until you have a real address. Never invent a contact address. Use `contactEmail()` anywhere UI needs an address; empty renders **Email coming soon**.
 
@@ -189,7 +189,7 @@ CAL_WEBHOOK_SECRET
 4. **Governing law:** insert jurisdiction in `/terms` section 14 (HTML TODO comment).
 5. **Cookies / analytics:** update `/cookies` if you add PostHog, GA, or a Meta pixel (HTML TODO comment).
 6. **Delete** `/dev/marks` before launch.
-7. **Bio link:** point Instagram/TikTok bio to `https://programcreator.com/apply`, not the homepage.
+7. **Bio link:** point Instagram/TikTok bio to `https://programcreator.co/apply`, not the homepage.
 
 ## Scripts
 
@@ -209,13 +209,13 @@ npx tsc --noEmit     # typecheck
 2. Import the repo in Vercel (Framework: Next.js).
 3. Paste all env vars listed above into Vercel → Project → Settings → Environment Variables (include `CAL_WEBHOOK_SECRET`).
 4. Deploy (Vercel builds from GitHub on every push to `main`).
-5. Add custom domain `programcreator.com` (+ `www` redirect).
+5. Add custom domain `programcreator.co` (+ `www` redirect).
 6. Verify the Resend sending domain (SPF/DKIM/DMARC).
 7. Confirm Cal.com embed loads on `/book` (dark theme, brand `#4D9BFF`).
 8. Re-run `supabase/schema.sql` when upgrading (drops and recreates `leads`).
 9. Submit a test lead through `/apply` → check Supabase, Sheet, and emails. Test the investment closed path. Book a call and confirm status / sheet / confirmation email.
 10. Configure the Cal webhook as above.
-11. Submit `https://programcreator.com/sitemap.xml` in Google Search Console.
+11. Submit `https://programcreator.co/sitemap.xml` in Google Search Console.
 
 Do **not** use `vercel --prod` as the primary path. Push to GitHub and let Vercel auto deploy.
 

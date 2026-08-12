@@ -1,10 +1,9 @@
 "use client";
 
-import { MaskLines, Reveal } from "@/components/motion";
+import { MaskLines, MaskText, Reveal } from "@/components/motion";
 import Glow from "@/components/system/Glow";
 import Container from "@/components/ui/Container";
 import CTAButton from "@/components/ui/CTAButton";
-import Heading from "@/components/ui/Heading";
 import { copy } from "@/lib/copy";
 
 export default function FinalCTA() {
@@ -18,13 +17,14 @@ export default function FinalCTA() {
             <p className="t-label">{copy.finalCta.eyebrow}</p>
           </Reveal>
 
-          <Heading
-            as="display"
-            text={copy.finalCta.heading}
-            underlineVariant={2}
-            className="mx-auto mt-5 max-w-[18ch]"
+          <MaskText
+            as="h2"
             delay={0.08}
-          />
+            underlineVariant={2}
+            className="t-display mx-auto mt-5 max-w-[18ch]"
+          >
+            {copy.finalCta.heading}
+          </MaskText>
 
           <MaskLines delay={0.2} className="t-body mx-auto mt-6 max-w-[48ch]">
             {copy.finalCta.body}
